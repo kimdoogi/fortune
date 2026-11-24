@@ -1,0 +1,21 @@
+{
+  // app Worker: 프론트(Static Assets) + API (docs/15 §2, D-023)
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "fortune-app",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": "../web/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/ws/*"]
+  },
+  "services": [{ "binding": "READING", "service": "fortune-reading" }],
+  "durable_objects": {
+    "bindings": [
+      { "name": "VILLAGE", "class_name": "VillageChannel", "script_name": "fortune-realtime" }
+    ]
+  },
+  "secrets": { "required": ["WS_TOKEN_KEY"] }
+}

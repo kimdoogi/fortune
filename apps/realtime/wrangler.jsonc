@@ -1,0 +1,12 @@
+{
+  // 점집 거리 멀티플레이 (docs/15 §4). 채널 1개 = Durable Object 1개
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "fortune-realtime",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "durable_objects": { "bindings": [{ "name": "VILLAGE", "class_name": "VillageChannel" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["VillageChannel"] }]
+}

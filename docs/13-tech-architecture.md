@@ -33,14 +33,16 @@ fortune/
 ├─ docs/                  # 이 기획 문서
 ├─ apps/
 │  ├─ web/                # three.js + Preact 프론트 (app Worker의 Static Assets로 배포)
+│  │  └─ src/scene/       # 거리·2등신 캐릭터·길찾기 (D-064: 지금은 여기, 나중에 models로)
 │  ├─ api/                # app Worker (API, 인증, 하루 호출 상한, 풀이 조율)
 │  ├─ realtime/           # Durable Objects (마을 멀티플레이)
 │  └─ reading/            # reading Worker (LLM 호출 전용, 공개 주소 없음)
 ├─ packages/
-│  ├─ shared-types/       # API 요청/응답, LLM 입출력 타입
+│  ├─ shared-types/       # API 요청/응답, LLM 입출력, 실시간 메시지 타입 + WebSocket 토큰 서명
 │  ├─ fortune-engine/     # 사주 계산, 타로 뽑기, 오방기, 꿈 사전 (순수 함수, 테스트 필수)
-│  ├─ models/             # 3D 모델 런타임 생성 코드 (D-029)
-│  └─ prompts/            # 점집별 프롬프트 (버전별 파일)
+│  │  └─ data/meanings/   # 해석 데이터 (사주, 타로, 오방기, 꿈 사전)
+│  ├─ models/             # 3D 모델 런타임 생성 코드 (D-029). M1은 아직 없음 (D-064)
+│  └─ prompts/            # 점집별 프롬프트(버전별 파일), 인사말, 금지 표현 목록(common/banned.json), 호격 조사(아/야) 처리
 ├─ tools/
 │  ├─ assets/             # 2D SVG 생성 스크립트 (D-030)
 │  ├─ solar-terms/        # 절기 시각 표 생성·검증 (D-039)
@@ -59,9 +61,9 @@ fortune/
 - ✅ 비밀값(API 키 등)은 코드·저장소·Wrangler `vars`에 넣지 않는다. `.dev.vars`, `.env`는 `.gitignore`
 - ✅ TypeScript `strict`, `any` 금지 (불가피하면 이유 주석)
 - ✅ 린트·포맷: Biome 기본 규칙 + 저장 시 포맷. CI에서 `biome check` 통과 필수
-- ✅ 브랜치: `main` 보호. 기능 브랜치 이름은 `feat/F05-saju`처럼 기능 ID를 붙인다
+- ✅ 브랜치: 1인 개발 동안은 `main`에 바로 커밋한다 (D-064). 협업이 시작되면 `main` 보호 + `feat/F05-saju` 같은 기능 브랜치로 바꾼다
 - ✅ 커밋: Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `chore:`)
-- ✅ PR마다 CI: 린트, 타입 검사, 단위·통합 테스트. 통과해야 병합
+- ✅ 커밋 전에 린트, 타입 검사, 단위 테스트를 돌린다 (`pnpm lint && pnpm typecheck && pnpm test`). CI는 협업이 시작될 때 붙인다
 - ✅ API 요청·응답 타입은 `shared-types`에만 정의하고 web·api·reading이 같이 쓴다
 
 ## 4. 테스트 전략

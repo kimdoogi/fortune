@@ -4,6 +4,7 @@ dist/
 .dev.vars*
 .env*
 !.env.example
+!.dev.vars.example
 .venv/
 __pycache__/
 *.bsp

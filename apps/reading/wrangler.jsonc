@@ -1,0 +1,12 @@
+{
+  // reading Worker: LLM 호출 전용, 공개 주소 없음 (docs/15 §6, D-022)
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "fortune-reading",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  // fixture: 저장된 응답을 돌려준다 (비용 없이 개발). live: Anthropic 호출 (M2)
+  "vars": { "LLM_MODE": "fixture" }
+}

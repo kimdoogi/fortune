@@ -1,0 +1,2 @@
+# 로컬 개발용. 복사해서 .dev.vars로 쓴다 (.dev.vars는 git에 올리지 않음)
+WS_TOKEN_KEY=change-me-local-only

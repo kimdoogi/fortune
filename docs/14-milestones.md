@@ -10,10 +10,17 @@
 - ✅ MVP 기능 명세 13개 확정 ([features](features/README.md)), F12는 MVP 제외
 
 ## M1. 기반
-- 🟡 저장소: pnpm 모노레포 뼈대, Biome, Vitest 완료. 앱(web·api·reading·realtime)과 배포 환경은 남음
+- ✅ 저장소: pnpm 모노레포, Biome, Vitest. 앱 4개 뼈대 완료 (2026-11-25)
+  - `apps/api` (app Worker): Static Assets + `/api/*`, 개발용 사주 계산·풀이 경로, WebSocket 토큰 발급, 마을 연결 전달
+  - `apps/reading`: Service Binding 전용(공개 주소 없음). 지금은 고정 응답(`LLM_MODE=fixture`), 실제 호출은 M2
+  - `apps/realtime`: 마을 Durable Object (토큰 검사, 30명 상한, 메시지 크기·간격 제한)
+  - `apps/web`: Vite + Preact + three.js
 - ✅ `fortune-engine` 완료 (2026-11-25): 네 기둥, 음력 변환, 오행·십신·신강·용신·대운·세운·월운·일진·합충. 테스트 147건 통과
-- [ ] 점집 거리 1개 + 2등신 캐릭터 탭 이동 (싱글)
-- [ ] 목표 기기에서 [07](07-mobile-performance.md) 기준 충족
+- ✅ 해석 데이터 초안: 사주, 타로 22장, 꿈 사전 150개, 오방기, 인사말, 금지 표현 목록 v1 (`packages/prompts`). 형식·금지 표현 테스트 통과, **사람 검수는 남음**
+- ✅ 점집 거리 1개 + 2등신 캐릭터 탭 이동 (싱글): 점집 4곳 색 테마, 성별·나이대 8종 캐릭터, A* 길찾기, 문 앞 "들어가기". 375×812 화면에서 확인
+- [ ] 배포 환경: Cloudflare 계정 로그인, Worker 3개 배포, 비밀값(`WS_TOKEN_KEY`) 등록 — **계정 필요**
+- [ ] AI Gateway 경로 확인 (BYOK, 하루 $10 상한) — **Anthropic 키 필요**
+- [ ] 목표 기기에서 [07](07-mobile-performance.md) 기준 충족 (30 FPS) — **실기기 필요**. 지금 JS 150KB(gzip)로 용량 기준 안. 지도 화면이 생기면 three.js는 동적 import로 분리해야 §2 기준을 지킨다
 
 ## M2. 점 보기
 - [ ] 점집 4개 내부 + 화면 전환

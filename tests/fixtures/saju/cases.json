@@ -1,0 +1,5089 @@
+{
+  "version": 1,
+  "rules": [
+    "D-032",
+    "D-033",
+    "D-034",
+    "D-035",
+    "D-036",
+    "D-037",
+    "D-038"
+  ],
+  "cases": [
+    {
+      "id": "A-01",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1921-03-15",
+        "time": "10:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1921-03-15T09:30+08:30",
+        "solarDate": "1921-03-15",
+        "pillars": {
+          "year": "신유",
+          "month": "신묘",
+          "day": "정축",
+          "hour": "을사"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1921 입춘: 천문 계산으로 판정 (절기와 929시간 차이, KASI 대비 오차 13분 이내)",
+        "1921 경칩: 천문 계산으로 판정 (절기와 214시간 차이, KASI 대비 오차 13분 이내)",
+        "1921 청명: 천문 계산으로 판정 (절기와 511시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1921-03-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-02",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1928-07-14",
+        "time": "14:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1928-07-14T13:30+08:30",
+        "solarDate": "1928-07-14",
+        "pillars": {
+          "year": "무진",
+          "month": "기미",
+          "day": "을묘",
+          "hour": "계미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1928 입춘: 천문 계산으로 판정 (절기와 3844시간 차이, KASI 대비 오차 13분 이내)",
+        "1928 소서: 천문 계산으로 판정 (절기와 163시간 차이, KASI 대비 오차 13분 이내)",
+        "1928 입추: 천문 계산으로 판정 (절기와 590시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1928-07-14"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-03",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1933-11-25",
+        "time": "06:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1933-11-25T05:30+08:30",
+        "solarDate": "1933-11-25",
+        "pillars": {
+          "year": "계유",
+          "month": "계해",
+          "day": "을미",
+          "hour": "기묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1933 입춘: 천문 계산으로 판정 (절기와 7047시간 차이, KASI 대비 오차 13분 이내)",
+        "1933 입동: 천문 계산으로 판정 (절기와 408시간 차이, KASI 대비 오차 13분 이내)",
+        "1933 대설: 천문 계산으로 판정 (절기와 304시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1933-11-25"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-04",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1939-01-16",
+        "time": "20:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1939-01-16T19:30+08:30",
+        "solarDate": "1939-01-16",
+        "pillars": {
+          "year": "무인",
+          "month": "을축",
+          "day": "계축",
+          "hour": "임술"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1939 입춘: 천문 계산으로 판정 (절기와 462시간 차이, KASI 대비 오차 13분 이내)",
+        "1939 소한: 천문 계산으로 판정 (절기와 246시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1939-01-16"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-05",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1942-05-26",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1942-05-26T11:30+08:30",
+        "solarDate": "1942-05-26",
+        "pillars": {
+          "year": "임오",
+          "month": "을사",
+          "day": "기묘",
+          "hour": "경오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1942 입춘: 천문 계산으로 판정 (절기와 2656시간 차이, KASI 대비 오차 13분 이내)",
+        "1942 입하: 천문 계산으로 판정 (절기와 479시간 차이, KASI 대비 오차 13분 이내)",
+        "1942 망종: 천문 계산으로 판정 (절기와 269시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1942-05-26"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-06",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1947-11-14",
+        "time": "04:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1947-11-14T03:30+08:30",
+        "solarDate": "1947-11-14",
+        "pillars": {
+          "year": "정해",
+          "month": "신해",
+          "day": "정유",
+          "hour": "임인"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1947 입춘: 천문 계산으로 판정 (절기와 6771시간 차이, KASI 대비 오차 13분 이내)",
+        "1947 입동: 천문 계산으로 판정 (절기와 133시간 차이, KASI 대비 오차 13분 이내)",
+        "1947 대설: 천문 계산으로 판정 (절기와 580시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1947-11-14"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-07",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1953-12-14",
+        "time": "16:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1953-12-14T15:30+08:30",
+        "solarDate": "1953-12-14",
+        "pillars": {
+          "year": "계사",
+          "month": "갑자",
+          "day": "기해",
+          "hour": "임신"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1953 입춘: 천문 계산으로 판정 (절기와 7516시간 차이, KASI 대비 오차 13분 이내)",
+        "1953 대설: 천문 계산으로 판정 (절기와 165시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1953-12-14"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-08",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1962-04-25",
+        "time": "08:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1962-04-25T07:30+08:30",
+        "solarDate": "1962-04-25",
+        "pillars": {
+          "year": "임인",
+          "month": "갑진",
+          "day": "계사",
+          "hour": "병진"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1962 입춘: 천문 계산으로 판정 (절기와 1912시간 차이, KASI 대비 오차 13분 이내)",
+        "1962 청명: 천문 계산으로 판정 (절기와 472시간 차이, KASI 대비 오차 13분 이내)",
+        "1962 입하: 천문 계산으로 판정 (절기와 265시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1962-04-25"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-09",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1966-08-16",
+        "time": "22:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1966-08-16T21:30+08:30",
+        "solarDate": "1966-08-16",
+        "pillars": {
+          "year": "병오",
+          "month": "병신",
+          "day": "정미",
+          "hour": "신해"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1966 입춘: 천문 계산으로 판정 (절기와 4638시간 차이, KASI 대비 오차 13분 이내)",
+        "1966 입추: 천문 계산으로 판정 (절기와 205시간 차이, KASI 대비 오차 13분 이내)",
+        "1966 백로: 천문 계산으로 판정 (절기와 542시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1966-08-16"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-10",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1971-10-13",
+        "time": "02:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1971-10-13T01:30+08:30",
+        "solarDate": "1971-10-13",
+        "pillars": {
+          "year": "신해",
+          "month": "무술",
+          "day": "신미",
+          "hour": "기축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1971 입춘: 천문 계산으로 판정 (절기와 6005시간 차이, KASI 대비 오차 13분 이내)",
+        "1971 한로: 천문 계산으로 판정 (절기와 90시간 차이, KASI 대비 오차 13분 이내)",
+        "1971 입동: 천문 계산으로 판정 (절기와 633시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1971-10-13"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-11",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1975-02-26",
+        "time": "18:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1975-02-26T17:30+08:30",
+        "solarDate": "1975-02-26",
+        "pillars": {
+          "year": "을묘",
+          "month": "무인",
+          "day": "계묘",
+          "hour": "신유"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1975 입춘: 천문 계산으로 판정 (절기와 526시간 차이, KASI 대비 오차 13분 이내)",
+        "1975 경칩: 천문 계산으로 판정 (절기와 188시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1975-02-26"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-12",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1979-06-15",
+        "time": "10:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1979-06-15T09:30+08:30",
+        "solarDate": "1979-06-15",
+        "pillars": {
+          "year": "기미",
+          "month": "경오",
+          "day": "계축",
+          "hour": "정사"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1979 입춘: 천문 계산으로 판정 (절기와 3135시간 차이, KASI 대비 오차 13분 이내)",
+        "1979 망종: 천문 계산으로 판정 (절기와 210시간 차이, KASI 대비 오차 13분 이내)",
+        "1979 소서: 천문 계산으로 판정 (절기와 544시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1979-06-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-13",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1983-03-24",
+        "time": "14:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1983-03-24T13:30+08:30",
+        "solarDate": "1983-03-24",
+        "pillars": {
+          "year": "계해",
+          "month": "을묘",
+          "day": "신해",
+          "hour": "을미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1983 입춘: 천문 계산으로 판정 (절기와 1147시간 차이, KASI 대비 오차 13분 이내)",
+        "1983 경칩: 천문 계산으로 판정 (절기와 433시간 차이, KASI 대비 오차 13분 이내)",
+        "1983 청명: 천문 계산으로 판정 (절기와 292시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1983-03-24"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-14",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1990-12-16",
+        "time": "06:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1990-12-16T05:30+08:30",
+        "solarDate": "1990-12-16",
+        "pillars": {
+          "year": "경오",
+          "month": "무자",
+          "day": "을묘",
+          "hour": "기묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1990 입춘: 천문 계산으로 판정 (절기와 7555시간 차이, KASI 대비 오차 13분 이내)",
+        "1990 대설: 천문 계산으로 판정 (절기와 204시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1990-12-16"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-15",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1994-07-26",
+        "time": "20:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1994-07-26T19:30+08:30",
+        "solarDate": "1994-07-26",
+        "pillars": {
+          "year": "갑술",
+          "month": "신미",
+          "day": "계축",
+          "hour": "임술"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1994 입춘: 천문 계산으로 판정 (절기와 4138시간 차이, KASI 대비 오차 13분 이내)",
+        "1994 소서: 천문 계산으로 판정 (절기와 459시간 차이, KASI 대비 오차 13분 이내)",
+        "1994 입추: 천문 계산으로 판정 (절기와 295시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1994-07-26"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-16",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "1999-09-25",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1999-09-25T11:30+08:30",
+        "solarDate": "1999-09-25",
+        "pillars": {
+          "year": "기묘",
+          "month": "계유",
+          "day": "경진",
+          "hour": "임오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1999 입춘: 천문 계산으로 판정 (절기와 5588시간 차이, KASI 대비 오차 13분 이내)",
+        "1999 백로: 천문 계산으로 판정 (절기와 409시간 차이, KASI 대비 오차 13분 이내)",
+        "1999 한로: 천문 계산으로 판정 (절기와 327시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1999-09-25"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-17",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "2003-01-26",
+        "time": "04:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2003-01-26T03:30+08:30",
+        "solarDate": "2003-01-26",
+        "pillars": {
+          "year": "임오",
+          "month": "계축",
+          "day": "기해",
+          "hour": "병인"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "2003 입춘: 천문 계산으로 판정 (절기와 227시간 차이, KASI 대비 오차 13분 이내)",
+        "2003 소한: 천문 계산으로 판정 (절기와 481시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 2003-01-26"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-18",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "2008-05-14",
+        "time": "16:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2008-05-14T15:30+08:30",
+        "solarDate": "2008-05-14",
+        "pillars": {
+          "year": "무자",
+          "month": "정사",
+          "day": "갑인",
+          "hour": "임신"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2008 입춘 02월04일 20시00분",
+        "KASI 2008 입하 05월05일 12시03분",
+        "KASI 2008 망종 06월05일 16시12분",
+        "KASI 일진 2008-05-14"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-19",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "2011-11-15",
+        "time": "08:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2011-11-15T07:30+08:30",
+        "solarDate": "2011-11-15",
+        "pillars": {
+          "year": "신묘",
+          "month": "기해",
+          "day": "갑술",
+          "hour": "무진"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2011 입춘 02월04일 13시33분",
+        "KASI 2011 입동 11월08일 03시35분",
+        "KASI 2011 대설 12월07일 20시29분",
+        "KASI 일진 2011-11-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "A-20",
+      "category": "general",
+      "input": {
+        "calendar": "solar",
+        "date": "2012-08-14",
+        "time": "22:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2012-08-14T21:30+08:30",
+        "solarDate": "2012-08-14",
+        "pillars": {
+          "year": "임진",
+          "month": "무신",
+          "day": "정미",
+          "hour": "신해"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2012 입춘 02월04일 19시22분",
+        "KASI 2012 입추 08월07일 11시30분",
+        "KASI 2012 백로 09월07일 14시29분",
+        "KASI 일진 2012-08-14"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-01",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2005-02-04",
+        "time": "02:41",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2005-02-04T02:11+08:30",
+        "solarDate": "2005-02-04",
+        "pillars": {
+          "year": "갑신",
+          "month": "정축",
+          "day": "기미",
+          "hour": "을축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2005 입춘 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2005 입춘 02월04일 02시43분",
+        "KASI 2005 소한 01월05일 15시03분",
+        "KASI 일진 2005-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-02",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2005-02-04",
+        "time": "02:45",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2005-02-04T02:15+08:30",
+        "solarDate": "2005-02-04",
+        "pillars": {
+          "year": "을유",
+          "month": "무인",
+          "day": "기미",
+          "hour": "을축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2005 입춘 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2005 입춘 02월04일 02시43분",
+        "KASI 2005 경칩 03월05일 20시45분",
+        "KASI 일진 2005-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-03",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2009-02-04",
+        "time": "01:48",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2009-02-04T01:18+08:30",
+        "solarDate": "2009-02-04",
+        "pillars": {
+          "year": "무자",
+          "month": "을축",
+          "day": "경진",
+          "hour": "정축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2009 입춘 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2009 입춘 02월04일 01시50분",
+        "KASI 2009 소한 01월05일 14시14분",
+        "KASI 일진 2009-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-04",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2009-02-04",
+        "time": "01:52",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2009-02-04T01:22+08:30",
+        "solarDate": "2009-02-04",
+        "pillars": {
+          "year": "기축",
+          "month": "병인",
+          "day": "경진",
+          "hour": "정축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2009 입춘 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2009 입춘 02월04일 01시50분",
+        "KASI 2009 경칩 03월05일 19시47분",
+        "KASI 일진 2009-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-05",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2012-02-04",
+        "time": "19:20",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2012-02-04T18:50+08:30",
+        "solarDate": "2012-02-04",
+        "pillars": {
+          "year": "신묘",
+          "month": "신축",
+          "day": "을미",
+          "hour": "을유"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2012 입춘 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2012 입춘 02월04일 19시22분",
+        "KASI 2012 소한 01월06일 07시44분",
+        "KASI 일진 2012-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-06",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2012-02-04",
+        "time": "19:24",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2012-02-04T18:54+08:30",
+        "solarDate": "2012-02-04",
+        "pillars": {
+          "year": "임진",
+          "month": "임인",
+          "day": "을미",
+          "hour": "을유"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2012 입춘 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2012 입춘 02월04일 19시22분",
+        "KASI 2012 경칩 03월05일 13시21분",
+        "KASI 일진 2012-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-07",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2014-02-04",
+        "time": "07:01",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2014-02-04T06:31+08:30",
+        "solarDate": "2014-02-04",
+        "pillars": {
+          "year": "계사",
+          "month": "을축",
+          "day": "병오",
+          "hour": "신묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2014 입춘 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2014 입춘 02월04일 07시03분",
+        "KASI 2014 소한 01월05일 19시24분",
+        "KASI 일진 2014-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-08",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2014-02-04",
+        "time": "07:05",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2014-02-04T06:35+08:30",
+        "solarDate": "2014-02-04",
+        "pillars": {
+          "year": "갑오",
+          "month": "병인",
+          "day": "병오",
+          "hour": "신묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2014 입춘 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2014 입춘 02월04일 07시03분",
+        "KASI 2014 경칩 03월06일 01시02분",
+        "KASI 일진 2014-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-09",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2017-02-04",
+        "time": "00:32",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2017-02-04T00:02+08:30",
+        "solarDate": "2017-02-04",
+        "pillars": {
+          "year": "병신",
+          "month": "신축",
+          "day": "임술",
+          "hour": "경자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2017 입춘 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2017 입춘 02월04일 00시34분",
+        "KASI 2017 소한 01월05일 12시56분",
+        "KASI 일진 2017-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "B-10",
+      "category": "ipchun",
+      "input": {
+        "calendar": "solar",
+        "date": "2017-02-04",
+        "time": "00:36",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2017-02-04T00:06+08:30",
+        "solarDate": "2017-02-04",
+        "pillars": {
+          "year": "정유",
+          "month": "임인",
+          "day": "임술",
+          "hour": "경자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2017 입춘 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2017 입춘 02월04일 00시34분",
+        "KASI 2017 경칩 03월05일 18시33분",
+        "KASI 일진 2017-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-01",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2004-03-05",
+        "time": "14:54",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2004-03-05T14:24+08:30",
+        "solarDate": "2004-03-05",
+        "pillars": {
+          "year": "갑신",
+          "month": "병인",
+          "day": "계미",
+          "hour": "기미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2004 경칩 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2004 입춘 02월04일 20시56분",
+        "KASI 2004 경칩 03월05일 14시56분",
+        "KASI 일진 2004-03-05"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-02",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2004-03-05",
+        "time": "14:58",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2004-03-05T14:28+08:30",
+        "solarDate": "2004-03-05",
+        "pillars": {
+          "year": "갑신",
+          "month": "정묘",
+          "day": "계미",
+          "hour": "기미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2004 경칩 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2004 입춘 02월04일 20시56분",
+        "KASI 2004 경칩 03월05일 14시56분",
+        "KASI 2004 청명 04월04일 19시43분",
+        "KASI 일진 2004-03-05"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-03",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2006-04-05",
+        "time": "07:13",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2006-04-05T06:43+08:30",
+        "solarDate": "2006-04-05",
+        "pillars": {
+          "year": "병술",
+          "month": "신묘",
+          "day": "갑자",
+          "hour": "정묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2006 청명 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2006 입춘 02월04일 08시27분",
+        "KASI 2006 경칩 03월06일 02시29분",
+        "KASI 2006 청명 04월05일 07시15분",
+        "KASI 일진 2006-04-05"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-04",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2006-04-05",
+        "time": "07:17",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2006-04-05T06:47+08:30",
+        "solarDate": "2006-04-05",
+        "pillars": {
+          "year": "병술",
+          "month": "임진",
+          "day": "갑자",
+          "hour": "정묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2006 청명 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2006 입춘 02월04일 08시27분",
+        "KASI 2006 청명 04월05일 07시15분",
+        "KASI 2006 입하 05월06일 00시31분",
+        "KASI 일진 2006-04-05"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-05",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2007-05-06",
+        "time": "06:18",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2007-05-06T05:48+08:30",
+        "solarDate": "2007-05-06",
+        "pillars": {
+          "year": "정해",
+          "month": "갑진",
+          "day": "경자",
+          "hour": "기묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2007 입하 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2007 입춘 02월04일 14시18분",
+        "KASI 2007 청명 04월05일 13시05분",
+        "KASI 2007 입하 05월06일 06시20분",
+        "KASI 일진 2007-05-06"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-06",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2007-05-06",
+        "time": "06:22",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2007-05-06T05:52+08:30",
+        "solarDate": "2007-05-06",
+        "pillars": {
+          "year": "정해",
+          "month": "을사",
+          "day": "경자",
+          "hour": "기묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2007 입하 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2007 입춘 02월04일 14시18분",
+        "KASI 2007 입하 05월06일 06시20분",
+        "KASI 2007 망종 06월06일 10시27분",
+        "KASI 일진 2007-05-06"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-07",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2008-06-05",
+        "time": "16:10",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2008-06-05T15:40+08:30",
+        "solarDate": "2008-06-05",
+        "pillars": {
+          "year": "무자",
+          "month": "정사",
+          "day": "병자",
+          "hour": "병신"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2008 망종 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2008 입춘 02월04일 20시00분",
+        "KASI 2008 입하 05월05일 12시03분",
+        "KASI 2008 망종 06월05일 16시12분",
+        "KASI 일진 2008-06-05"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-08",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2008-06-05",
+        "time": "16:14",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2008-06-05T15:44+08:30",
+        "solarDate": "2008-06-05",
+        "pillars": {
+          "year": "무자",
+          "month": "무오",
+          "day": "병자",
+          "hour": "병신"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2008 망종 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2008 입춘 02월04일 20시00분",
+        "KASI 2008 망종 06월05일 16시12분",
+        "KASI 2008 소서 07월07일 02시27분",
+        "KASI 일진 2008-06-05"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-09",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2010-07-07",
+        "time": "14:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2010-07-07T13:30+08:30",
+        "solarDate": "2010-07-07",
+        "pillars": {
+          "year": "경인",
+          "month": "임오",
+          "day": "무오",
+          "hour": "기미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2010 소서 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2010 입춘 02월04일 07시48분",
+        "KASI 2010 망종 06월06일 03시49분",
+        "KASI 2010 소서 07월07일 14시02분",
+        "KASI 일진 2010-07-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-10",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2010-07-07",
+        "time": "14:04",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2010-07-07T13:34+08:30",
+        "solarDate": "2010-07-07",
+        "pillars": {
+          "year": "경인",
+          "month": "계미",
+          "day": "무오",
+          "hour": "기미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2010 소서 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2010 입춘 02월04일 07시48분",
+        "KASI 2010 소서 07월07일 14시02분",
+        "KASI 2010 입추 08월07일 23시49분",
+        "KASI 일진 2010-07-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-11",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2011-08-08",
+        "time": "05:31",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2011-08-08T05:01+08:30",
+        "solarDate": "2011-08-08",
+        "pillars": {
+          "year": "신묘",
+          "month": "을미",
+          "day": "을미",
+          "hour": "기묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2011 입추 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2011 입춘 02월04일 13시33분",
+        "KASI 2011 소서 07월07일 19시42분",
+        "KASI 2011 입추 08월08일 05시33분",
+        "KASI 일진 2011-08-08"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-12",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2011-08-08",
+        "time": "05:35",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2011-08-08T05:05+08:30",
+        "solarDate": "2011-08-08",
+        "pillars": {
+          "year": "신묘",
+          "month": "병신",
+          "day": "을미",
+          "hour": "기묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2011 입추 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2011 입춘 02월04일 13시33분",
+        "KASI 2011 입추 08월08일 05시33분",
+        "KASI 2011 백로 09월08일 08시34분",
+        "KASI 일진 2011-08-08"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-13",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2013-09-07",
+        "time": "20:14",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2013-09-07T19:44+08:30",
+        "solarDate": "2013-09-07",
+        "pillars": {
+          "year": "계사",
+          "month": "경신",
+          "day": "병자",
+          "hour": "무술"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2013 백로 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2013 입춘 02월04일 01시13분",
+        "KASI 2013 입추 08월07일 17시20분",
+        "KASI 2013 백로 09월07일 20시16분",
+        "KASI 일진 2013-09-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-14",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2013-09-07",
+        "time": "20:18",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2013-09-07T19:48+08:30",
+        "solarDate": "2013-09-07",
+        "pillars": {
+          "year": "계사",
+          "month": "신유",
+          "day": "병자",
+          "hour": "무술"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2013 백로 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2013 입춘 02월04일 01시13분",
+        "KASI 2013 백로 09월07일 20시16분",
+        "KASI 2013 한로 10월08일 11시58분",
+        "KASI 일진 2013-09-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-15",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2015-10-08",
+        "time": "23:41",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2015-10-08T23:11+08:30",
+        "solarDate": "2015-10-08",
+        "pillars": {
+          "year": "을미",
+          "month": "을유",
+          "day": "무오",
+          "hour": "임자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2015 한로 -2분 (23:30 이후라 일주도 다음 날)",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2015 입춘 02월04일 12시58분",
+        "KASI 2015 백로 09월08일 07시59분",
+        "KASI 2015 한로 10월08일 23시43분",
+        "KASI 일진 2015-10-09"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-16",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2015-10-08",
+        "time": "23:45",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2015-10-08T23:15+08:30",
+        "solarDate": "2015-10-08",
+        "pillars": {
+          "year": "을미",
+          "month": "병술",
+          "day": "무오",
+          "hour": "임자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2015 한로 +2분 (23:30 이후라 일주도 다음 날)",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2015 입춘 02월04일 12시58분",
+        "KASI 2015 한로 10월08일 23시43분",
+        "KASI 2015 입동 11월08일 02시58분",
+        "KASI 일진 2015-10-09"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-17",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2016-11-07",
+        "time": "08:46",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2016-11-07T08:16+08:30",
+        "solarDate": "2016-11-07",
+        "pillars": {
+          "year": "병신",
+          "month": "무술",
+          "day": "계사",
+          "hour": "병진"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2016 입동 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2016 입춘 02월04일 18시46분",
+        "KASI 2016 한로 10월08일 05시33분",
+        "KASI 2016 입동 11월07일 08시48분",
+        "KASI 일진 2016-11-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-18",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2016-11-07",
+        "time": "08:50",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2016-11-07T08:20+08:30",
+        "solarDate": "2016-11-07",
+        "pillars": {
+          "year": "병신",
+          "month": "기해",
+          "day": "계사",
+          "hour": "병진"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2016 입동 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2016 입춘 02월04일 18시46분",
+        "KASI 2016 입동 11월07일 08시48분",
+        "KASI 2016 대설 12월07일 01시41분",
+        "KASI 일진 2016-11-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-19",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2014-12-07",
+        "time": "14:02",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2014-12-07T13:32+08:30",
+        "solarDate": "2014-12-07",
+        "pillars": {
+          "year": "갑오",
+          "month": "을해",
+          "day": "임자",
+          "hour": "정미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2014 대설 -2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2014 입춘 02월04일 07시03분",
+        "KASI 2014 입동 11월07일 21시07분",
+        "KASI 2014 대설 12월07일 14시04분",
+        "KASI 일진 2014-12-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-20",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2014-12-07",
+        "time": "14:06",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2014-12-07T13:36+08:30",
+        "solarDate": "2014-12-07",
+        "pillars": {
+          "year": "갑오",
+          "month": "병자",
+          "day": "임자",
+          "hour": "정미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2014 대설 +2분",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2014 입춘 02월04일 07시03분",
+        "KASI 2014 대설 12월07일 14시04분",
+        "KASI 일진 2014-12-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-21",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2013-01-05",
+        "time": "13:32",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2013-01-05T13:02+08:30",
+        "solarDate": "2013-01-05",
+        "pillars": {
+          "year": "임진",
+          "month": "임자",
+          "day": "신미",
+          "hour": "을미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2013 소한 -2분 (월주만 바뀌고 연주는 그대로)",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2013 입춘 02월04일 01시13분",
+        "KASI 2013 소한 01월05일 13시34분",
+        "KASI 일진 2013-01-05"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "C-22",
+      "category": "jeolgi",
+      "input": {
+        "calendar": "solar",
+        "date": "2013-01-05",
+        "time": "13:36",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2013-01-05T13:06+08:30",
+        "solarDate": "2013-01-05",
+        "pillars": {
+          "year": "임진",
+          "month": "계축",
+          "day": "신미",
+          "hour": "을미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "2013 소한 +2분 (월주만 바뀌고 연주는 그대로)",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2013 입춘 02월04일 01시13분",
+        "KASI 2013 소한 01월05일 13시34분",
+        "KASI 일진 2013-01-05"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-01",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1985-03-12",
+        "time": "23:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1985-03-12T22:59+08:30",
+        "solarDate": "1985-03-12",
+        "pillars": {
+          "year": "을축",
+          "month": "기묘",
+          "day": "경술",
+          "hour": "정해"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "해시, 당일 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1985 입춘: 천문 계산으로 판정 (절기와 881시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 경칩: 천문 계산으로 판정 (절기와 167시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 청명: 천문 계산으로 판정 (절기와 558시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1985-03-12"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-02",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1985-03-12",
+        "time": "23:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1985-03-12T23:00+08:30",
+        "solarDate": "1985-03-12",
+        "pillars": {
+          "year": "을축",
+          "month": "기묘",
+          "day": "신해",
+          "hour": "무자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "자시, 다음 날 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1985 입춘: 천문 계산으로 판정 (절기와 881시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 경칩: 천문 계산으로 판정 (절기와 167시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 청명: 천문 계산으로 판정 (절기와 558시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1985-03-13"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-03",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1985-03-12",
+        "time": "23:59",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1985-03-12T23:29+08:30",
+        "solarDate": "1985-03-12",
+        "pillars": {
+          "year": "을축",
+          "month": "기묘",
+          "day": "신해",
+          "hour": "무자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "자시, 다음 날 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1985 입춘: 천문 계산으로 판정 (절기와 882시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 경칩: 천문 계산으로 판정 (절기와 168시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 청명: 천문 계산으로 판정 (절기와 557시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1985-03-13"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-04",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1985-03-13",
+        "time": "00:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1985-03-12T23:30+08:30",
+        "solarDate": "1985-03-13",
+        "pillars": {
+          "year": "을축",
+          "month": "기묘",
+          "day": "신해",
+          "hour": "무자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "D-02와 같은 일주·시주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1985 입춘: 천문 계산으로 판정 (절기와 882시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 경칩: 천문 계산으로 판정 (절기와 168시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 청명: 천문 계산으로 판정 (절기와 557시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1985-03-13"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-05",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1985-03-13",
+        "time": "01:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1985-03-13T00:59+08:30",
+        "solarDate": "1985-03-13",
+        "pillars": {
+          "year": "을축",
+          "month": "기묘",
+          "day": "신해",
+          "hour": "무자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "자시, 당일 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1985 입춘: 천문 계산으로 판정 (절기와 883시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 경칩: 천문 계산으로 판정 (절기와 169시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 청명: 천문 계산으로 판정 (절기와 556시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1985-03-13"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-06",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "2005-10-18",
+        "time": "23:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2005-10-18T22:59+08:30",
+        "solarDate": "2005-10-18",
+        "pillars": {
+          "year": "을유",
+          "month": "병술",
+          "day": "을해",
+          "hour": "정해"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "해시, 당일 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2005 입춘 02월04일 02시43분",
+        "KASI 2005 한로 10월08일 13시33분",
+        "KASI 2005 입동 11월07일 16시42분",
+        "KASI 일진 2005-10-18"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-07",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "2005-10-18",
+        "time": "23:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2005-10-18T23:00+08:30",
+        "solarDate": "2005-10-18",
+        "pillars": {
+          "year": "을유",
+          "month": "병술",
+          "day": "병자",
+          "hour": "무자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "자시, 다음 날 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2005 입춘 02월04일 02시43분",
+        "KASI 2005 한로 10월08일 13시33분",
+        "KASI 2005 입동 11월07일 16시42분",
+        "KASI 일진 2005-10-19"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-08",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "2005-10-19",
+        "time": "00:15",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2005-10-18T23:45+08:30",
+        "solarDate": "2005-10-19",
+        "pillars": {
+          "year": "을유",
+          "month": "병술",
+          "day": "병자",
+          "hour": "무자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "D-07과 같은 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2005 입춘 02월04일 02시43분",
+        "KASI 2005 한로 10월08일 13시33분",
+        "KASI 2005 입동 11월07일 16시42분",
+        "KASI 일진 2005-10-19"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-09",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1999-12-31",
+        "time": "23:45",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1999-12-31T23:15+08:30",
+        "solarDate": "1999-12-31",
+        "pillars": {
+          "year": "기묘",
+          "month": "병자",
+          "day": "무오",
+          "hour": "임자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "일주는 2000-01-01, 연주·월주는 그대로",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1999 입춘: 천문 계산으로 판정 (절기와 7928시간 차이, KASI 대비 오차 13분 이내)",
+        "1999 대설: 천문 계산으로 판정 (절기와 577시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 2000-01-01"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "D-10",
+      "category": "day_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "2009-02-03",
+        "time": "23:45",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2009-02-03T23:15+08:30",
+        "solarDate": "2009-02-03",
+        "pillars": {
+          "year": "무자",
+          "month": "을축",
+          "day": "경진",
+          "hour": "병자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "일주는 2월 4일, 입춘(02-04 01:50) 전이라 연주·월주는 그대로",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2009 입춘 02월04일 01시50분",
+        "KASI 2009 소한 01월05일 14시14분",
+        "KASI 일진 2009-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-01",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "01:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T00:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "경자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1677시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 239시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 499시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-02",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "01:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T01:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "신축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1677시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 239시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 499시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-03",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "03:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T02:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "신축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1679시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 241시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 497시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-04",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "03:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T03:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "임인"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1679시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 241시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 497시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-05",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "05:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T04:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "임인"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1681시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 243시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 495시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-06",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "05:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T05:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "계묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1681시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 243시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 495시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-07",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "07:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T06:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "계묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1683시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 245시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 493시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-08",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "07:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T07:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "갑진"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1683시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 245시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 493시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-09",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "09:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T08:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "갑진"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1685시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 247시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 491시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-10",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "09:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T09:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "을사"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1685시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 247시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 491시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-11",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "11:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T10:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "을사"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1687시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 249시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 489시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-12",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "11:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T11:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "병오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1687시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 249시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 489시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-13",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "13:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T12:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "병오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1689시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 251시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 487시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-14",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "13:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T13:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "정미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1689시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 251시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 487시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-15",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "15:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T14:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "정미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1691시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 253시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 485시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-16",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "15:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T15:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "무신"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1691시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 253시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 485시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-17",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "17:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T16:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "무신"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1693시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 255시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 483시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-18",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "17:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T17:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "기유"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1693시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 255시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 483시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-19",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "19:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T18:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "기유"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1695시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 257시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 481시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-20",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "19:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T19:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "경술"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1695시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 257시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 481시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-21",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "21:29",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T20:59+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "경술"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1697시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 259시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 479시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "E-22",
+      "category": "hour_boundary",
+      "input": {
+        "calendar": "solar",
+        "date": "1997-04-15",
+        "time": "21:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1997-04-15T21:00+08:30",
+        "solarDate": "1997-04-15",
+        "pillars": {
+          "year": "정축",
+          "month": "갑진",
+          "day": "정해",
+          "hour": "신해"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1997 입춘: 천문 계산으로 판정 (절기와 1697시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 청명: 천문 계산으로 판정 (절기와 259시간 차이, KASI 대비 오차 13분 이내)",
+        "1997 입하: 천문 계산으로 판정 (절기와 479시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1997-04-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "F-01",
+      "category": "dst",
+      "input": {
+        "calendar": "solar",
+        "date": "1987-07-15",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1987-07-15T10:30+08:30",
+        "solarDate": "1987-07-15",
+        "pillars": {
+          "year": "정묘",
+          "month": "정미",
+          "day": "을축",
+          "hour": "신사"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "서머타임 적용 (UTC+10 → 기준시 10:30, 사시)",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+10:00",
+        "1987 입춘: 천문 계산으로 판정 (절기와 3857시간 차이, KASI 대비 오차 13분 이내)",
+        "1987 소서: 천문 계산으로 판정 (절기와 178시간 차이, KASI 대비 오차 13분 이내)",
+        "1987 입추: 천문 계산으로 판정 (절기와 576시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1987-07-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "F-02",
+      "category": "dst",
+      "input": {
+        "calendar": "solar",
+        "date": "1988-08-20",
+        "time": "10:15",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1988-08-20T08:45+08:30",
+        "solarDate": "1988-08-20",
+        "pillars": {
+          "year": "무진",
+          "month": "경신",
+          "day": "정미",
+          "hour": "갑진"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "서머타임을 빼먹으면 사시, 제대로 하면 진시",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+10:00",
+        "1988 입춘: 천문 계산으로 판정 (절기와 4738시간 차이, KASI 대비 오차 13분 이내)",
+        "1988 입추: 천문 계산으로 판정 (절기와 305시간 차이, KASI 대비 오차 13분 이내)",
+        "1988 백로: 천문 계산으로 판정 (절기와 442시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1988-08-20"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "F-03",
+      "category": "dst",
+      "input": {
+        "calendar": "solar",
+        "date": "1987-05-10",
+        "time": "01:59",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1987-05-10T01:29+08:30",
+        "solarDate": "1987-05-10",
+        "pillars": {
+          "year": "정묘",
+          "month": "을사",
+          "day": "기미",
+          "hour": "을축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "서머타임 시작 직전",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1987 입춘: 천문 계산으로 판정 (절기와 2264시간 차이, KASI 대비 오차 13분 이내)",
+        "1987 입하: 천문 계산으로 판정 (절기와 88시간 차이, KASI 대비 오차 13분 이내)",
+        "1987 망종: 천문 계산으로 판정 (절기와 660시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1987-05-10"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "F-04",
+      "category": "dst",
+      "input": {
+        "calendar": "solar",
+        "date": "1987-05-10",
+        "time": "03:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1987-05-10T01:30+08:30",
+        "solarDate": "1987-05-10",
+        "pillars": {
+          "year": "정묘",
+          "month": "을사",
+          "day": "기미",
+          "hour": "을축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "서머타임 시작 직후",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+10:00",
+        "1987 입춘: 천문 계산으로 판정 (절기와 2264시간 차이, KASI 대비 오차 13분 이내)",
+        "1987 입하: 천문 계산으로 판정 (절기와 88시간 차이, KASI 대비 오차 13분 이내)",
+        "1987 망종: 천문 계산으로 판정 (절기와 660시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1987-05-10"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "F-05",
+      "category": "dst",
+      "input": {
+        "calendar": "solar",
+        "date": "1987-05-10",
+        "time": "02:30",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "1987-05-10",
+        "pillars": null,
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": "NONEXISTENT_TIME"
+      },
+      "check": "존재하지 않는 시각 → NONEXISTENT_TIME (D-037)",
+      "basis": [
+        "IANA tz Asia/Seoul: 시계를 앞당겨 없는 시각"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "F-06",
+      "category": "dst",
+      "input": {
+        "calendar": "solar",
+        "date": "1987-10-11",
+        "time": "02:10",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1987-10-11T00:40+08:30",
+        "solarDate": "1987-10-11",
+        "pillars": {
+          "year": "정묘",
+          "month": "경술",
+          "day": "계사",
+          "hour": "임자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": true
+        },
+        "error": null
+      },
+      "check": "두 번 있는 시각 → 서머타임 쪽(기준시 00:40, 자시), ambiguousTime (D-038). 표준시 쪽이면 축시라 규칙을 구분함",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+10:00 (두 번 있는 시각, 먼저 지나간 쪽, D-038)",
+        "1987 입춘: 천문 계산으로 판정 (절기와 5959시간 차이, KASI 대비 오차 13분 이내)",
+        "1987 한로: 천문 계산으로 판정 (절기와 44시간 차이, KASI 대비 오차 13분 이내)",
+        "1987 입동: 천문 계산으로 판정 (절기와 679시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1987-10-11"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "F-07",
+      "category": "dst",
+      "input": {
+        "calendar": "solar",
+        "date": "1956-06-15",
+        "time": "11:40",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1956-06-15T10:40+08:30",
+        "solarDate": "1956-06-15",
+        "pillars": {
+          "year": "병신",
+          "month": "갑오",
+          "day": "계축",
+          "hour": "정사"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "UTC+9:30 서머타임. 빼먹으면 오시, 제대로 하면 사시",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:30",
+        "1956 입춘: 천문 계산으로 판정 (절기와 3150시간 차이, KASI 대비 오차 13분 이내)",
+        "1956 망종: 천문 계산으로 판정 (절기와 225시간 차이, KASI 대비 오차 13분 이내)",
+        "1956 소서: 천문 계산으로 판정 (절기와 530시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1956-06-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "F-08",
+      "category": "dst",
+      "input": {
+        "calendar": "solar",
+        "date": "1949-07-15",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1949-07-15T10:30+08:30",
+        "solarDate": "1949-07-15",
+        "pillars": {
+          "year": "기축",
+          "month": "신미",
+          "day": "병오",
+          "hour": "계사"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "1949년 서머타임(4/3~9/10, UTC+10) → 기준시 10:30, 사시",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+10:00",
+        "1949 입춘: 천문 계산으로 판정 (절기와 3862시간 차이, KASI 대비 오차 13분 이내)",
+        "1949 소서: 천문 계산으로 판정 (절기와 183시간 차이, KASI 대비 오차 13분 이내)",
+        "1949 입추: 천문 계산으로 판정 (절기와 571시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1949-07-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "G-01",
+      "category": "utc830",
+      "input": {
+        "calendar": "solar",
+        "date": "1954-03-20",
+        "time": "23:40",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1954-03-20T23:10+08:30",
+        "solarDate": "1954-03-20",
+        "pillars": {
+          "year": "갑오",
+          "month": "정묘",
+          "day": "병자",
+          "hour": "무자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": true
+        },
+        "error": null
+      },
+      "check": "1954-03-21 00:00에 시계를 23:30으로 늦춰 23:30~23:59가 두 번 있음 → 앞쪽(UTC+9), 기준시 23:10, 다음 날 일주, ambiguousTime",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00 (두 번 있는 시각, 먼저 지나간 쪽, D-038)",
+        "1954 입춘: 천문 계산으로 판정 (절기와 1062시간 차이, KASI 대비 오차 13분 이내)",
+        "1954 경칩: 천문 계산으로 판정 (절기와 348시간 차이, KASI 대비 오차 13분 이내)",
+        "1954 청명: 천문 계산으로 판정 (절기와 377시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1954-03-21"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "G-02",
+      "category": "utc830",
+      "input": {
+        "calendar": "solar",
+        "date": "1954-03-22",
+        "time": "23:10",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1954-03-22T23:10+08:30",
+        "solarDate": "1954-03-22",
+        "pillars": {
+          "year": "갑오",
+          "month": "정묘",
+          "day": "무인",
+          "hour": "임자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "UTC+8:30 → 기준시 23:10, 다음 날 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+8:30",
+        "1954 입춘: 천문 계산으로 판정 (절기와 1110시간 차이, KASI 대비 오차 13분 이내)",
+        "1954 경칩: 천문 계산으로 판정 (절기와 396시간 차이, KASI 대비 오차 13분 이내)",
+        "1954 청명: 천문 계산으로 판정 (절기와 329시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1954-03-23"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "G-03",
+      "category": "utc830",
+      "input": {
+        "calendar": "solar",
+        "date": "1958-01-10",
+        "time": "01:10",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1958-01-10T01:10+08:30",
+        "solarDate": "1958-01-10",
+        "pillars": {
+          "year": "정유",
+          "month": "계축",
+          "day": "정해",
+          "hour": "신축"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "기준시 01:10 → 축시",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+8:30",
+        "1958 입춘: 천문 계산으로 판정 (절기와 615시간 차이, KASI 대비 오차 13분 이내)",
+        "1958 소한: 천문 계산으로 판정 (절기와 93시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1958-01-10"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "G-04",
+      "category": "utc830",
+      "input": {
+        "calendar": "solar",
+        "date": "1960-11-15",
+        "time": "23:20",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1960-11-15T23:20+08:30",
+        "solarDate": "1960-11-15",
+        "pillars": {
+          "year": "경자",
+          "month": "정해",
+          "day": "무신",
+          "hour": "임자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "다음 날 일주",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+8:30",
+        "1960 입춘: 천문 계산으로 판정 (절기와 6835시간 차이, KASI 대비 오차 13분 이내)",
+        "1960 입동: 천문 계산으로 판정 (절기와 197시간 차이, KASI 대비 오차 13분 이내)",
+        "1960 대설: 천문 계산으로 판정 (절기와 516시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1960-11-16"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "G-05",
+      "category": "utc830",
+      "input": {
+        "calendar": "solar",
+        "date": "1961-08-09",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1961-08-09T12:00+08:30",
+        "solarDate": "1961-08-09",
+        "pillars": {
+          "year": "신축",
+          "month": "병신",
+          "day": "갑술",
+          "hour": "경오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "UTC+8:30 마지막 날",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+8:30",
+        "1961 입춘: 천문 계산으로 판정 (절기와 4466시간 차이, KASI 대비 오차 13분 이내)",
+        "1961 입추: 천문 계산으로 판정 (절기와 33시간 차이, KASI 대비 오차 13분 이내)",
+        "1961 백로: 천문 계산으로 판정 (절기와 714시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1961-08-09"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "G-06",
+      "category": "utc830",
+      "input": {
+        "calendar": "solar",
+        "date": "1961-08-10",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1961-08-10T11:30+08:30",
+        "solarDate": "1961-08-10",
+        "pillars": {
+          "year": "신축",
+          "month": "병신",
+          "day": "을해",
+          "hour": "임오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "UTC+9로 돌아온 날 (00:00~00:29는 없는 시각)",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1961 입춘: 천문 계산으로 판정 (절기와 4490시간 차이, KASI 대비 오차 13분 이내)",
+        "1961 입추: 천문 계산으로 판정 (절기와 56시간 차이, KASI 대비 오차 13분 이내)",
+        "1961 백로: 천문 계산으로 판정 (절기와 690시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1961-08-10"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "H-01",
+      "category": "lunar",
+      "input": {
+        "calendar": "lunar",
+        "date": "1925-01-01",
+        "time": "10:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1925-01-24T09:30+08:30",
+        "solarDate": "1925-01-24",
+        "pillars": {
+          "year": "갑자",
+          "month": "정축",
+          "day": "무신",
+          "hour": "정사"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 1925-01-01 → 1925-01-24",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1925 입춘: 천문 계산으로 판정 (절기와 271시간 차이, KASI 대비 오차 13분 이내)",
+        "1925 소한: 천문 계산으로 판정 (절기와 437시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1925-01-24"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "H-02",
+      "category": "lunar",
+      "input": {
+        "calendar": "lunar",
+        "date": "1950-10-15",
+        "time": "14:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1950-11-24T13:30+08:30",
+        "solarDate": "1950-11-24",
+        "pillars": {
+          "year": "경인",
+          "month": "정해",
+          "day": "계해",
+          "hour": "기미"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 1950-10-15 → 1950-11-24",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1950 입춘: 천문 계산으로 판정 (절기와 7028시간 차이, KASI 대비 오차 13분 이내)",
+        "1950 입동: 천문 계산으로 판정 (절기와 389시간 차이, KASI 대비 오차 13분 이내)",
+        "1950 대설: 천문 계산으로 판정 (절기와 323시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1950-11-24"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "H-03",
+      "category": "lunar",
+      "input": {
+        "calendar": "lunar",
+        "date": "1965-12-29",
+        "time": "06:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1966-01-20T05:30+08:30",
+        "solarDate": "1966-01-20",
+        "pillars": {
+          "year": "을사",
+          "month": "기축",
+          "day": "기묘",
+          "hour": "정묘"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 1965-12-29 → 1966-01-20",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1966 입춘: 천문 계산으로 판정 (절기와 370시간 차이, KASI 대비 오차 13분 이내)",
+        "1966 소한: 천문 계산으로 판정 (절기와 338시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1966-01-20"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "H-04",
+      "category": "lunar",
+      "input": {
+        "calendar": "lunar",
+        "date": "1972-05-05",
+        "time": "20:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1972-06-15T19:30+08:30",
+        "solarDate": "1972-06-15",
+        "pillars": {
+          "year": "임자",
+          "month": "병오",
+          "day": "정축",
+          "hour": "경술"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 1972-05-05 → 1972-06-15",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1972 입춘: 천문 계산으로 판정 (절기와 3162시간 차이, KASI 대비 오차 13분 이내)",
+        "1972 망종: 천문 계산으로 판정 (절기와 237시간 차이, KASI 대비 오차 13분 이내)",
+        "1972 소서: 천문 계산으로 판정 (절기와 518시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1972-06-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "H-05",
+      "category": "lunar",
+      "input": {
+        "calendar": "lunar",
+        "date": "1984-01-15",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1984-02-16T11:30+08:30",
+        "solarDate": "1984-02-16",
+        "pillars": {
+          "year": "갑자",
+          "month": "병인",
+          "day": "경진",
+          "hour": "임오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 1984-01-15 → 1984-02-16",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1984 입춘: 천문 계산으로 판정 (절기와 276시간 차이, KASI 대비 오차 13분 이내)",
+        "1984 경칩: 천문 계산으로 판정 (절기와 439시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1984-02-16"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "H-06",
+      "category": "lunar",
+      "input": {
+        "calendar": "lunar",
+        "date": "1993-09-09",
+        "time": "16:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1993-10-23T15:30+08:30",
+        "solarDate": "1993-10-23",
+        "pillars": {
+          "year": "계유",
+          "month": "임술",
+          "day": "정축",
+          "hour": "무신"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 1993-09-09 → 1993-10-23",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1993 입춘: 천문 계산으로 판정 (절기와 6275시간 차이, KASI 대비 오차 13분 이내)",
+        "1993 한로: 천문 계산으로 판정 (절기와 360시간 차이, KASI 대비 오차 13분 이내)",
+        "1993 입동: 천문 계산으로 판정 (절기와 363시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1993-10-23"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "H-07",
+      "category": "lunar",
+      "input": {
+        "calendar": "lunar",
+        "date": "2000-04-08",
+        "time": "08:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2000-05-11T07:30+08:30",
+        "solarDate": "2000-05-11",
+        "pillars": {
+          "year": "경진",
+          "month": "신사",
+          "day": "기사",
+          "hour": "무진"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 2000-04-08 → 2000-05-11",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "2000 입춘: 천문 계산으로 판정 (절기와 2314시간 차이, KASI 대비 오차 13분 이내)",
+        "2000 입하: 천문 계산으로 판정 (절기와 138시간 차이, KASI 대비 오차 13분 이내)",
+        "2000 망종: 천문 계산으로 판정 (절기와 610시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 2000-05-11"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "H-08",
+      "category": "lunar",
+      "input": {
+        "calendar": "lunar",
+        "date": "2010-12-30",
+        "time": "22:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2011-02-02T21:30+08:30",
+        "solarDate": "2011-02-02",
+        "pillars": {
+          "year": "경인",
+          "month": "기축",
+          "day": "무자",
+          "hour": "계해"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 2010-12-30 → 2011-02-02",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2011 입춘 02월04일 13시33분",
+        "KASI 2011 소한 01월06일 01시55분",
+        "KASI 일진 2011-02-02"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "I-01",
+      "category": "leap_month",
+      "input": {
+        "calendar": "lunar",
+        "date": "1995-08-10",
+        "time": "12:00",
+        "isLeapMonth": true,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1995-10-04T11:30+08:30",
+        "solarDate": "1995-10-04",
+        "pillars": {
+          "year": "을해",
+          "month": "을유",
+          "day": "무진",
+          "hour": "무오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 1995-08-10 윤 → 1995-10-04",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1995 입춘: 천문 계산으로 판정 (절기와 5804시간 차이, KASI 대비 오차 13분 이내)",
+        "1995 백로: 천문 계산으로 판정 (절기와 624시간 차이, KASI 대비 오차 13분 이내)",
+        "1995 한로: 천문 계산으로 판정 (절기와 111시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1995-10-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "I-02",
+      "category": "leap_month",
+      "input": {
+        "calendar": "lunar",
+        "date": "2001-04-10",
+        "time": "12:00",
+        "isLeapMonth": true,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2001-06-01T11:30+08:30",
+        "solarDate": "2001-06-01",
+        "pillars": {
+          "year": "신사",
+          "month": "계사",
+          "day": "을미",
+          "hour": "임오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 2001-04-10 윤 → 2001-06-01",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "2001 입춘: 천문 계산으로 판정 (절기와 2817시간 차이, KASI 대비 오차 13분 이내)",
+        "2001 입하: 천문 계산으로 판정 (절기와 640시간 차이, KASI 대비 오차 13분 이내)",
+        "2001 망종: 천문 계산으로 판정 (절기와 108시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 2001-06-01"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "I-03",
+      "category": "leap_month",
+      "input": {
+        "calendar": "lunar",
+        "date": "2004-02-10",
+        "time": "12:00",
+        "isLeapMonth": true,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2004-03-30T11:30+08:30",
+        "solarDate": "2004-03-30",
+        "pillars": {
+          "year": "갑신",
+          "month": "정묘",
+          "day": "무신",
+          "hour": "무오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 2004-02-10 윤 → 2004-03-30",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2004 입춘 02월04일 20시56분",
+        "KASI 2004 경칩 03월05일 14시56분",
+        "KASI 2004 청명 04월04일 19시43분",
+        "KASI 일진 2004-03-30"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "I-04",
+      "category": "leap_month",
+      "input": {
+        "calendar": "lunar",
+        "date": "2006-07-10",
+        "time": "12:00",
+        "isLeapMonth": true,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2006-09-02T11:30+08:30",
+        "solarDate": "2006-09-02",
+        "pillars": {
+          "year": "병술",
+          "month": "병신",
+          "day": "갑오",
+          "hour": "경오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 2006-07-10 윤 → 2006-09-02",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2006 입춘 02월04일 08시27분",
+        "KASI 2006 입추 08월08일 00시41분",
+        "KASI 2006 백로 09월08일 03시39분",
+        "KASI 일진 2006-09-02"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "I-05",
+      "category": "leap_month",
+      "input": {
+        "calendar": "lunar",
+        "date": "2012-03-10",
+        "time": "12:00",
+        "isLeapMonth": true,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2012-04-30T11:30+08:30",
+        "solarDate": "2012-04-30",
+        "pillars": {
+          "year": "임진",
+          "month": "갑진",
+          "day": "신유",
+          "hour": "갑오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 음→양 2012-03-10 윤 → 2012-04-30",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2012 입춘 02월04일 19시22분",
+        "KASI 2012 청명 04월04일 18시05분",
+        "KASI 2012 입하 05월05일 11시20분",
+        "KASI 일진 2012-04-30"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "I-06",
+      "category": "leap_month",
+      "input": {
+        "calendar": "lunar",
+        "date": "1990-01-10",
+        "time": "12:00",
+        "isLeapMonth": true,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": null,
+        "pillars": null,
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": "NO_SUCH_LEAP_MONTH"
+      },
+      "check": "그 해에 없는 윤달 → NO_SUCH_LEAP_MONTH",
+      "basis": [
+        "KASI 음양력 변환: 해당 윤달 없음"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "J-01",
+      "category": "hour_unknown",
+      "input": {
+        "calendar": "solar",
+        "date": "1985-03-12",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "1985-03-12",
+        "pillars": {
+          "year": "을축",
+          "month": "기묘",
+          "day": "경술",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "시주 null",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1985 입춘: 천문 계산으로 판정 (절기와 870시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 경칩: 천문 계산으로 판정 (절기와 156시간 차이, KASI 대비 오차 13분 이내)",
+        "1985 청명: 천문 계산으로 판정 (절기와 569시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1985-03-12"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "J-02",
+      "category": "hour_unknown",
+      "input": {
+        "calendar": "solar",
+        "date": "1999-12-31",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "1999-12-31",
+        "pillars": {
+          "year": "기묘",
+          "month": "병자",
+          "day": "정사",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "일주는 12-31 그대로",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1999 입춘: 천문 계산으로 판정 (절기와 7916시간 차이, KASI 대비 오차 13분 이내)",
+        "1999 대설: 천문 계산으로 판정 (절기와 565시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1999-12-31"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "J-03",
+      "category": "hour_unknown",
+      "input": {
+        "calendar": "solar",
+        "date": "2009-02-04",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2009-02-04",
+        "pillars": {
+          "year": "기축",
+          "month": "병인",
+          "day": "경진",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": true,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "입춘 당일 → 정오 기준, solarTermDay (D-036)",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2009 입춘 02월04일 01시50분",
+        "KASI 2009 경칩 03월05일 19시47분",
+        "입춘 당일, 정오 기준 (D-036)",
+        "KASI 일진 2009-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "J-04",
+      "category": "hour_unknown",
+      "input": {
+        "calendar": "solar",
+        "date": "2013-09-07",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2013-09-07",
+        "pillars": {
+          "year": "계사",
+          "month": "경신",
+          "day": "병자",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": true,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "백로 당일 → 정오 기준, solarTermDay (D-036)",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2013 입춘 02월04일 01시13분",
+        "KASI 2013 입추 08월07일 17시20분",
+        "KASI 2013 백로 09월07일 20시16분",
+        "백로 당일, 정오 기준 (D-036)",
+        "KASI 일진 2013-09-07"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "J-05",
+      "category": "hour_unknown",
+      "input": {
+        "calendar": "solar",
+        "date": "1956-06-15",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "1956-06-15",
+        "pillars": {
+          "year": "병신",
+          "month": "갑오",
+          "day": "계축",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "서머타임 기간이어도 영향 없음",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:30",
+        "1956 입춘: 천문 계산으로 판정 (절기와 3150시간 차이, KASI 대비 오차 13분 이내)",
+        "1956 망종: 천문 계산으로 판정 (절기와 225시간 차이, KASI 대비 오차 13분 이내)",
+        "1956 소서: 천문 계산으로 판정 (절기와 529시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1956-06-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "J-06",
+      "category": "hour_unknown",
+      "input": {
+        "calendar": "lunar",
+        "date": "2001-04-10",
+        "time": null,
+        "isLeapMonth": true,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2001-06-01",
+        "pillars": {
+          "year": "신사",
+          "month": "계사",
+          "day": "을미",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "음력 + 윤달 + 시간 모름",
+      "basis": [
+        "KASI 음→양 2001-04-10 윤 → 2001-06-01",
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "2001 입춘: 천문 계산으로 판정 (절기와 2817시간 차이, KASI 대비 오차 13분 이내)",
+        "2001 입하: 천문 계산으로 판정 (절기와 640시간 차이, KASI 대비 오차 13분 이내)",
+        "2001 망종: 천문 계산으로 판정 (절기와 108시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 2001-06-01"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "K-01",
+      "category": "range",
+      "input": {
+        "calendar": "solar",
+        "date": "1920-01-01",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "1920-01-01T11:30+08:30",
+        "solarDate": "1920-01-01",
+        "pillars": {
+          "year": "기미",
+          "month": "병자",
+          "day": "무오",
+          "hour": "무오"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "입춘 전이라 연주는 1919년 쪽",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "1920 입춘: 천문 계산으로 판정 (절기와 839시간 차이, KASI 대비 오차 13분 이내)",
+        "1920 소한: 천문 계산으로 판정 (절기와 132시간 차이, KASI 대비 오차 13분 이내)",
+        "KASI 일진 1920-01-01"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "K-02",
+      "category": "range",
+      "input": {
+        "calendar": "solar",
+        "date": "1919-12-31",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": null,
+        "pillars": null,
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": "OUT_OF_RANGE"
+      },
+      "check": "OUT_OF_RANGE",
+      "basis": [
+        "지원 범위 D-035"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "K-03",
+      "category": "range",
+      "input": {
+        "calendar": "solar",
+        "date": "1990-02-30",
+        "time": "12:00",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": null,
+        "pillars": null,
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": "INVALID_DATE"
+      },
+      "check": "INVALID_DATE",
+      "basis": [],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "K-04",
+      "category": "range",
+      "input": {
+        "calendar": "solar",
+        "date": "2012-12-31",
+        "time": "23:45",
+        "isLeapMonth": false,
+        "hourUnknown": false
+      },
+      "expected": {
+        "referenceTime": "2012-12-31T23:15+08:30",
+        "solarDate": "2012-12-31",
+        "pillars": {
+          "year": "임진",
+          "month": "임자",
+          "day": "정묘",
+          "hour": "경자"
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "일주는 2013-01-01",
+      "basis": [
+        "IANA tz Asia/Seoul: UTC+9:00",
+        "KASI 2012 입춘 02월04일 19시22분",
+        "KASI 2012 대설 12월07일 02시19분",
+        "KASI 일진 2013-01-01"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "K-05",
+      "category": "range",
+      "input": {
+        "calendar": "solar",
+        "date": "2051-01-01",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": null,
+        "pillars": null,
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": "OUT_OF_RANGE"
+      },
+      "check": "일진 OUT_OF_RANGE",
+      "basis": [
+        "지원 범위 D-035"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "L-01",
+      "category": "iljin",
+      "input": {
+        "calendar": "solar",
+        "date": "2026-01-01",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2026-01-01",
+        "pillars": {
+          "year": null,
+          "month": null,
+          "day": "을해",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 일진 2026-01-01"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "L-02",
+      "category": "iljin",
+      "input": {
+        "calendar": "solar",
+        "date": "2026-02-04",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2026-02-04",
+        "pillars": {
+          "year": null,
+          "month": null,
+          "day": "기유",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 일진 2026-02-04"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "L-03",
+      "category": "iljin",
+      "input": {
+        "calendar": "solar",
+        "date": "2027-07-15",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2027-07-15",
+        "pillars": {
+          "year": null,
+          "month": null,
+          "day": "을미",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 일진 2027-07-15"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "L-04",
+      "category": "iljin",
+      "input": {
+        "calendar": "solar",
+        "date": "2030-12-31",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2030-12-31",
+        "pillars": {
+          "year": null,
+          "month": null,
+          "day": "경자",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 일진 2030-12-31"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "L-05",
+      "category": "iljin",
+      "input": {
+        "calendar": "solar",
+        "date": "2040-02-29",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2040-02-29",
+        "pillars": {
+          "year": null,
+          "month": null,
+          "day": "정해",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 일진 2040-02-29"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    },
+    {
+      "id": "L-06",
+      "category": "iljin",
+      "input": {
+        "calendar": "solar",
+        "date": "2050-12-31",
+        "time": null,
+        "isLeapMonth": false,
+        "hourUnknown": true
+      },
+      "expected": {
+        "referenceTime": null,
+        "solarDate": "2050-12-31",
+        "pillars": {
+          "year": null,
+          "month": null,
+          "day": "을유",
+          "hour": null
+        },
+        "flags": {
+          "solarTermDay": false,
+          "ambiguousTime": false
+        },
+        "error": null
+      },
+      "check": "",
+      "basis": [
+        "KASI 일진 2050-12-31"
+      ],
+      "sources": [
+        "KASI astro.kasi.re.kr (월력요항 24절기, 음양력 변환 /life/solc, /life/lunc)",
+        "연·월·시 간지: 60갑자 순환, 월두법, 시두법"
+      ],
+      "crossChecked": null,
+      "checkedAt": "2026-11-24"
+    }
+  ]
+}

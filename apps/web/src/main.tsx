@@ -5,9 +5,12 @@
 import { render } from "preact";
 import { api } from "./api/client";
 import { App } from "./ui/app/App";
+import { installViewport } from "./ui/app/viewport";
 import "./ui/styles.css";
 
 async function start() {
+  // 키보드·화면 방향 처리 (07 §1)
+  installViewport();
   // 개발 서버에서만: 서버 없이 화면을 볼 수 있게 api 객체의 함수를 가짜로 바꾼다 (배포 빌드에서는 빠짐)
   if (import.meta.env.DEV && new URLSearchParams(location.search).has("mock")) {
     const { mockApi } = await import("./ui/app/mock");

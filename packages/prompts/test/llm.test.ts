@@ -8,10 +8,15 @@ import {
   CRISIS_TEXT,
   DREAM_SYMBOL_IDS,
   FALLBACKS,
+  FOLLOWUP_BLOCKED,
+  FOLLOWUP_SCHEMA,
   SECTION_TARGETS,
+  checkFollowup,
   checkOutput,
   classifySchema,
   classifySystemPrompt,
+  followupSystemPrompt,
+  followupVersion,
   outputSchema,
   promptVersion,
   systemPrompt,
@@ -39,10 +44,12 @@ describe("시스템 프롬프트 (04 §2)", () => {
     expect(systemPrompt("dream")).toContain("몽실 할매");
     // 나이대·성별 맞춤은 모든 상품에 들어간다 (D-069)
     for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("[나이대와 성별에 맞추기]");
+    // 콕 집어 말하기도 모든 상품에 (D-070)
+    for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("[콕 집어 말하기]");
   });
 
   it("프롬프트 버전이 저장용 문자열로 나온다", () => {
-    expect(promptVersion("obanggi")).toBe("common@3+dolyeong@2+obanggi@1");
+    expect(promptVersion("obanggi")).toBe("common@4+dolyeong@2+obanggi@1");
   });
 
   it("대체 문장·위기 안내에 금지 표현이 없다", () => {
@@ -111,5 +118,56 @@ describe("출력 검사 (04 §5, §9)", () => {
     });
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.lengthWarnings).toEqual(["card:50/200"]);
+  });
+});
+
+describe("이어 묻기 (F15, 04 §13)", () => {
+  it("시스템 프롬프트는 점집마다 고정이고 이어 묻기 지시가 들어 있다", () => {
+    expect(followupSystemPrompt("tarot")).toContain("[이번 대화: 이어 묻기]");
+    expect(followupSystemPrompt("tarot")).toContain("달님 언니");
+    expect(followupSystemPrompt("tarot")).toBe(followupSystemPrompt("tarot"));
+    expect(followupVersion("saju")).toBe("common@4+saju@1+followup@1");
+    expect(FOLLOWUP_SCHEMA.required).toEqual(["risk", "answer"]);
+  });
+
+  it("정상 답은 통과", () => {
+    const r = checkFollowup({ risk: "none", answer: "가".repeat(200) });
+    expect(r).toMatchObject({ ok: true, risk: "none", lengthWarning: null });
+  });
+
+  it("위험·차단이면 답을 버린다", () => {
+    for (const risk of ["self_harm", "sexual", "violence", "other"]) {
+      expect(checkFollowup({ risk, answer: "무언가" })).toMatchObject({
+        ok: true,
+        risk,
+        answer: "",
+      });
+    }
+  });
+
+  it("주의 분류는 답을 남긴다", () => {
+    expect(checkFollowup({ risk: "investment", answer: "가".repeat(180) })).toMatchObject({
+      ok: true,
+      risk: "investment",
+    });
+  });
+
+  it("빈 답·이상한 분류·금지 표현은 실패", () => {
+    expect(checkFollowup({ risk: "none", answer: "" })).toMatchObject({
+      ok: false,
+      reason: "invalid_output",
+    });
+    expect(checkFollowup({ risk: "maybe", answer: "가" })).toMatchObject({
+      ok: false,
+      reason: "invalid_output",
+    });
+    expect(checkFollowup({ risk: "none", answer: "부적을 사면 풀려요" })).toMatchObject({
+      ok: false,
+      reason: "banned",
+    });
+  });
+
+  it("차단 문장에 금지 표현이 없다", () => {
+    for (const t of Object.values(FOLLOWUP_BLOCKED)) expect(findBanned(t)).toEqual([]);
   });
 });

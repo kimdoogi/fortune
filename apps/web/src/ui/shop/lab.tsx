@@ -69,6 +69,8 @@ function sample(product: ProductId, category?: string, reused = false): ReadingR
     reused,
     disclaimer: LAB_DISCLAIMER,
     todayCallsLeft: calls,
+    followups: [],
+    followupsLeft: 3,
   };
 }
 

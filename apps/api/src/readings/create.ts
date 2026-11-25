@@ -2,6 +2,7 @@
  * POST /api/readings (docs/15 §3, F05~F08):
  * 인증 → 검증 → seed_key → 저장본 있으면 반환 → requestId 중복 방지 → 하루 상한 → 계산 → 해석 → 저장
  */
+import { FOLLOWUP_MAX } from "@fortune/prompts/llm";
 import {
   DISCLAIMER,
   type InterpretResult,
@@ -25,7 +26,7 @@ import {
   findBySeed,
   insertReading,
   releaseRequest,
-  toResult,
+  resultWithFollowups,
 } from "./store";
 
 const requestId = z.string().min(8).max(64);
@@ -80,7 +81,8 @@ export async function createReading(
 
   // 같은 seed 저장본이 있으면 LLM 없이 그대로 (docs/03 결과 고정)
   const stored = await findBySeed(env, user.id, plan.seedKey);
-  if (stored) return json(toResult(stored, true, await callsLeft(env, user.id)));
+  if (stored)
+    return json(await resultWithFollowups(env, stored, true, await callsLeft(env, user.id)));
 
   const { input, visual } = await plan.build();
 
@@ -89,7 +91,7 @@ export async function createReading(
   if (claim.kind === "busy") throw new HttpError("RATE_LIMITED", IN_FLIGHT_TEXT);
   if (claim.kind === "done") {
     const row = await findById(env, user.id, claim.readingId);
-    if (row) return json(toResult(row, true, await callsLeft(env, user.id)));
+    if (row) return json(await resultWithFollowups(env, row, true, await callsLeft(env, user.id)));
     throw new HttpError("RATE_LIMITED", IN_FLIGHT_TEXT);
   }
 
@@ -134,7 +136,7 @@ export async function createReading(
       const winner = await findBySeed(env, user.id, plan.seedKey);
       if (!winner) throw new Error("reading insert conflict without a stored row");
       await completeRequest(env, body.requestId, winner.id);
-      return json(toResult(winner, true, left));
+      return json(await resultWithFollowups(env, winner, true, left));
     }
     await completeRequest(env, body.requestId, id);
     const out: ReadingResult = {
@@ -147,6 +149,8 @@ export async function createReading(
       reused: false,
       disclaimer: DISCLAIMER,
       todayCallsLeft: left,
+      followups: [],
+      followupsLeft: FOLLOWUP_MAX,
     };
     return json(out);
   })();

@@ -139,6 +139,35 @@ export interface ReadingResult {
   /** 결과 아래에 코드가 붙이는 고지 (docs/04 §7) */
   disclaimer: string;
   todayCallsLeft: number;
+  /** 이어 묻기 문답 (F15), 오래된 것부터 */
+  followups: FollowupView[];
+  /** 이 풀이에 더 물을 수 있는 횟수 (최대 3) */
+  followupsLeft: number;
+}
+
+// ── F15 이어 묻기 ─────────────────────────────────────────
+export interface FollowupView {
+  id: string;
+  question: string;
+  answer: string;
+  /** ISO 시각 */
+  createdAt: string;
+}
+
+/** POST /api/readings/:id/followups 본문 */
+export interface FollowupRequest {
+  question: string;
+  requestId: string;
+}
+
+/**
+ * POST /api/readings/:id/followups 응답.
+ * 위험 글이면 422 CRISIS(위기 안내), 차단이면 422 BLOCKED_CONTENT(점술가 말투 문장)로 온다
+ */
+export interface FollowupResponse {
+  followup: FollowupView;
+  followupsLeft: number;
+  todayCallsLeft: number;
 }
 
 // ── F08 꿈 검사 ───────────────────────────────────────────

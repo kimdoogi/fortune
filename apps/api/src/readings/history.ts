@@ -5,7 +5,7 @@ import type { Env } from "../env";
 import { HttpError, json, noContent } from "../http";
 import type { User } from "../session";
 import { callsLeft } from "../usage";
-import { findById, toResult } from "./store";
+import { findById, resultWithFollowups } from "./store";
 
 export const PAGE_SIZE = 20;
 
@@ -74,13 +74,18 @@ export async function listReadings(url: URL, env: Env, user: User): Promise<Resp
 export async function getReading(id: string, env: Env, user: User): Promise<Response> {
   const row = await findById(env, user.id, id);
   if (!row) throw notFound();
-  return json(toResult(row, true, await callsLeft(env, user.id)));
+  return json(await resultWithFollowups(env, row, true, await callsLeft(env, user.id)));
 }
 
 /** 삭제 (D-055). 같은 seed로 다시 보면 새로 생성된다 (F10) */
 export async function deleteReading(id: string, env: Env, user: User): Promise<Response> {
   const [res] = await env.DB.batch([
     env.DB.prepare("DELETE FROM readings WHERE id = ? AND user_id = ?").bind(id, user.id),
+    // 이어 묻기 문답도 함께 지운다 (F15)
+    env.DB.prepare("DELETE FROM reading_followups WHERE reading_id = ? AND user_id = ?").bind(
+      id,
+      user.id,
+    ),
     env.DB.prepare("DELETE FROM request_log WHERE reading_id = ? AND user_id = ?").bind(
       id,
       user.id,

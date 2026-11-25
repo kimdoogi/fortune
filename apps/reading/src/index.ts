@@ -8,11 +8,13 @@ import { WorkerEntrypoint } from "cloudflare:workers";
 import type {
   ClassifyInput,
   ClassifyResult,
+  FollowupInput,
+  FollowupResult,
   InterpretInput,
   InterpretResult,
   ReadingService,
 } from "@fortune/shared-types";
-import { classifyWith, fixture, fixtureClassify, interpretWith } from "./core";
+import { classifyWith, fixture, fixtureClassify, followupWith, interpretWith } from "./core";
 import { type LlmEnv, makeClient } from "./llm";
 
 interface Env extends LlmEnv {
@@ -29,6 +31,23 @@ export default class Reading extends WorkerEntrypoint<Env> implements ReadingSer
   async classify(input: ClassifyInput): Promise<ClassifyResult> {
     if (this.env.LLM_MODE === "fixture") return fixtureClassify(input);
     return classifyWith(makeClient(this.env), input);
+  }
+
+  async followup(input: FollowupInput): Promise<FollowupResult> {
+    if (this.env.LLM_MODE === "fixture") {
+      const answerJson = JSON.stringify({
+        risk: "none",
+        answer: `[고정 응답] ${input.question}에 대한 답`,
+      });
+      return {
+        ok: true,
+        risk: "none",
+        answer: `[고정 응답] ${input.question}에 대한 답`,
+        answerJson,
+        promptVersion: "fixture",
+      };
+    }
+    return followupWith(makeClient(this.env), input);
   }
 
   override async fetch(): Promise<Response> {

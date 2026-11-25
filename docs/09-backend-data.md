@@ -20,6 +20,7 @@
 | `profiles` | user_id, nickname, birth_date, calendar(양/음), is_leap_month, birth_time, hour_unknown, gender | **민감 정보. 생년월일·출생 시각은 AES-GCM 암호화** ([15 §8](15-infrastructure.md#8-보안)) |
 | `avatars` | user_id, base_id, equipped_parts | |
 | `readings` | id, user_id, shop, product, seed, input_json, output_json, prompt_version, created_at | 결과 재열람, LLM 재호출 없음 |
+| `reading_followups` | id, reading_id, user_id, question, answer_json, created_at | 이어 묻기 (F15). 풀이를 지우면 함께 지운다 |
 | `wallet_ledger` | id, user_id, delta, reason, ref_id, created_at | ⏸ MVP 제외 (D-057). 유료화 때 추가 |
 | `payments` | id, user_id, pg, amount, status, pg_tx_id | PG 결과 기록. 결제 붙일 때 추가 (D-019) |
 | `inventory` | user_id, item_id, acquired_at | 꾸미기 파츠 |
@@ -41,6 +42,7 @@
 | GET | `/api/readings` | 점 기록 목록 [F10](features/F10-history.md) | ✅ |
 | GET | `/api/readings/:id` | 결과 다시 보기 | ✅ |
 | DELETE | `/api/readings/:id` | 결과 삭제 (D-055) | ✅ |
+| POST | `/api/readings/:id/followups` | 이어 묻기 (F15, 한 풀이에 3번) | ✅ |
 | POST | `/api/payments/...` | 결제 (출시 후, D-019) | — |
 | GET | `/api/daily` | 오늘의 운세 | ✅ |
 | WS | `/ws/village/:channel` | 마을 멀티플레이 | ✅ |

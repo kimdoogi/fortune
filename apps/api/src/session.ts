@@ -146,7 +146,14 @@ export async function postSession(req: Request, env: Env): Promise<Response> {
 
 /** 사용자의 모든 행을 지운다 (D-055: 즉시 삭제, 유예 없음) */
 export async function deleteUserData(env: Env, userId: string): Promise<void> {
-  const tables = ["readings", "checks", "request_log", "daily_usage", "profiles"];
+  const tables = [
+    "reading_followups",
+    "readings",
+    "checks",
+    "request_log",
+    "daily_usage",
+    "profiles",
+  ];
   await env.DB.batch([
     ...tables.map((t) => env.DB.prepare(`DELETE FROM ${t} WHERE user_id = ?`).bind(userId)),
     env.DB.prepare("DELETE FROM users WHERE id = ?").bind(userId),

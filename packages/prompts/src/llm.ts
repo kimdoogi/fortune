@@ -42,6 +42,8 @@ export const CALL = {
   interpret: { effort: "low", maxTokens: 4000, timeoutMs: 20_000 },
   sajuFull: { effort: "low", maxTokens: 8000, timeoutMs: 25_000 },
   classify: { effort: "low", maxTokens: 1000, timeoutMs: 10_000 },
+  /** 이어 묻기 (04 §13). effort는 모든 이어 묻기에서 같아야 메시지 캐시가 유지된다 */
+  followup: { effort: "low", maxTokens: 2000, timeoutMs: 15_000 },
 } as const;
 
 export function callSettings(product: ProductId) {
@@ -186,4 +188,68 @@ export function checkOutput(product: ProductId, raw: unknown): OutputCheck {
   const hits = findBanned(all);
   if (hits.length) return { ok: false, reason: "banned", detail: hits.join(",") };
   return { ok: true, output, lengthWarnings };
+}
+
+// ── 이어 묻기 (F15, 04 §13) ─────────────────────────────────
+
+/** 한 풀이에 물을 수 있는 횟수 (D-071) */
+export const FOLLOWUP_MAX = 3;
+export const FOLLOWUP_MAX_CHARS = 100;
+export const FOLLOWUP_TARGET = 200;
+
+/** 이어 묻기 시스템 프롬프트: 공통 규칙 + 캐릭터 + 이어 묻기 지시. 점집마다 고정 (캐시) */
+export function followupSystemPrompt(shop: ShopId): string {
+  return [PROMPTS.common.text, PROMPTS.persona[shop].text, PROMPTS.followup.text].join("\n\n");
+}
+
+export function followupVersion(shop: ShopId): string {
+  return `common@${PROMPTS.common.v}+${shop}@${PROMPTS.persona[shop].v}+followup@${PROMPTS.followup.v}`;
+}
+
+/** 이어 묻기 출력 스키마. 바꾸면 캐시가 깨지므로 고정한다 */
+export const FOLLOWUP_SCHEMA = {
+  type: "object",
+  properties: {
+    risk: { type: "string", enum: [...CLASSIFY_RISKS] },
+    answer: { type: "string", description: "200자 안팎. 위험·차단이면 빈 문자열" },
+  },
+  required: ["risk", "answer"],
+  additionalProperties: false,
+} as const;
+
+/** 차단(sexual, violence, other)일 때 보여주는 문장 (04a 이어 묻기) */
+export const FOLLOWUP_BLOCKED: Record<ShopId, string> = {
+  saju: "그 이야기는 이 자리에서 나눌 수 없구려. 풀이에 대해 다른 것을 물어보시오.",
+  tarot: "음… 그 이야기는 카드에게 묻기 어려워요. 풀이에 대해 다른 걸 물어봐 줄래요?",
+  dolyeong: "그건 아기도령이 말 못 해! 다른 거 물어봐!",
+  dream: "아이고, 그 얘기는 할매가 못 들어 주겄어. 꿈 얘기로 다시 물어봐.",
+};
+
+export type FollowupRisk = (typeof CLASSIFY_RISKS)[number];
+
+export type FollowupCheck =
+  | { ok: true; risk: FollowupRisk; answer: string; lengthWarning: string | null }
+  | { ok: false; reason: "invalid_output" | "banned"; detail: string };
+
+/** 이어 묻기 출력 검사: 스키마, 위험 분류, 금지 표현, 길이(로그만) */
+export function checkFollowup(raw: unknown): FollowupCheck {
+  if (!raw || typeof raw !== "object")
+    return { ok: false, reason: "invalid_output", detail: "not an object" };
+  const o = raw as Record<string, unknown>;
+  const risk = CLASSIFY_RISKS.find((r) => r === o.risk);
+  if (!risk) return { ok: false, reason: "invalid_output", detail: "bad risk" };
+  const answer = typeof o.answer === "string" ? o.answer.trim() : "";
+  // 위험·차단이면 답은 버린다 (코드가 위기 안내·차단 문장을 보여 준다)
+  if (risk === "self_harm" || risk === "sexual" || risk === "violence" || risk === "other") {
+    return { ok: true, risk, answer: "", lengthWarning: null };
+  }
+  if (!answer) return { ok: false, reason: "invalid_output", detail: "empty answer" };
+  const hits = findBanned(answer);
+  if (hits.length) return { ok: false, reason: "banned", detail: hits.join(",") };
+  const len = [...answer].length;
+  const warn =
+    len < FOLLOWUP_TARGET * 0.5 || len > FOLLOWUP_TARGET * 1.6
+      ? `answer:${len}/${FOLLOWUP_TARGET}`
+      : null;
+  return { ok: true, risk, answer, lengthWarning: warn };
 }

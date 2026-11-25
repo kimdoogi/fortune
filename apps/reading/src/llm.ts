@@ -46,7 +46,10 @@ export function makeClient(env: LlmEnv): Anthropic {
 
 export interface CallSpec {
   system: string;
-  user: string;
+  /** 대화 전체. 한 번 묻는 호출은 user 하나 */
+  messages: Anthropic.MessageParam[];
+  /** 마지막 메시지에 캐시 중단점을 둔다 (이어 묻기: 다음 호출이 앞부분을 캐시에서 읽게, 04 §13) */
+  cacheConversation?: boolean;
   schema: Record<string, unknown>;
   maxTokens: number;
   effort: "low" | "medium" | "high";
@@ -73,7 +76,8 @@ export async function callModel(
         max_tokens: spec.maxTokens,
         // 점집·상품마다 고정이라 캐시한다 (04 §2)
         system: [{ type: "text", text: spec.system, cache_control: { type: "ephemeral" } }],
-        messages: [{ role: "user", content: spec.user }],
+        messages: spec.messages,
+        ...(spec.cacheConversation ? { cache_control: { type: "ephemeral" as const } } : {}),
         output_config: {
           effort: spec.effort,
           format: { type: "json_schema", schema: spec.schema },

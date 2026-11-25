@@ -235,6 +235,8 @@ function result(
     reused: false,
     disclaimer: DISCLAIMER,
     todayCallsLeft: 30,
+    followups: [],
+    followupsLeft: 3,
   };
 }
 
@@ -371,6 +373,20 @@ export const mockApi: Api = {
     await wait(300);
     db.readings = db.readings.filter((x) => x.id !== id);
     save();
+  },
+  async followup(_id, req) {
+    await wait(900);
+    return {
+      followup: {
+        id: req.requestId,
+        question: req.question,
+        answer:
+          "[mock] 이번 풀이의 흐름으로 보면, 서두르지 않고 한 걸음씩 가면 좋은 때예요. 요즘 혼자 고민을 오래 붙잡고 있지 않았나요?",
+        createdAt: new Date().toISOString(),
+      },
+      followupsLeft: 2,
+      todayCallsLeft: db.calls,
+    };
   },
   async daily(): Promise<DailyResponse> {
     const p = needProfile();

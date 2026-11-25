@@ -18,7 +18,7 @@ export function render() {
     .map((s) => `${s.id}: ${s.name} (${s.synonyms.filter((w) => w !== s.name).join(", ")})`)
     .join("\n");
   const data = {
-    common: { v: 3, text: read("common/v3.md") },
+    common: { v: 4, text: read("common/v4.md") },
     persona: {
       saju: { v: 1, text: read("saju/persona.v1.md") },
       tarot: { v: 1, text: read("tarot/persona.v1.md") },
@@ -33,6 +33,7 @@ export function render() {
       obanggi: { v: 1, text: read("dolyeong/obanggi.v1.md") },
       dream: { v: 1, text: read("dream/dream.v1.md") },
     },
+    followup: { v: 1, text: read("followup/v1.md") },
     classify: {
       v: 1,
       text: `${read("classify/v1.md")}\n\n[상징 목록] ID: 이름 (동의어)\n${symbolLines}`,

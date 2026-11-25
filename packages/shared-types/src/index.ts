@@ -82,10 +82,43 @@ export type ClassifyResult =
     }
   | { ok: false; reason: "refusal" | "timeout" | "api_error" | "invalid_output" };
 
+/**
+ * 이어 묻기 입력 (F15, docs/04 §13). 캐시가 타도록 저장된 JSON 문자열을 그대로 넘긴다
+ * (다시 직렬화하면 키 순서가 바뀔 수 있다).
+ */
+export interface FollowupInput {
+  shop: ShopId;
+  /** 원래 풀이 입력 (readings.input_json 그대로) */
+  originalInput: string;
+  /** 원래 풀이 출력 (readings.output_json 그대로) */
+  originalOutput: string;
+  /** 앞선 문답. answerJson은 저장된 출력 문자열 그대로 */
+  history: { question: string; answerJson: string }[];
+  question: string;
+}
+
+export type FollowupResult =
+  | {
+      ok: true;
+      risk: ClassifyRisk;
+      /** 위험·차단(self_harm, sexual, violence, other)이면 빈 문자열 */
+      answer: string;
+      /** 다음 이어 묻기에 그대로 다시 보낼 출력 문자열 */
+      answerJson: string;
+      promptVersion: string;
+    }
+  | {
+      ok: false;
+      reason: "refusal" | "timeout" | "api_error" | "invalid_output" | "banned" | "truncated";
+      fallback: string;
+      promptVersion: string;
+    };
+
 /** reading Worker RPC (docs/15 §6) */
 export interface ReadingService {
   interpret(input: InterpretInput): Promise<InterpretResult>;
   classify(input: ClassifyInput): Promise<ClassifyResult>;
+  followup(input: FollowupInput): Promise<FollowupResult>;
 }
 
 /** 멀티플레이 메시지 (docs/15 §4) */

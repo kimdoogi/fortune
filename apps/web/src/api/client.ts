@@ -8,6 +8,8 @@ import type {
   CheckResponse,
   DailyResponse,
   ErrorCode,
+  FollowupRequest,
+  FollowupResponse,
   MenuResponse,
   ProfileInput,
   ProfileView,
@@ -75,4 +77,7 @@ export const api = {
   get: (id: string) => call<ReadingResult>("GET", `/api/readings/${encodeURIComponent(id)}`),
   remove: (id: string) => call<void>("DELETE", `/api/readings/${encodeURIComponent(id)}`),
   daily: () => call<DailyResponse>("GET", "/api/daily"),
+  /** F15: 풀이에 이어 묻기 (한 풀이에 3번) */
+  followup: (id: string, req: FollowupRequest) =>
+    call<FollowupResponse>("POST", `/api/readings/${encodeURIComponent(id)}/followups`, req),
 };

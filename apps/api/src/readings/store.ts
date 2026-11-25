@@ -1,6 +1,8 @@
 /** readings·request_log 테이블 읽기/쓰기 (docs/09 §2, F10) */
+import { FOLLOWUP_MAX } from "@fortune/prompts/llm";
 import {
   DISCLAIMER,
+  type FollowupView,
   type InterpretOutput,
   type ProductId,
   type ReadingResult,
@@ -15,14 +17,21 @@ export interface ReadingRow {
   shop: ShopId;
   product: ProductId;
   seed_key: string;
+  input_json: string;
   visual_json: string;
   output_json: string;
   created_at: string;
 }
 
-const COLUMNS = "id, user_id, shop, product, seed_key, visual_json, output_json, created_at";
+const COLUMNS =
+  "id, user_id, shop, product, seed_key, input_json, visual_json, output_json, created_at";
 
-export function toResult(row: ReadingRow, reused: boolean, todayCallsLeft: number): ReadingResult {
+export function toResult(
+  row: ReadingRow,
+  reused: boolean,
+  todayCallsLeft: number,
+  followups: FollowupView[] = [],
+): ReadingResult {
   return {
     id: row.id,
     shop: row.shop,
@@ -33,7 +42,46 @@ export function toResult(row: ReadingRow, reused: boolean, todayCallsLeft: numbe
     reused,
     disclaimer: DISCLAIMER,
     todayCallsLeft,
+    followups,
+    followupsLeft: Math.max(0, FOLLOWUP_MAX - followups.length),
   };
+}
+
+// ── 이어 묻기 (F15) ───────────────────────────────────────
+export interface FollowupRow {
+  id: string;
+  question: string;
+  answer: string;
+  answer_json: string;
+  created_at: string;
+}
+
+export async function listFollowups(env: Env, readingId: string): Promise<FollowupRow[]> {
+  const res = await env.DB.prepare(
+    `SELECT id, question, answer, answer_json, created_at FROM reading_followups
+     WHERE reading_id = ? ORDER BY created_at, id`,
+  )
+    .bind(readingId)
+    .all<FollowupRow>();
+  return res.results;
+}
+
+export const toFollowupView = (f: FollowupRow): FollowupView => ({
+  id: f.id,
+  question: f.question,
+  answer: f.answer,
+  createdAt: f.created_at,
+});
+
+/** 저장된 풀이 + 이어 묻기 문답 */
+export async function resultWithFollowups(
+  env: Env,
+  row: ReadingRow,
+  reused: boolean,
+  todayCallsLeft: number,
+): Promise<ReadingResult> {
+  const f = await listFollowups(env, row.id);
+  return toResult(row, reused, todayCallsLeft, f.map(toFollowupView));
 }
 
 export function findBySeed(env: Env, userId: string, seedKey: string): Promise<ReadingRow | null> {

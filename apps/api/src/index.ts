@@ -9,6 +9,7 @@ import { getMenu } from "./menu";
 import { getProfile, putProfile } from "./profile";
 import { checkDream } from "./readings/check";
 import { createReading } from "./readings/create";
+import { createFollowup } from "./readings/followups";
 import { deleteReading, getReading, listReadings } from "./readings/history";
 import { deleteSession, postSession, requireUser } from "./session";
 import { forwardVillage, wsToken } from "./ws";
@@ -47,6 +48,8 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
     if (method === "POST") return createReading(req, env, ctx, user);
     if (method === "GET") return listReadings(url, env, user);
   }
+  const fu = /^\/api\/readings\/([A-Za-z0-9-]{1,64})\/followups$/.exec(path);
+  if (fu?.[1] && method === "POST") return createFollowup(fu[1], req, env, ctx, user);
   const one = /^\/api\/readings\/([A-Za-z0-9-]{1,64})$/.exec(path);
   if (one?.[1]) {
     if (method === "GET") return getReading(one[1], env, user);

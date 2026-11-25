@@ -9,12 +9,16 @@ import {
   CLASSIFY_VERSION,
   DREAM_SYMBOL_IDS,
   FALLBACKS,
+  FOLLOWUP_SCHEMA,
   MODEL,
   SECTION_TARGETS,
   callSettings,
+  checkFollowup,
   checkOutput,
   classifySchema,
   classifySystemPrompt,
+  followupSystemPrompt,
+  followupVersion,
   outputSchema,
   promptVersion,
   systemPrompt,
@@ -22,6 +26,8 @@ import {
 import type {
   ClassifyInput,
   ClassifyResult,
+  FollowupInput,
+  FollowupResult,
   InterpretInput,
   InterpretOutput,
   InterpretResult,
@@ -89,7 +95,7 @@ export async function interpretWith(
     const t0 = Date.now();
     const r: CallOutcome = await callModel(client, MODEL, {
       system: systemPrompt(input.product),
-      user: JSON.stringify(input),
+      messages: [{ role: "user", content: JSON.stringify(input) }],
       schema: outputSchema(input.product),
       maxTokens,
       effort: opts.effort ?? settings.effort,
@@ -167,7 +173,7 @@ export async function classifyWith(
     const t0 = Date.now();
     const r = await callModel(client, MODEL, {
       system: classifySystemPrompt(),
-      user: JSON.stringify({ kind: input.kind, text: input.text }),
+      messages: [{ role: "user", content: JSON.stringify({ kind: input.kind, text: input.text }) }],
       schema: classifySchema(ids),
       maxTokens: CALL.classify.maxTokens,
       effort: CALL.classify.effort,
@@ -219,4 +225,106 @@ export async function classifyWith(
     return { ok: false, reason: "api_error" };
   }
   return { ok: false, reason: "api_error" };
+}
+
+/**
+ * 이어 묻기 (F15, docs/04 §13). 원래 풀이 입력·출력과 앞선 문답을 저장된 문자열 그대로 이어 붙여
+ * 앞부분이 프롬프트 캐시에서 읽히게 한다. 위험 검사와 답을 한 번에 받는다 (D-071).
+ */
+export async function followupWith(
+  client: Anthropic,
+  input: FollowupInput,
+  opts: CoreOptions = {},
+): Promise<FollowupResult> {
+  const pv = followupVersion(input.shop);
+  const log = opts.log ?? defaultLog;
+  const sleep = opts.sleep ?? defaultSleep;
+  const fail = (reason: Extract<FollowupResult, { ok: false }>["reason"]): FollowupResult => ({
+    ok: false,
+    reason,
+    fallback: FALLBACKS[input.shop],
+    promptVersion: pv,
+  });
+  const messages: Anthropic.MessageParam[] = [
+    { role: "user", content: input.originalInput },
+    { role: "assistant", content: input.originalOutput },
+    ...input.history.flatMap((h): Anthropic.MessageParam[] => [
+      { role: "user", content: JSON.stringify({ question: h.question }) },
+      { role: "assistant", content: h.answerJson },
+    ]),
+    { role: "user", content: JSON.stringify({ question: input.question }) },
+  ];
+  let maxTokens: number = CALL.followup.maxTokens;
+  const retried = { api: false, truncated: false, parse: false };
+
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    const t0 = Date.now();
+    const r: CallOutcome = await callModel(client, MODEL, {
+      system: followupSystemPrompt(input.shop),
+      messages,
+      cacheConversation: true,
+      schema: FOLLOWUP_SCHEMA,
+      maxTokens,
+      // effort는 고정 (바꾸면 메시지 캐시가 깨진다, 04 §13)
+      effort: CALL.followup.effort,
+      timeoutMs: CALL.followup.timeoutMs,
+    });
+    const base = {
+      kind: "followup",
+      shop: input.shop,
+      turn: input.history.length + 1,
+      attempt,
+      ms: Date.now() - t0,
+    };
+    if (r.kind === "text") {
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(r.text);
+      } catch {
+        parsed = null;
+      }
+      const check = checkFollowup(parsed);
+      log({
+        ...base,
+        result: check.ok ? "ok" : check.reason,
+        risk: check.ok ? check.risk : undefined,
+        detail: check.ok ? check.lengthWarning : check.detail,
+        in: r.usage.input_tokens,
+        out: r.usage.output_tokens,
+        cacheRead: r.usage.cache_read_input_tokens,
+        cacheWrite: r.usage.cache_creation_input_tokens,
+      });
+      if (check.ok) {
+        return {
+          ok: true,
+          risk: check.risk,
+          answer: check.answer,
+          answerJson: r.text,
+          promptVersion: pv,
+        };
+      }
+      if (check.reason === "banned") return fail("banned");
+      if (!retried.parse) {
+        retried.parse = true;
+        continue;
+      }
+      return fail("invalid_output");
+    }
+    log({ ...base, result: r.kind });
+    if (r.kind === "refusal") return fail("refusal");
+    if (r.kind === "timeout") return fail("timeout");
+    if (r.kind === "max_tokens") {
+      if (retried.truncated) return fail("truncated");
+      retried.truncated = true;
+      maxTokens = Math.round(maxTokens * 1.5);
+      continue;
+    }
+    if (r.kind === "retryable" && !retried.api) {
+      retried.api = true;
+      await sleep(1000);
+      continue;
+    }
+    return fail("api_error");
+  }
+  return fail("api_error");
 }

@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { InterpretInput } from "@fortune/shared-types";
 import { describe, expect, it } from "vitest";
-import { classifyWith, interpretWith } from "../src/core";
+import { classifyWith, followupWith, interpretWith } from "../src/core";
 
 /** messages.create만 흉내 낸 가짜 클라이언트. 응답(또는 던질 오류)을 차례로 돌려준다 */
 function fakeClient(steps: (unknown | Error)[]) {
@@ -139,5 +139,82 @@ describe("분류 (docs/04 §6)", () => {
       risk: "medical",
       symbols: [],
     });
+  });
+});
+
+describe("이어 묻기 (F15, docs/04 §13)", () => {
+  const originalInput = JSON.stringify(input);
+  const originalOutput = goodOutput;
+  const answer1 = JSON.stringify({ risk: "none", answer: "가".repeat(200) });
+
+  it("원래 풀이 → 앞선 문답 → 새 질문 순서로 보내고, 대화 캐시를 켠다", async () => {
+    const { client, calls } = fakeClient([msg(answer1)]);
+    const r = await followupWith(
+      client,
+      {
+        shop: "tarot",
+        originalInput,
+        originalOutput,
+        history: [],
+        question: "그 사람이 연락할까요?",
+      },
+      quiet,
+    );
+    expect(r).toMatchObject({ ok: true, risk: "none", answerJson: answer1 });
+    expect(calls[0]?.cache_control).toEqual({ type: "ephemeral" });
+    expect(calls[0]?.messages).toEqual([
+      { role: "user", content: originalInput },
+      { role: "assistant", content: originalOutput },
+      { role: "user", content: JSON.stringify({ question: "그 사람이 연락할까요?" }) },
+    ]);
+  });
+
+  it("두 번째 이어 묻기의 앞부분은 첫 번째 요청과 바이트가 같다 (캐시가 탄다)", async () => {
+    const first = fakeClient([msg(answer1)]);
+    const r1 = await followupWith(
+      first.client,
+      { shop: "tarot", originalInput, originalOutput, history: [], question: "Q1" },
+      quiet,
+    );
+    if (!r1.ok) throw new Error("first failed");
+    const second = fakeClient([msg(answer1)]);
+    await followupWith(
+      second.client,
+      {
+        shop: "tarot",
+        originalInput,
+        originalOutput,
+        history: [{ question: "Q1", answerJson: r1.answerJson }],
+        question: "Q2",
+      },
+      quiet,
+    );
+    const m1 = first.calls[0]?.messages as unknown[];
+    const m2 = second.calls[0]?.messages as unknown[];
+    expect(JSON.stringify(m2.slice(0, m1.length))).toBe(JSON.stringify(m1));
+    expect(second.calls[0]?.system).toEqual(first.calls[0]?.system);
+    expect(second.calls[0]?.output_config).toEqual(first.calls[0]?.output_config);
+  });
+
+  it("위기 신호면 답을 버린다", async () => {
+    const { client } = fakeClient([msg(JSON.stringify({ risk: "self_harm", answer: "..." }))]);
+    expect(
+      await followupWith(
+        client,
+        { shop: "dream", originalInput, originalOutput, history: [], question: "q" },
+        quiet,
+      ),
+    ).toMatchObject({ ok: true, risk: "self_harm", answer: "" });
+  });
+
+  it("실패하면 점집 말투 대체 문장", async () => {
+    const { client } = fakeClient([rateLimit(), rateLimit()]);
+    const r = await followupWith(
+      client,
+      { shop: "saju", originalInput, originalOutput, history: [], question: "q" },
+      quiet,
+    );
+    expect(r).toMatchObject({ ok: false, reason: "api_error" });
+    if (!r.ok) expect(r.fallback).toContain("구름에 가려");
   });
 });

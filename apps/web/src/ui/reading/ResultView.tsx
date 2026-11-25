@@ -12,6 +12,7 @@ import {
 } from "@fortune/shared-types";
 import type { ComponentChildren, JSX } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import { Followups } from "./Followups";
 import { colorSwatch, orderedSections } from "./format";
 import { type TypingBlock, blockCount, useTyping } from "./typing";
 import {
@@ -272,9 +273,13 @@ export function ResultView(props: {
   result: ReadingResult;
   animate: boolean;
   onClose: () => void;
+  /** 이어 묻기에서 오늘 남은 횟수가 바뀌면 (F15) */
+  onCallsLeft?: (n: number) => void;
 }): JSX.Element {
   const { result } = props;
   const [footer, setFooter] = useState(!props.animate);
+  const [crisis, setCrisis] = useState(false);
+  if (crisis) return <CrisisScreen onClose={() => setCrisis(false)} />;
   const v = result.visual;
   const cat = v.shop === "tarot" || v.shop === "dolyeong" ? ` · ${v.category}` : "";
   return (
@@ -292,6 +297,13 @@ export function ResultView(props: {
         animate={props.animate}
         onDone={() => setFooter(true)}
       />
+      {footer && result.followups !== undefined && (
+        <Followups
+          result={result}
+          onCrisis={() => setCrisis(true)}
+          onCallsLeft={props.onCallsLeft}
+        />
+      )}
       <footer class={footer ? "rd-foot rd-foot-on" : "rd-foot"}>
         <p class="rd-disclaimer">{result.disclaimer}</p>
         <button type="button" class="rd-btn-close" onClick={props.onClose}>

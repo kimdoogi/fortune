@@ -21,6 +21,7 @@ flowchart LR
   D --> H
   DR --> H
   H --> SH[F11 공유 카드]
+  H --> FU[F15 이어 묻기]
   M --> DY[F13 오늘의 운세]
 ```
 
@@ -42,6 +43,7 @@ flowchart LR
 | [F12](F12-coins.md) | 복채 지급 / 사용 | 공통 | M6 | ⏸ MVP 제외 (D-057) |
 | [F13](F13-daily.md) | 오늘의 운세 | S1 | M2 | ✅ |
 | [F14](F14-session.md) | 비회원 계정 생성 / 유지 | S0 | M1 | ✅ |
+| [F15](F15-followup.md) | 이어 묻기 (풀이에 이어 질문) | S5 | M2 | ✅ |
 
 ## 공통 규칙
 - 모든 API는 app Worker를 거친다 ([15](../15-infrastructure.md)). 경로는 [09 §3](../09-backend-data.md#3-api-목록-초안)

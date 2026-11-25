@@ -6,7 +6,7 @@ import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
 import { type AgeBand, Chibi, type Gender } from "./chibi";
 import type { Point } from "./nav";
-import { type Street, buildStreet } from "./street";
+import { type Street, type StreetLighting, buildStreet } from "./street";
 
 export const WALK_SPEED = 2.0; // m/s (F03)
 const DOOR_REACH = 0.6;
@@ -18,6 +18,17 @@ const LOOK_HEIGHT = 1.0;
 const CAM_MIN_Z = -3.6;
 /** 가만히 서 있으면 이만큼 뒤에 카메라 쪽으로 돌아본다 (08 §1) */
 const IDLE_TURN_AFTER = 1.5;
+
+/** 사주집(D-065) 조명. 거리가 조명을 주지 않을 때 쓴다 */
+const DEFAULT_LIGHTING: StreetLighting = {
+  sky: "#a3a8e6",
+  ground: "#3d2c26",
+  hemi: 1.35,
+  moon: "#c9d0ff",
+  moonI: 0.85,
+  warm: "#ffc890",
+  warmI: 0.55,
+};
 
 export interface StreetEvents {
   onNearDoor(near: boolean): void;
@@ -57,13 +68,15 @@ export class StreetView {
     this.street = buildStreet(shop);
     this.scene.add(this.street.group);
     this.scene.background = this.street.fogColor;
-    this.scene.fog = new THREE.Fog(this.street.fogColor, 16, 44);
+    const [fogNear, fogFar] = this.street.fogRange ?? [16, 44];
+    this.scene.fog = new THREE.Fog(this.street.fogColor, fogNear, fogFar);
 
-    // 달빛(차갑게) + 등불 쪽 채움빛(따뜻하게). 진짜 점광원은 쓰지 않는다 (D-065)
-    this.scene.add(new THREE.HemisphereLight("#a3a8e6", "#3d2c26", 1.35));
-    const moon = new THREE.DirectionalLight("#c9d0ff", 0.85);
+    // 달빛(차갑게) + 등불 쪽 채움빛(따뜻하게). 진짜 점광원은 쓰지 않는다 (D-065). 색은 점집마다 (D-075)
+    const l = this.street.lighting ?? DEFAULT_LIGHTING;
+    this.scene.add(new THREE.HemisphereLight(l.sky, l.ground, l.hemi));
+    const moon = new THREE.DirectionalLight(l.moon, l.moonI);
     moon.position.set(-5, 9, 8);
-    const warm = new THREE.DirectionalLight("#ffc890", 0.55);
+    const warm = new THREE.DirectionalLight(l.warm, l.warmI);
     warm.position.set(4, 3, 7);
     this.scene.add(moon, warm);
 

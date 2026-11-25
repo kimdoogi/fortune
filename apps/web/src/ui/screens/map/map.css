@@ -100,6 +100,30 @@
   animation: drift 26s ease-in-out infinite alternate;
 }
 
+/* 아기도령 횃불: 불꽃이 일렁이고 붉은 빛이 들쭉날쭉 */
+.map-art .flame {
+  animation: flame 0.9s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.map-art .torch-glow {
+  animation: torch 1.7s steps(6, jump-none) infinite;
+}
+
+.map-art .fog {
+  animation: fog 14s ease-in-out infinite alternate;
+}
+
+/* 타로집 굴뚝 연기, 꿈해몽 떠 있는 구름 */
+.map-art .smoke {
+  animation: smoke 4s ease-out infinite;
+}
+
+.map-art .bob {
+  animation: bob 5s ease-in-out infinite;
+}
+
 .map-art .firefly {
   animation: firefly 7s ease-in-out infinite;
   transform-box: fill-box;
@@ -185,6 +209,70 @@
 @keyframes drift {
   to {
     transform: translateX(26px);
+  }
+}
+
+@keyframes flame {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  30% {
+    transform: scale(0.9, 1.12) skewX(4deg);
+  }
+  60% {
+    transform: scale(1.06, 0.92) skewX(-3deg);
+  }
+}
+
+@keyframes torch {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  45% {
+    opacity: 0.95;
+  }
+  70% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes fog {
+  from {
+    transform: translateX(-8px);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(8px);
+    opacity: 1;
+  }
+}
+
+@keyframes smoke {
+  0% {
+    transform: translate(0, 4px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(4px, -8px);
+    opacity: 0;
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
   }
 }
 

@@ -15,7 +15,7 @@ export interface HanokStyle {
 }
 
 export const WOOD = "#6e4429";
-const WOOD_DARK = "#4a2c1a";
+export const WOOD_DARK = "#4a2c1a";
 const STONE = "#8d877c";
 const STONE_DARK = "#625d55";
 
@@ -134,7 +134,7 @@ function roof(
 }
 
 /** 격자 창살 (세로 n개, 가로 m개) */
-function lattice(
+export function lattice(
   cx: number,
   cy: number,
   z: number,
@@ -142,6 +142,7 @@ function lattice(
   h: number,
   nv: number,
   nh: number,
+  color = WOOD_DARK,
 ): THREE.BufferGeometry[] {
   const out: THREE.BufferGeometry[] = [];
   const t = 0.05;
@@ -156,7 +157,7 @@ function lattice(
   for (let i = 1; i <= nh; i++) {
     out.push(at(new THREE.BoxGeometry(w, 0.025, 0.03), cx, cy - h / 2 + (h * i) / (nh + 1), z));
   }
-  return out.map((g) => colored(g, WOOD_DARK));
+  return out.map((g) => colored(g, color));
 }
 
 export function buildHanok(style: HanokStyle, bz: number): Hanok {

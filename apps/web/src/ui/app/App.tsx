@@ -8,6 +8,7 @@ import { startPair, stopPair } from "../../net/pairSession";
 import { MapScreen } from "../screens/map/MapScreen";
 import { MeScreen } from "../screens/me/MeScreen";
 import { ProfileFlow } from "../screens/profile/ProfileFlow";
+import { StyleEditor } from "../screens/style/StyleEditor";
 import { Loading, NightSky, Plaque, ToastHost } from "./kit";
 import { lazy } from "./lazy";
 import { loadStreet } from "./preload";
@@ -57,6 +58,14 @@ function Routes() {
       );
     case "me":
       return <MeScreen profile={p} />;
+    case "style":
+      return (
+        <StyleEditor
+          profile={p}
+          onSaved={() => goBack({ name: "me" })}
+          onCancel={() => goBack({ name: "me" })}
+        />
+      );
     case "street":
     case "inside":
       return <Street key={r.shop} shop={r.shop} inside={r.name === "inside"} profile={p} />;

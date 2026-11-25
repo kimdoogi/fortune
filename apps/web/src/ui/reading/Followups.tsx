@@ -1,12 +1,20 @@
 /**
  * 이어 묻기 (F15). 결과 아래에 문답을 대화처럼 쌓고, 한 풀이에 3번까지 묻는다.
  * 답은 받은 뒤 한 글자씩 보여 준다 (D-044). 위험 글은 위기 안내, 차단은 점술가 말투 문장.
+ * 같이 본 풀이(F16, D-091)는 상대가 물은 문답도 둘만의 방 소식을 받아 바로 보여 준다.
  */
-import type { FollowupView, ReadingResult, ShopId } from "@fortune/shared-types";
+import {
+  type FollowupView,
+  PAIR_PRODUCT,
+  type ReadingResult,
+  type ShopId,
+} from "@fortune/shared-types";
 import type { JSX } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { ApiFailure, api, newRequestId } from "../../api/client";
+import { pairState } from "../../net/pairSession";
 import { CHARACTERS } from "../shop/characters";
+import { toParagraphs } from "./format";
 
 const MAX_CHARS = 100;
 const MS_PER_CHAR = 32;
@@ -15,7 +23,7 @@ const MS_PER_CHAR = 32;
 const THINKING: Record<ShopId, string> = {
   saju: "흠… 그대의 여덟 글자를 다시 살펴보는 중이오.",
   tarot: "음… 카드를 다시 들여다보고 있어요.",
-  dolyeong: "딸랑딸랑… 깃발한테 물어보는 중!",
+  dolyeong: "딸랑딸랑… 할아버지한테 물어보는 중!",
   dream: "아이고, 차 한 모금 마시고 생각 좀 해 보자.",
 };
 
@@ -67,6 +75,39 @@ export function Followups(props: {
   const [fresh, setFresh] = useState<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const requestId = useRef(newRequestId());
+  const pair = Object.values(PAIR_PRODUCT).includes(props.result.product);
+  /** 상대가 물어보는 중이면 그 닉네임 */
+  const [partnerAsking, setPartnerAsking] = useState<string | null>(null);
+  const ps = pair ? pairState.value : null;
+  const ev = ps?.event;
+  const lastSeq = useRef(ev?.seq ?? 0);
+
+  // 같이 본 풀이: 상대가 묻는 중 → 답이 나오면 내 기록에 들어온 문답을 다시 받아 붙인다 (D-091)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 새 소식이 올 때만
+  useEffect(() => {
+    if (!ev || ev.seq === lastSeq.current) return;
+    lastSeq.current = ev.seq;
+    const m = ev.msg;
+    if ((m.t !== "asking" && m.t !== "asked") || m.id === ps?.myId) return;
+    if (m.product !== props.result.product) return;
+    if (m.t === "asking") {
+      setPartnerAsking(ps?.partner?.nickname ?? ps?.partnerLeft ?? "같이 온 분");
+      setTimeout(follow, 30);
+      return;
+    }
+    setPartnerAsking(null);
+    if (!m.ok) return;
+    api.get(props.result.id).then(
+      (r) => {
+        const added = r.followups.filter((f) => !items.some((x) => x.id === f.id));
+        if (!added.length) return;
+        setItems((xs) => [...xs, ...added.filter((f) => !xs.some((x) => x.id === f.id))]);
+        setFresh(added.at(-1)?.id ?? null);
+        setTimeout(follow, 30);
+      },
+      () => undefined,
+    );
+  }, [ev?.seq]);
 
   const follow = () => bottom.current?.scrollIntoView({ block: "nearest" });
   const count = [...text].length;
@@ -107,11 +148,20 @@ export function Followups(props: {
         <ol class="rd-fu-list">
           {items.map((f) => (
             <li key={f.id} class="rd-fu-turn">
-              <p class="rd-fu-q">{f.question}</p>
+              {pair && (
+                <span class={f.asker ? "rd-fu-asker rd-fu-asker-other" : "rd-fu-asker"}>
+                  {f.asker ? `${f.asker} 님의 질문` : "내 질문"}
+                </span>
+              )}
+              <p class={f.asker ? "rd-fu-q rd-fu-q-other" : "rd-fu-q"}>{f.question}</p>
               <div class="rd-fu-a">
                 <span class="rd-fu-who">{who}</span>
                 <p>
-                  <TypedAnswer text={f.answer} animate={f.id === fresh} onTick={follow} />
+                  <TypedAnswer
+                    text={toParagraphs(f.answer)}
+                    animate={f.id === fresh}
+                    onTick={follow}
+                  />
                 </p>
               </div>
             </li>
@@ -123,6 +173,12 @@ export function Followups(props: {
         <div class="rd-fu-a rd-fu-thinking">
           <span class="rd-fu-who">{who}</span>
           <p>{THINKING[shop]}</p>
+        </div>
+      )}
+      {partnerAsking && !busy && (
+        <div class="rd-fu-a rd-fu-thinking">
+          <span class="rd-fu-who">{who}</span>
+          <p>{partnerAsking} 님이 물어보는 중이에요…</p>
         </div>
       )}
       {notice && !busy && (

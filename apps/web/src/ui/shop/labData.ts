@@ -18,6 +18,7 @@ export const LAB_PROFILE: ProfileView = {
   gender: "female",
   ageBand: "20대",
   avatarId: "female:20대",
+  style: null,
   dayMaster: { stem: "갑", element: "목", yinYang: "양" },
   zodiac: "쥐",
   flags: { ambiguousTime: false, solarTermDay: false },

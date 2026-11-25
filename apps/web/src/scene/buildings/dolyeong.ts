@@ -556,6 +556,22 @@ export function buildDolyeong(kit: Kit): Building {
       style: { bgTop: "#efe6d2", bgBottom: "#cbbd9e", border: "#7a2a22", text: "#8a1f18" },
     },
     door: { x: 0, y: doorY, z: zf + 0.3 },
+    // 디딤돌 하나 + 흙 기단
+    steps: [
+      [bz + 2.5, 0.16],
+      [bz + 1.95, base],
+    ],
+    doorway: {
+      z: zf,
+      shape: "rect",
+      w: 1.24,
+      h: doorH,
+      y0: doorY - doorH / 2,
+      leaves: 2,
+      leaf: "#ff9a66",
+      frame: "#3a281c",
+      paper: true,
+    },
     frontEdge,
     blockRects: [[-3.4, bz - 2.3, 3.4, frontEdge - 0.1]],
     blockers: [

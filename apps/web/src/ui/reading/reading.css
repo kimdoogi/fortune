@@ -1043,6 +1043,7 @@ button.rd-sec-title:active {
   font-size: 15px;
   line-height: 1.7;
   color: #4a2e18;
+  white-space: pre-line;
   word-break: keep-all;
 }
 
@@ -1429,4 +1430,94 @@ button.rd-sec-title:active {
   font-weight: 700;
   letter-spacing: 0.06em;
   color: #9a7a5c;
+}
+
+/* 같이 본 풀이의 이어 묻기: 누가 물었나 (F16, D-091) */
+.rd-fu-asker {
+  align-self: flex-end;
+  margin: 0 4px -4px 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #9a7a5c;
+}
+
+.rd-fu-q.rd-fu-q-other {
+  background: linear-gradient(180deg, #e7dcff, #c9b6f2);
+  color: #2e2150;
+}
+
+/* 쌀점: 놋 쟁반에 떨어진 쌀알 (D-087) */
+.sh-rice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sh-rice-tray {
+  position: relative;
+  width: 132px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 40%, #f2d38a 0%, #c9962e 62%, #8a5a1a 100%);
+  box-shadow: inset 0 -4px 8px rgba(80, 40, 0, 0.45), 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.sh-rice-grain {
+  position: absolute;
+  width: 7px;
+  height: 4px;
+  margin: -2px 0 0 -3.5px;
+  border-radius: 50%;
+  background: #fffaf0;
+  box-shadow: 0 1px 1px rgba(60, 30, 0, 0.45);
+  opacity: 0;
+  animation: sh-rice-drop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+
+@keyframes sh-rice-drop {
+  from {
+    opacity: 0;
+    translate: 0 -26px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.sh-rice-label {
+  margin: 0;
+  font-size: 14px;
+  color: #fff1c8;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.sh-rice-label b {
+  font-size: 18px;
+  color: #ffd889;
+}
+
+.sh-rice-care b {
+  color: #ff9b8a;
+}
+
+/* 신점 결과 위쪽: 쌀점 쟁반 (깃발 대신, D-087) */
+.rd-rice-head {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0 2px;
+}
+
+.rd-rice-head .sh-rice-label {
+  color: #5a4230;
+  text-shadow: none;
+}
+
+.rd-rice-head .sh-rice-label b {
+  color: #8a4b2a;
+}
+
+.rd-rice-head .sh-rice-care b {
+  color: #b23a2a;
 }

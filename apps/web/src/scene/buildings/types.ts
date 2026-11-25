@@ -3,6 +3,7 @@
  * 정적 조각은 거리 배경과 한 덩어리로 합치고, 움직이는 것만 따로 그린다 (07 §4).
  */
 import type * as THREE from "three";
+import type { Doorway } from "../door-anim";
 import type { GlowSpot } from "../glow";
 
 /** 현판 색 (바탕 그라데이션, 테두리, 글씨) */
@@ -23,6 +24,10 @@ export interface Building {
   sign: { x: number; y: number; z: number; w: number; h: number; style?: SignStyle };
   /** 문 탭 판정 상자 */
   door: { x: number; y: number; z: number };
+  /** 들어갈 때 열리는 문 모양 (D-094) */
+  doorway: Doorway;
+  /** 문까지 밟고 올라가는 단: [앞면 z, 윗면 y]. 거리 쪽부터 안쪽 순서 (마지막이 기단) */
+  steps: [number, number][];
   /** 문 앞 걸을 수 있는 경계 (이보다 +z 쪽만 걸을 수 있음) */
   frontEdge: number;
   /** 길찾기에서 막을 사각형 (x0, z0, x1, z1) */

@@ -36,7 +36,44 @@ export interface SectionView {
   text: string;
 }
 
-/** 정해진 순서대로, 표에 없는 키는 뒤에 붙인다. 빈 섹션은 뺀다 */
+/** 이보다 짧은 글은 한 문단으로 둔다 */
+const PARA_MIN = 120;
+/** 한 문단이 이 길이를 넘으면 다음 문장부터 새 문단 */
+const PARA_TARGET = 95;
+/** 한 문단에 넣는 문장 수 상한 */
+const PARA_SENTENCES = 3;
+
+/**
+ * 긴 풀이를 읽기 쉽게 문단으로 나눈다: 문장 2~3개(95자 남짓)마다 빈 줄.
+ * 이미 줄바꿈이 있는 글(신점 공수 등)과 짧은 글은 그대로 둔다. 화면에서만 나누고 저장값은 그대로
+ */
+export function toParagraphs(text: string): string {
+  const t = text.trim();
+  if (t.length < PARA_MIN || t.includes("\n")) return t;
+  // 문장 끝(. ! ? …) 뒤에 붙은 닫는 따옴표·괄호까지 한 문장으로
+  const sentences = t.match(/[^.!?…]+(?:[.!?…]+["'”’)\]]*|$)/g)?.map((s) => s.trim()) ?? [t];
+  const paras: string[] = [];
+  let cur: string[] = [];
+  let len = 0;
+  for (const s of sentences.filter(Boolean)) {
+    if (cur.length && (len >= PARA_TARGET || cur.length >= PARA_SENTENCES)) {
+      paras.push(cur.join(" "));
+      cur = [];
+      len = 0;
+    }
+    cur.push(s);
+    len += s.length;
+  }
+  if (cur.length) {
+    // 마지막 문단이 한 문장짜리로 짧게 남으면 앞 문단에 붙인다
+    const last = cur.join(" ");
+    if (paras.length && last.length < 30) paras[paras.length - 1] += ` ${last}`;
+    else paras.push(last);
+  }
+  return paras.join("\n\n");
+}
+
+/** 정해진 순서대로, 표에 없는 키는 뒤에 붙인다. 빈 섹션은 뺀다. 긴 섹션은 문단으로 나눈다 */
 export function orderedSections(
   product: ProductId,
   sections: Record<string, string>,
@@ -47,7 +84,11 @@ export function orderedSections(
     ...Object.keys(sections).filter((k) => !order.includes(k)),
   ];
   return keys
-    .map((key) => ({ key, title: SECTION_TITLES[key] ?? key, text: (sections[key] ?? "").trim() }))
+    .map((key) => ({
+      key,
+      title: SECTION_TITLES[key] ?? key,
+      text: toParagraphs(sections[key] ?? ""),
+    }))
     .filter((s) => s.text.length > 0);
 }
 

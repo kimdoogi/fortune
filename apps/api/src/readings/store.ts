@@ -43,13 +43,18 @@ export function toResult(
     disclaimer: DISCLAIMER,
     todayCallsLeft,
     followups,
-    followupsLeft: Math.max(0, followupMax(row.product) - followups.length),
+    // 같이 본 풀이는 사람마다 따로 센다: 상대가 물은 것(asker 있음)은 빼고 (D-091)
+    followupsLeft: Math.max(0, followupMax(row.product) - followups.filter((f) => !f.asker).length),
   };
 }
 
 // ── 이어 묻기 (F15) ───────────────────────────────────────
 export interface FollowupRow {
   id: string;
+  /** 물은 사람 */
+  user_id: string;
+  /** 같이 본 풀이에서 물은 사람 닉네임 (D-091) */
+  asker: string | null;
   question: string;
   answer: string;
   answer_json: string;
@@ -58,7 +63,7 @@ export interface FollowupRow {
 
 export async function listFollowups(env: Env, readingId: string): Promise<FollowupRow[]> {
   const res = await env.DB.prepare(
-    `SELECT id, question, answer, answer_json, created_at FROM reading_followups
+    `SELECT id, user_id, asker, question, answer, answer_json, created_at FROM reading_followups
      WHERE reading_id = ? ORDER BY created_at, id`,
   )
     .bind(readingId)
@@ -66,10 +71,12 @@ export async function listFollowups(env: Env, readingId: string): Promise<Follow
   return res.results;
 }
 
-export const toFollowupView = (f: FollowupRow): FollowupView => ({
+/** viewerId: 이 풀이 주인. 상대가 물은 문답에는 asker를 붙인다 (D-091) */
+export const toFollowupView = (f: FollowupRow, viewerId: string): FollowupView => ({
   id: f.id,
   question: f.question,
   answer: f.answer,
+  ...(f.user_id !== viewerId && f.asker ? { asker: f.asker } : {}),
   createdAt: f.created_at,
 });
 
@@ -81,7 +88,12 @@ export async function resultWithFollowups(
   todayCallsLeft: number,
 ): Promise<ReadingResult> {
   const f = await listFollowups(env, row.id);
-  return toResult(row, reused, todayCallsLeft, f.map(toFollowupView));
+  return toResult(
+    row,
+    reused,
+    todayCallsLeft,
+    f.map((x) => toFollowupView(x, row.user_id)),
+  );
 }
 
 export function findBySeed(env: Env, userId: string, seedKey: string): Promise<ReadingRow | null> {

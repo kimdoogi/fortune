@@ -34,7 +34,7 @@ export const SHOP_INFO: Record<ShopId, ShopInfo> = {
   dolyeong: {
     name: "아기도령",
     master: "아기도령",
-    intro: "깃발 하나 뽑아 봐! 내가 다 알려 줄게!",
+    intro: "쌀 한 줌 던져서 할아버지한테 물어볼게! 내가 다 맞혀 줄게!",
     roof: "#a83a35",
     tint: "#ffb3a0",
   },

@@ -18,9 +18,9 @@
 | `users` | id, created_at, auth_provider, status |
 | `daily_usage` | user_id, date, llm_calls | 하루 30회 상한 (D-057) | |
 | `profiles` | user_id, nickname, birth_date, calendar(양/음), is_leap_month, birth_time, hour_unknown, gender | **민감 정보. 생년월일·출생 시각은 AES-GCM 암호화** ([15 §8](15-infrastructure.md#8-보안)) |
-| `avatars` | user_id, base_id, equipped_parts | |
+| ~~`avatars`~~ | 따로 두지 않는다. 꾸미기는 `profiles.style` (코드 한 줄, 0006, D-098) | [F17](features/F17-avatar-style.md) |
 | `readings` | id, user_id, shop, product, seed, input_json, output_json, prompt_version, created_at | 결과 재열람, LLM 재호출 없음 |
-| `reading_followups` | id, reading_id, user_id, question, answer_json, created_at | 이어 묻기 (F15). 풀이를 지우면 함께 지운다 |
+| `reading_followups` | id, reading_id, user_id, question, answer_json, asker, created_at | 이어 묻기 (F15). 풀이를 지우면 함께 지운다. user_id는 물은 사람. 같이 본 풀이는 상대 풀이에도 같은 문답을 넣고 asker(물은 사람 닉네임)를 남긴다 (0005, D-091) |
 | `wallet_ledger` | id, user_id, delta, reason, ref_id, created_at | ⏸ MVP 제외 (D-057). 유료화 때 추가 |
 | `payments` | id, user_id, pg, amount, status, pg_tx_id | PG 결과 기록. 결제 붙일 때 추가 (D-019) |
 | `inventory` | user_id, item_id, acquired_at | 꾸미기 파츠 |
@@ -42,7 +42,7 @@
 |---|---|---|---|
 | POST | `/api/session` | 익명 계정 생성 / 기기 토큰 발급 | Turnstile |
 | GET/PUT | `/api/profile` | 프로필 | ✅ |
-| GET/PUT | `/api/avatar` | 캐릭터 | ✅ |
+| PUT | `/api/profile/style` | 캐릭터 꾸미기 [F17](features/F17-avatar-style.md) (D-098, `/api/avatar` 대신) | ✅ |
 | POST | `/api/readings/check` | 자유질문·꿈 내용 검사 (해석 전) [F08](features/F08-dream.md), [F09](features/F09-free-question.md) | ✅ |
 | POST | `/api/readings` | 점 보기 요청 (하루 30회 상한 검사 포함) | ✅ |
 | GET | `/api/readings` | 점 기록 목록 [F10](features/F10-history.md) | ✅ |

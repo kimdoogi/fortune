@@ -100,7 +100,7 @@ export function ShopScreen(props: {
   profile: ProfileView;
   /** 3D 점술가 동작 트리거 */
   npc: (a: NpcAction) => void;
-  /** "나가기" → 거리 문 앞으로 */
+  /** "나가기" → 바로 지도로 (같이 보기는 방장 지도·손님 끝내기) */
   onExit: () => void;
   /** 오늘 남은 횟수가 바뀌면 알려 준다 */
   onCallsLeft?: (n: number) => void;

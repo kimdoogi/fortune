@@ -47,6 +47,8 @@ export function buildSaju(bz: number): Building {
     glows: hanok.glows,
     sign: hanok.sign,
     door: hanok.door,
+    doorway: hanok.doorway,
+    steps: hanok.steps,
     frontEdge: hanok.frontEdge,
     blockRects: [[-3.7, bz - 2.4, 3.7, hanok.frontEdge - 0.1]],
     blockers: [[jx, jz, 1.3]],

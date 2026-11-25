@@ -47,6 +47,7 @@ import {
   releaseRequest,
   resultWithFollowups,
 } from "../readings/store";
+import { pickThemes } from "../readings/themes";
 import { drawTarot, flagForGrade, rngFor, throwRice } from "../seed";
 import type { User } from "../session";
 import { nowIso, todayKst } from "../time";
@@ -134,6 +135,7 @@ function baseInput(
     },
     ...(relation ? { relation } : {}),
     facts,
+    themes: pickThemes(),
     question: null,
   };
 }

@@ -310,6 +310,23 @@ export function buildDream(kit: Kit): Building {
       style: { bgTop: "#e6eefb", bgBottom: "#bccbe8", border: "#ffffff", text: "#4a568f" },
     },
     door: { x: 0, y: gy, z: zf + 0.3 },
+    steps: [
+      [bz + 2.7, 0.13],
+      [bz + 2.36, 0.27],
+      [bz + 2.0, base],
+    ],
+    // 달문: 돌 테두리 안쪽에 맞춰 조금 작게
+    doorway: {
+      z: zf,
+      shape: "circle",
+      w: (gr - 0.05) * 2,
+      h: (gr - 0.05) * 2,
+      y0: gy - (gr - 0.05),
+      leaves: 2,
+      leaf: GLOW_PAPER,
+      frame: WOOD,
+      paper: true,
+    },
     frontEdge,
     blockRects: [[-3.4, bz - 2.2, 3.4, frontEdge - 0.1]],
     blockers: [

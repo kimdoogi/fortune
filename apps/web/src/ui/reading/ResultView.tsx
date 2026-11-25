@@ -12,6 +12,7 @@ import {
 } from "@fortune/shared-types";
 import type { ComponentChildren, JSX } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import { RiceTray } from "../shop/sinjeom";
 import { Followups } from "./Followups";
 import { colorSwatch, orderedSections } from "./format";
 import { type TypingBlock, blockCount, useTyping } from "./typing";
@@ -255,6 +256,13 @@ function VisualHeader(props: { result: ReadingResult }) {
     case "tarot":
       return <TarotSpreadView cards={v.cards} />;
     case "dolyeong":
+      // 신점은 깃발을 뽑지 않는다: 쌀점 쟁반을 보여 준다 (D-087). 쌀점 전 예전 결과는 깃발
+      if (v.mode === "sinjeom" && v.rice)
+        return (
+          <div class="rd-rice-head">
+            <RiceTray rice={v.rice} />
+          </div>
+        );
       return (
         <div class="rd-flag-head">
           <FlagArt color={v.flag.color} class="rd-flag-art" />

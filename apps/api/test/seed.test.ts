@@ -85,7 +85,7 @@ describe("오방기", () => {
 
 describe("seed_key", () => {
   it("사주 정밀은 프로필 버전 + 연도", () => {
-    expect(sajuSeedKey(3, 2026)).toBe("saju:v3:3:2026");
+    expect(sajuSeedKey(3, 2026)).toBe("saju:v4:3:2026");
   });
 
   it("꿈 정규화: 공백·문장부호를 정리한다", () => {

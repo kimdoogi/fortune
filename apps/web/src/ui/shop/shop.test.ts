@@ -16,7 +16,7 @@ describe("오류 → 캐릭터 대사 (04 §9)", () => {
 
   it("하루 상한 문장이 비면 미리 써 둔 대사 (닉네임 채움)", () => {
     const f = describeFailure("dolyeong", new ApiFailure("DAILY_LIMIT", "", 429), "민준", 0);
-    expect(f.line).toBe("으음, 오늘은 깃발 다 뽑았어. 내일 또 와!");
+    expect(f.line).toBe("으음, 오늘은 쌀 다 던졌어. 내일 또 와!");
   });
 
   it("LLM 실패는 대체 문장 + 다시 해 보기", () => {

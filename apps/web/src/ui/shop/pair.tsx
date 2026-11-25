@@ -22,7 +22,7 @@ import { RiceTray } from "./sinjeom";
 
 /** 동의 문구 (F16): 무엇이 서로에게 보이는지 */
 export const PAIR_CONSENT =
-  "같이 보면 두 사람의 띠·타고난 기운과 풀이가 서로에게 보여요. 생년월일과 태어난 시간은 보이지 않아요.";
+  "같이 보면 두 사람의 띠·타고난 기운, 풀이와 더 물어본 질문이 서로에게 보여요. 생년월일과 태어난 시간은 보이지 않아요.";
 
 /** 점집 안에서 쓰는 같이 보기 정보 (StreetScreen이 넘겨 준다) */
 export interface PairCtx {
@@ -33,6 +33,30 @@ export interface PairCtx {
   partnerName: string | null;
   /** 방에서 온 마지막 풀이 소식. seq로 새 소식을 가린다 */
   event: { seq: number; msg: ServerMessage } | null;
+}
+
+/** 클립보드에 복사. 막혀 있으면 예전 방식(선택 후 복사)으로. 됐으면 true */
+export async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch {
+      ok = false;
+    }
+    ta.remove();
+    return ok;
+  }
 }
 
 /** 링크 보내기: 휴대폰 공유 창, 안 되면 복사 */
@@ -46,7 +70,7 @@ export async function shareInvite(url: string, nickname: string): Promise<"share
       // 취소하면 복사로
     }
   }
-  await navigator.clipboard?.writeText(url).catch(() => undefined);
+  await copyText(url);
   return "copied";
 }
 

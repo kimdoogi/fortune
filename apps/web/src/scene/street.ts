@@ -9,6 +9,7 @@ import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { buildBuilding } from "./buildings";
 import type { SignStyle } from "./buildings/types";
+import { type DoorAnim, buildDoorAnim } from "./door-anim";
 import { rng } from "./geo";
 import { type GlowSpot, glowMaterial, glowPoints } from "./glow";
 import { NavGrid, type Point } from "./nav";
@@ -35,6 +36,12 @@ export interface Street {
   doorFront: Point;
   /** 탭 판정용: 이 메시를 누르면 문으로 간다 */
   doorTargets: THREE.Object3D[];
+  /** 들어갈 때 여는 문 (D-094) */
+  door: DoorAnim;
+  /** 문 안쪽 한 걸음 (여기까지 걸어 들어가며 사라진다) */
+  doorInside: Point;
+  /** 그 자리 발밑 높이: 문 앞 계단·기단을 밟고 올라간다 (평소 길은 0) */
+  groundAt(z: number): number;
   ground: THREE.Mesh;
   fogColor: THREE.Color;
   /** 안개 시작·끝 거리 (없으면 16~44) */
@@ -216,6 +223,11 @@ export function buildStreet(shop: ShopId): Street {
   doorHit.position.set(building.door.x, building.door.y, building.door.z);
   group.add(doorHit);
 
+  // 들어갈 때 열리는 문짝 (평소에는 숨김)
+  const door = buildDoorAnim(building.doorway);
+  disposables.push(door);
+  group.add(door.group);
+
   // 풀숲과 꽃 (길·마당·집을 피해서)
   {
     const { rand } = kit;
@@ -316,6 +328,14 @@ export function buildStreet(shop: ShopId): Street {
     spawn: { x: 0, z: 6 },
     doorFront: { x: 0, z: building.frontEdge + 0.4 },
     doorTargets: [doorHit, sign],
+    door,
+    doorInside: { x: 0, z: building.doorway.z - 0.5 },
+    groundAt(z) {
+      let y = 0;
+      // 발끝이 단 앞면을 넘으면 그 단 위 (캐릭터 발 반지름만큼 앞에서)
+      for (const [front, top] of building.steps) if (z <= front + 0.06) y = top;
+      return y;
+    },
     ground,
     fogColor: new THREE.Color(env.fog.color),
     fogRange: [env.fog.near, env.fog.far],

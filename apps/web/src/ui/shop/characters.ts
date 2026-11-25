@@ -35,7 +35,7 @@ export const CHARACTERS: Record<ShopId, Character> = {
     name: "아기도령",
     shopName: "아기도령",
     fallback: "으앙, 방울 소리가 안 들려! 이따 다시 와!",
-    loading: "딸랑딸랑… 깃발한테 물어보는 중이야!",
+    loading: "딸랑딸랑… 할아버지한테 물어보는 중이야!",
     again: "또 뽑고 싶으면 말해! 딸랑!",
   },
   dream: {

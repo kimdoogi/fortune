@@ -18,16 +18,16 @@ export function render() {
     .map((s) => `${s.id}: ${s.name} (${s.synonyms.filter((w) => w !== s.name).join(", ")})`)
     .join("\n");
   const data = {
-    common: { v: 8, text: read("common/v8.md") },
+    common: { v: 10, text: read("common/v10.md") },
     persona: {
-      saju: { v: 3, text: read("saju/persona.v3.md") },
+      saju: { v: 4, text: read("saju/persona.v4.md") },
       tarot: { v: 2, text: read("tarot/persona.v2.md") },
       dolyeong: { v: 4, text: read("dolyeong/persona.v4.md") },
       dream: { v: 1, text: read("dream/persona.v1.md") },
     },
     product: {
       daily: { v: 3, text: read("saju/daily.v3.md") },
-      saju_full: { v: 3, text: read("saju/saju_full.v3.md") },
+      saju_full: { v: 4, text: read("saju/saju_full.v4.md") },
       gunghap: { v: 1, text: read("saju/gunghap.v1.md") },
       tarot_pair: { v: 1, text: read("tarot/tarot_pair.v1.md") },
       sinjeom_pair: { v: 1, text: read("dolyeong/sinjeom_pair.v1.md") },
@@ -35,12 +35,12 @@ export function render() {
       tarot_one: { v: 1, text: read("tarot/tarot_one.v1.md") },
       tarot_three: { v: 2, text: read("tarot/tarot_three.v2.md") },
       obanggi: { v: 1, text: read("dolyeong/obanggi.v1.md") },
-      dream: { v: 2, text: read("dream/dream.v2.md") },
-      sinjeom: { v: 4, text: read("dolyeong/sinjeom.v4.md") },
+      dream: { v: 3, text: read("dream/dream.v3.md") },
+      sinjeom: { v: 5, text: read("dolyeong/sinjeom.v5.md") },
     },
-    followup: { v: 4, text: read("followup/v4.md") },
+    followup: { v: 5, text: read("followup/v5.md") },
     // 아기도령 신점 대화 (F07, D-073)
-    talk: { v: 5, text: read("dolyeong/talk.v5.md") },
+    talk: { v: 6, text: read("dolyeong/talk.v6.md") },
     classify: {
       v: 2,
       text: `${read("classify/v2.md")}\n\n[상징 목록] ID: 이름 (동의어)\n${symbolLines}`,

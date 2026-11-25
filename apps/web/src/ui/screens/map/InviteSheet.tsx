@@ -6,7 +6,7 @@ import { api } from "../../../api/client";
 import { Icon } from "../../app/kit";
 import { navigate } from "../../app/router";
 import { friendly } from "../../app/state";
-import { PAIR_CONSENT, shareInvite } from "../../shop/pair";
+import { PAIR_CONSENT, copyText, shareInvite } from "../../shop/pair";
 
 export function InviteSheet(props: { nickname: string; onClose: () => void }) {
   const [step, setStep] = useState<"consent" | "making" | "made">("consent");
@@ -34,6 +34,15 @@ export function InviteSheet(props: { nickname: string; onClose: () => void }) {
       setStep("consent");
       setNote(friendly(e));
     }
+  };
+
+  const [copied, setCopied] = useState<"" | "ok" | "fail">("");
+  const copy = async () => {
+    if (!link) return;
+    const ok = await copyText(link.url);
+    if (!alive.current) return;
+    setCopied(ok ? "ok" : "fail");
+    setTimeout(() => alive.current && setCopied(""), 2000);
   };
 
   const send = async () => {
@@ -80,7 +89,19 @@ export function InviteSheet(props: { nickname: string; onClose: () => void }) {
           </>
         ) : (
           <>
-            <p class="invite-link">{link.url}</p>
+            <div class="invite-link-row">
+              <p class="invite-link">{link.url}</p>
+              <button
+                type="button"
+                class={`invite-copy ${copied === "ok" ? "done" : ""}`}
+                onClick={() => void copy()}
+              >
+                {copied === "ok" ? "복사했어요" : "복사"}
+              </button>
+            </div>
+            {copied === "fail" && (
+              <p class="invite-note">복사가 안 됐어요. 주소를 길게 눌러 직접 복사해 주세요.</p>
+            )}
             {note && <p class="invite-note">{note}</p>}
             <button type="button" class="btn-enter sheet-go" onClick={send}>
               <Icon.share />

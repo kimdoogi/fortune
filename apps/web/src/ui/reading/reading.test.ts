@@ -1,8 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { SECTION_ORDER, colorSwatch, orderedSections, pillarInfo } from "./format";
+import { SECTION_ORDER, colorSwatch, orderedSections, pillarInfo, toParagraphs } from "./format";
 import { EMBLEMS, TAROT_NAMES, toRoman } from "./tarotArt";
 import { PUNCT_PAUSE, blockCount, buildTimeline, charDelay, countAt, splitChars } from "./typing";
 import { iconKind } from "./visuals";
+
+describe("문단 나누기 (가독성)", () => {
+  it("짧은 글과 줄바꿈이 있는 글은 그대로", () => {
+    expect(toParagraphs("짧은 풀이예요. 좋아요.")).toBe("짧은 풀이예요. 좋아요.");
+    const gongsu = `${"가".repeat(70)}!\n${"나".repeat(70)}!`;
+    expect(toParagraphs(gongsu)).toBe(gongsu);
+  });
+
+  it("긴 글은 문장을 자르지 않고 문단으로 나눈다", () => {
+    const s = (n: number, ch: string) => `${ch.repeat(n)}요.`;
+    const text = [s(40, "가"), s(40, "나"), s(40, "다"), s(40, "라"), s(40, "마")].join(" ");
+    const out = toParagraphs(text);
+    const paras = out.split("\n\n");
+    expect(paras.length).toBeGreaterThan(1);
+    expect(paras.join(" ")).toBe(text);
+    for (const p of paras) expect(p.endsWith("요.")).toBe(true);
+  });
+
+  it("닫는 따옴표는 문장에 붙여 둔다", () => {
+    const text = `카드 이름은 '${"별".repeat(30)}.' ${"가".repeat(60)}요. ${"나".repeat(60)}요?`;
+    expect(toParagraphs(text).replace(/\n\n/g, " ")).toBe(text);
+  });
+});
 
 describe("한 글자씩 (D-044)", () => {
   it("한글 음절·이모지를 한 글자로 센다", () => {

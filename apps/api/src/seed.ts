@@ -6,9 +6,12 @@ import type { FlagColor, FlagGrade, TarotCategory } from "@fortune/shared-types"
 import { sha256, sha256Hex } from "./crypto";
 
 // ── seed_key (readings.seed_key) ─────────────────────────
-/** v2: 월별 운세(D-079), v3: 쉬운 말·요즘 추천(D-083). 판을 올리면 예전 저장본 대신 새로 푼다 */
+/**
+ * v2: 월별 운세(D-079), v3: 쉬운 말·요즘 추천(D-083), v4: 구체적으로·생활 주제(D-096).
+ * 판을 올리면 예전 저장본 대신 새로 푼다
+ */
 export const sajuSeedKey = (profileVersion: number, year: number) =>
-  `saju:v3:${profileVersion}:${year}`;
+  `saju:v4:${profileVersion}:${year}`;
 export const tarotSeedKey = (date: string, product: string, category: TarotCategory) =>
   `tarot:${date}:${product}:${category}`;
 export const obanggiSeedKey = (date: string, category: string) => `obanggi:${date}:${category}`;

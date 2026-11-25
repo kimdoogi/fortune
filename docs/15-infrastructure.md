@@ -111,7 +111,7 @@ sequenceDiagram
 | 서버 → 클라 | `moved` / `emoted` / `chatted` | 다른 유저 행동 중계 |
 | 서버 → 클라 | `hidden` / `shown` | 다른 유저가 건물에 들어감 / 나옴 |
 
-- ✅ 서버 검증: 걷는 속도 2.0m/s 상한, 이모트·문장 2초에 1번, 이동 0.3초에 1번 ([F03](features/F03-street.md))
+- ✅ 서버 검증: 걷는 속도 3.0m/s 상한 (D-092), 이모트·문장 2초에 1번, 이동 0.3초에 1번 ([F03](features/F03-street.md))
 - ✅ 점집에 들어가도 연결을 유지한다 ([F04](features/F04-shop-enter.md))
 - ✅ 재접속: 1, 2, 4, 8초 간격으로 최대 5번, 같은 채널로 ([F03](features/F03-street.md))
 - ✅ **WebSocket 인증:** app Worker가 `userId·채널·만료(5분)`에 HMAC 서명한 토큰을 발급하고, Durable Object가 `WS_TOKEN_KEY`로 검증한다. 메시지는 JSON, 1개 최대 512바이트
@@ -119,7 +119,7 @@ sequenceDiagram
 ### 둘만의 방 (궁합, D-089)
 - ✅ `pair:<code>` = Durable Object 1개 (같은 `VillageChannel` 클래스, 정원 2). 토큰 채널이 `pair:<code>`이고, app Worker는 초대의 초대한 사람·손님에게만 토큰을 준다
 - ✅ 토큰에 외모(`성별:나이대`)를 넣어 상대 캐릭터를 그린다
-- ✅ 추가 메시지: 클라 → `travel`(방장만: 점집 또는 지도, D-090), `go_inside`(같이 들어가기), 서버 → `traveled`, `went_inside`, `picked`·`submitted`·`result_ready`·`result_failed`(app Worker가 DO RPC `notify()`로 보냄). 토큰에 역할(`r: host|guest`)을 넣고 DO가 `travel`은 방장 것만 받는다. DO는 마지막 `travel`을 기억해 snapshot에 `place`로 준다
+- ✅ 추가 메시지: 클라 → `travel`(방장만: 점집 또는 지도, D-090), `go_inside`(같이 들어가기), 서버 → `traveled`, `went_inside`, `picked`·`submitted`·`result_ready`·`result_failed`·`asking`·`asked`(이어 묻기, D-091)(app Worker가 DO RPC `notify()`로 보냄). 토큰에 역할(`r: host|guest`)을 넣고 DO가 `travel`은 방장 것만 받는다. DO는 마지막 `travel`을 기억해 snapshot에 `place`로 준다
 - ✅ 같이 보는 동안(지도·골목·점집 안) 연결 하나를 유지한다 (화면이 바뀌어도 끊지 않는다)
 - ✅ 점집 안에서도 연결을 유지해 관계 고르기와 결과 알림을 주고받는다
 

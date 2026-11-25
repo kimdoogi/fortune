@@ -10,6 +10,7 @@ import { ApiFailure, api } from "../../../api/client";
 import { Icon, NightSky, Plaque } from "../../app/kit";
 import { Portrait, SHOP_INFO } from "../../app/shops";
 import { firstVisit, friendly, handleError, profile } from "../../app/state";
+import { StyleEditor } from "../style/StyleEditor";
 import { AvatarPreview } from "./AvatarPreview";
 import {
   BRANCHES,
@@ -134,7 +135,7 @@ export function ProfileFlow(props: {
   }
 
   if (step === "preview" && saved)
-    return <Preview profile={saved} mode={props.mode} onDone={props.onDone} />;
+    return <Preview profile={saved} mode={props.mode} onDone={props.onDone} onStyled={setSaved} />;
 
   const showBack = step !== "welcome" && (index > 0 || step === "blocked" || !!props.onCancel);
 
@@ -622,15 +623,37 @@ function Blocked() {
   );
 }
 
-function Preview(props: { profile: ProfileView; mode: "new" | "edit"; onDone: () => void }) {
+function Preview(props: {
+  profile: ProfileView;
+  mode: "new" | "edit";
+  onDone: () => void;
+  onStyled: (p: ProfileView) => void;
+}) {
   const p = props.profile;
+  const [styling, setStyling] = useState(false);
+  // 꾸미기 (F17): 이 화면 위에서 열고, 저장하면 바뀐 모습으로 돌아온다
+  if (styling)
+    return (
+      <StyleEditor
+        profile={p}
+        onSaved={(next) => {
+          props.onStyled(next);
+          setStyling(false);
+        }}
+        onCancel={() => setStyling(false)}
+      />
+    );
   return (
     <div class="screen profile preview">
       <NightSky />
       <div class="pf-body">
         <section class="card pf-card pf-preview">
           <Plaque>내 캐릭터</Plaque>
-          <AvatarPreview gender={p.gender} ageBand={p.ageBand} size={210} />
+          <AvatarPreview gender={p.gender} ageBand={p.ageBand} style={p.style} size={210} />
+          <button type="button" class="btn-quiet pf-style" onClick={() => setStyling(true)}>
+            <Icon.edit />
+            꾸미기
+          </button>
           <h1 class="pf-title">반가워요, {p.nickname} 님!</h1>
           <div class="chips">
             <span class="chip">

@@ -8,9 +8,23 @@ import {
   stemInfo,
 } from "@fortune/fortune-engine";
 import { findBanned } from "@fortune/prompts";
+import {
+  ACCESSORIES,
+  type AgeBand,
+  type AvatarStyle,
+  type BirthTime,
+  HAIRS,
+  HAIR_COLORS,
+  OUTFITS,
+  OUTFIT_COLORS,
+  SPECIES,
+  type StyleInput,
+  TONES,
+  avatarString,
+  encodeStyle,
+  parseStyle,
+} from "@fortune/shared-types";
 import type {
-  AgeBand,
-  BirthTime,
   Calendar,
   Gender,
   HourBranch,
@@ -94,6 +108,22 @@ export const ProfileSchema = z.object({
   consent: z.literal(true),
 });
 
+/** 캐릭터 꾸미기 (F17, D-098): 목록에 있는 값만 받는다 */
+export const StyleSchema = z.object({
+  species: z.enum(SPECIES),
+  hair: z.enum(HAIRS),
+  outfit: z.enum(OUTFITS),
+  color: z.enum(OUTFIT_COLORS),
+  acc: z.enum(ACCESSORIES),
+  hairColor: z.enum(HAIR_COLORS),
+  tone: z
+    .number()
+    .int()
+    .min(0)
+    .max(TONES - 1),
+});
+export const StyleInputSchema = z.object({ style: StyleSchema.nullable() });
+
 /** 암호화해서 함께 저장하는 부분 */
 export interface BirthData {
   birthDate: string;
@@ -106,6 +136,8 @@ export interface Profile extends BirthData {
   calendar: Calendar;
   gender: Gender;
   profileVersion: number;
+  /** 캐릭터 꾸미기 (F17). 없거나 모르는 코드면 null = 기본 모습 */
+  style: AvatarStyle | null;
 }
 
 /** 엔진 오류 → 안내 문구 (F02 예외 상황) */
@@ -168,7 +200,8 @@ export function profileView(p: Profile, natal: PillarsResult, ageBand: AgeBand):
     birthTime: p.birthTime,
     gender: p.gender,
     ageBand,
-    avatarId: `${p.gender}:${ageBand}`,
+    avatarId: avatarString(p.gender, ageBand, p.style),
+    style: p.style,
     dayMaster: { stem: dm, element: info.element, yinYang: info.yinYang },
     zodiac: ZODIAC[natal.pillars.year.charAt(1)] ?? "",
     flags: natal.flags,
@@ -182,11 +215,12 @@ interface ProfileRow {
   key_version: number;
   gender: Gender;
   profile_version: number;
+  style: string | null;
 }
 
 export async function loadProfile(env: Env, userId: string): Promise<Profile | null> {
   const row = await env.DB.prepare(
-    "SELECT nickname, calendar, birth_enc, key_version, gender, profile_version FROM profiles WHERE user_id = ?",
+    "SELECT nickname, calendar, birth_enc, key_version, gender, profile_version, style FROM profiles WHERE user_id = ?",
   )
     .bind(userId)
     .first<ProfileRow>();
@@ -198,6 +232,7 @@ export async function loadProfile(env: Env, userId: string): Promise<Profile | n
     calendar: row.calendar,
     gender: row.gender,
     profileVersion: row.profile_version,
+    style: parseStyle(row.style),
     ...birth,
   };
 }
@@ -241,7 +276,7 @@ export async function putProfile(req: Request, env: Env, user: User): Promise<Re
        nickname = excluded.nickname, calendar = excluded.calendar, birth_enc = excluded.birth_enc,
        key_version = excluded.key_version, gender = excluded.gender, age_band = excluded.age_band,
        profile_version = profiles.profile_version + 1, updated_at = excluded.updated_at
-     RETURNING profile_version`,
+     RETURNING profile_version, style`,
   )
     .bind(
       user.id,
@@ -253,13 +288,30 @@ export async function putProfile(req: Request, env: Env, user: User): Promise<Re
       ageBand,
       nowIso(),
     )
-    .first<{ profile_version: number }>();
+    .first<{ profile_version: number; style: string | null }>();
   const profile: Profile = {
     ...birth,
     nickname: input.nickname,
     calendar: input.calendar,
     gender: input.gender,
     profileVersion: row?.profile_version ?? 1,
+    // 프로필을 고쳐도 꾸미기는 그대로 둔다 (F17)
+    style: parseStyle(row?.style),
   };
   return json(profileView(profile, natal, ageBand));
+}
+
+/**
+ * PUT /api/profile/style (F17, D-098): 꾸미기만 바꾼다. profile_version은 그대로 (사주 seed가 바뀌지 않게).
+ * null이면 지우고 기본 모습으로
+ */
+export async function putStyle(req: Request, env: Env, user: User): Promise<Response> {
+  const input: StyleInput = await readBody(req, StyleInputSchema);
+  const p = await requireProfile(env, user.id);
+  const code = input.style ? encodeStyle(input.style) : null;
+  await env.DB.prepare("UPDATE profiles SET style = ?1, updated_at = ?2 WHERE user_id = ?3")
+    .bind(code, nowIso(), user.id)
+    .run();
+  const natal = natalOf(p);
+  return json(profileView({ ...p, style: parseStyle(code) }, natal, ageBandAt(natal)));
 }

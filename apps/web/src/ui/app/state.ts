@@ -106,10 +106,10 @@ export async function boot() {
   }
 }
 
-/** 프로필의 외모 (avatarId = `${gender}:${ageBand}`) */
+/** 프로필의 외모 (avatarId = `${gender}:${ageBand}[:코드]`, 꾸미기는 F17) */
 export function lookOf(p: ProfileView) {
   const [g, a] = p.avatarId.split(":");
   const gender = g === "male" || g === "female" ? g : p.gender;
   const ageBand = a === "10대" || a === "20대" || a === "30대" || a === "40대 이상" ? a : p.ageBand;
-  return { gender, ageBand } as const;
+  return { gender, ageBand, style: p.style ?? null } as const;
 }

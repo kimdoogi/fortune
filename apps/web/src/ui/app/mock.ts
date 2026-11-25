@@ -17,6 +17,7 @@ import {
   type ReadingVisual,
   SHOP_PRODUCTS,
   type ShopId,
+  avatarString,
 } from "@fortune/shared-types";
 import { ApiFailure, type api } from "../../api/client";
 
@@ -46,6 +47,7 @@ const SAMPLE_PROFILE: ProfileView = {
   gender: "female",
   ageBand: "20대",
   avatarId: "female:20대",
+  style: null,
   dayMaster: { stem: "병", element: "화", yinYang: "양" },
   zodiac: "쥐",
   flags: { ambiguousTime: false, solarTermDay: false },
@@ -84,6 +86,7 @@ function makeProfile(input: ProfileInput): ProfileView {
     ...rest,
     ageBand,
     avatarId: `${input.gender}:${ageBand}`,
+    style: null,
     dayMaster: {
       stem,
       element: ELEMENTS[STEMS.indexOf(stem)] ?? "목",
@@ -387,7 +390,21 @@ export const mockApi: Api = {
   },
   async putProfile(input) {
     await wait(700);
-    db.profile = makeProfile(input);
+    // 프로필을 고쳐도 꾸미기는 그대로 (F17)
+    const style = db.profile?.style ?? null;
+    const p = makeProfile(input);
+    db.profile = { ...p, style, avatarId: avatarString(p.gender, p.ageBand, style) };
+    save();
+    return db.profile;
+  },
+  async putStyle(input) {
+    await wait(400);
+    const p = needProfile();
+    db.profile = {
+      ...p,
+      style: input.style,
+      avatarId: avatarString(p.gender, p.ageBand, input.style),
+    };
     save();
     return db.profile;
   },

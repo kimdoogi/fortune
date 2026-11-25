@@ -4,12 +4,18 @@
  */
 import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
-import { type AgeBand, Chibi, type Gender } from "./chibi";
+import { Chibi, type ChibiLook } from "./chibi";
 import type { Point } from "./nav";
 import { type Street, type StreetLighting, buildStreet } from "./street";
 
-export const WALK_SPEED = 2.0; // m/s (F03)
+export const WALK_SPEED = 3.0; // m/s (F03, D-092: 2.0은 답답하다는 말이 있어 1.5배)
 const DOOR_REACH = 0.6;
+/** 문 열리는 시간 (s) */
+const DOOR_OPEN_S = 0.45;
+/** 문이 이만큼 열리면 걸어 들어가기 시작한다 (s) */
+const WALK_IN_AFTER = 0.3;
+/** 들어가기 연출이 이보다 길어지면 그냥 끝낸다 (s) */
+const ENTER_MAX_S = 2.2;
 /** 같이 들어가기: 둘 다 문 앞 이 거리 안 (F16) */
 export const PAIR_DOOR_REACH = 1.6;
 /** 캐릭터 기준 카메라 위치와, 화면 가운데에 올 지점(캐릭터 앞쪽) */
@@ -102,10 +108,15 @@ export class StreetView {
   private markerAge = 0;
   /** 같은 방의 다른 사람 (궁합 둘만의 방, F16) */
   private readonly remotes = new Map<string, Remote>();
+  /** 문 열림 (0 닫힘 ~ 1 열림)과 목표 (D-094) */
+  private doorT = 0;
+  private doorTarget = 0;
+  /** 문 열고 걸어 들어가는 중 */
+  private entering: { t: number; walking: boolean; done: () => void } | null = null;
 
   constructor(
     shop: ShopId,
-    look: { gender: Gender; ageBand: AgeBand },
+    look: ChibiLook,
     private readonly events: StreetEvents,
   ) {
     this.street = buildStreet(shop);
@@ -123,7 +134,8 @@ export class StreetView {
     warm.position.set(4, 3, 7);
     this.scene.add(moon, warm);
 
-    this.me = new Chibi(look);
+    // 뼈마다 합쳐 캐릭터 하나 드로우콜 약 34 → 12 (07 §3, F17)
+    this.me = new Chibi(look).compact();
     this.me.root.position.set(this.street.spawn.x, 0, this.street.spawn.z);
     this.me.root.rotation.y = this.facing; // 처음에는 카메라를 본다
     this.scene.add(this.me.root);
@@ -149,8 +161,53 @@ export class StreetView {
     this.camera.lookAt(this.cameraTarget(p));
   }
 
-  /** 점집에서 나오면 문 앞에 서서 거리 쪽을 본다 (06 §4, F04) */
+  /**
+   * 들어가기 연출 (D-094): 문이 바깥으로 열리고, 캐릭터가 문 안으로 걸어 들어간다.
+   * 문 앞(같이 들어가기 거리 안)에 있는 상대도 따라 들어간다. 다 들어가면 끝난다
+   */
+  playEnter(): Promise<void> {
+    this.entering?.done();
+    this.path = [];
+    this.goingToDoor = false;
+    this.marker.visible = false;
+    this.doorTarget = 1;
+    return new Promise((resolve) => {
+      this.entering = { t: 0, walking: false, done: resolve };
+    });
+  }
+
+  /** 계단을 밟아 오르내린다: 발밑 높이로 빠르게 따라간다 (D-095) */
+  private stepY(y: number, z: number, dt: number): number {
+    const target = this.street.groundAt(z);
+    if (Math.abs(target - y) < 1e-3) return target;
+    return y + (target - y) * (1 - Math.exp(-dt * 30));
+  }
+
+  /** 문 안으로 걷기 시작 (나와 문 앞의 상대) */
+  private walkIn() {
+    const d = this.street.doorFront;
+    const inside = this.street.doorInside;
+    const p = this.me.root.position;
+    this.path = [{ x: d.x + (p.x - d.x) * 0.3, z: d.z }, inside];
+    for (const r of this.remotes.values()) {
+      const rp = r.chibi.root.position;
+      if (Math.hypot(rp.x - d.x, rp.z - d.z) > PAIR_DOOR_REACH + 0.4) continue;
+      // 상대는 반 박자 늦게, 옆으로 비켜서 들어간다
+      const side = rp.x >= p.x ? 0.35 : -0.35;
+      r.path = [
+        { x: rp.x, z: rp.z + 0.01 },
+        { x: d.x + side, z: d.z },
+        { x: inside.x + side, z: inside.z },
+      ];
+    }
+  }
+
+  /** 점집에서 나오면 문 앞에 서서 거리 쪽을 본다 (06 §4, F04). 열린 문은 뒤에서 닫힌다 */
   standAtDoor() {
+    this.entering?.done();
+    this.entering = null;
+    this.doorT = 1;
+    this.doorTarget = 0;
     const d = this.street.doorFront;
     this.path = [];
     this.goingToDoor = false;
@@ -185,6 +242,7 @@ export class StreetView {
 
   /** 화면 탭 (정규화 좌표). 문을 누르면 문 앞까지, 땅을 누르면 그 자리로 */
   tap(ndc: THREE.Vector2) {
+    if (this.entering) return;
     this.raycaster.setFromCamera(ndc, this.camera);
     if (this.raycaster.intersectObjects(this.street.doorTargets, false).length > 0) {
       this.walkTo(this.street.doorFront, true);
@@ -224,9 +282,9 @@ export class StreetView {
   }
 
   /** 상대 캐릭터를 세운다. 처음 위치는 마지막으로 알려진 목적지 (없으면 출발점 옆) */
-  addRemote(id: string, look: { gender: Gender; ageBand: AgeBand }, nickname: string, at?: Point) {
+  addRemote(id: string, look: ChibiLook, nickname: string, at?: Point) {
     this.removeRemote(id);
-    const chibi = new Chibi(look);
+    const chibi = new Chibi(look).compact();
     const p = at ?? { x: this.street.spawn.x + 0.9, z: this.street.spawn.z + 0.3 };
     chibi.root.position.set(p.x, 0, p.z);
     const tag = nameTag(nickname);
@@ -297,6 +355,7 @@ export class StreetView {
         moving = true;
       }
       if (heading !== null) r.facing = turnToward(r.facing, heading, 1 - Math.exp(-dt * 14));
+      pos.y = this.stepY(pos.y, pos.z, dt);
       r.chibi.root.rotation.y = r.facing;
       r.chibi.update(dt, moving);
       r.chibi.takeStep();
@@ -312,6 +371,27 @@ export class StreetView {
   }
 
   update(dt: number, time: number) {
+    // 문 열기·닫기 (D-094)
+    if (this.doorT !== this.doorTarget) {
+      const step = dt / DOOR_OPEN_S;
+      this.doorT =
+        this.doorTarget > this.doorT
+          ? Math.min(this.doorTarget, this.doorT + step)
+          : Math.max(this.doorTarget, this.doorT - step);
+      this.street.door.set(this.doorT);
+    }
+    if (this.entering) {
+      const e = this.entering;
+      e.t += dt;
+      if (!e.walking && e.t >= WALK_IN_AFTER) {
+        e.walking = true;
+        this.walkIn();
+      }
+      if ((e.walking && this.path.length === 0) || e.t >= ENTER_MAX_S) {
+        this.entering = null;
+        e.done();
+      }
+    }
     const pos = this.me.root.position;
     let moving = false;
     let heading: number | null = null;
@@ -335,6 +415,7 @@ export class StreetView {
       moving = true;
     }
     this.idle = moving ? 0 : this.idle + dt;
+    pos.y = this.stepY(pos.y, pos.z, dt);
 
     const near =
       Math.hypot(pos.x - this.street.doorFront.x, pos.z - this.street.doorFront.z) < DOOR_REACH &&

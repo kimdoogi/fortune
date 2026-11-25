@@ -1,5 +1,5 @@
 /** 거리 접속 토큰과 WebSocket 전달 (docs/15 §4). 궁합 둘만의 방은 F16 */
-import { signWsToken } from "@fortune/shared-types";
+import { avatarString, signWsToken } from "@fortune/shared-types";
 import type { Env } from "./env";
 import { inviteForMember } from "./gunghap/invites";
 import { json } from "./http";
@@ -14,7 +14,10 @@ import type { User } from "./session";
 export async function wsToken(url: URL, env: Env, user: User): Promise<Response> {
   const profile = await loadProfile(env, user.id);
   const nickname = profile?.nickname ?? "손님";
-  const look = profile ? `${profile.gender}:${ageBandAt(natalOf(profile))}` : undefined;
+  // "성별:나이대[:꾸미기 코드]" (F17). 예전 앱은 앞 두 칸만 읽는다
+  const look = profile
+    ? avatarString(profile.gender, ageBandAt(natalOf(profile)), profile.style)
+    : undefined;
   const room = url.searchParams.get("room");
   let channel: string;
   let role: "host" | "guest" | undefined;

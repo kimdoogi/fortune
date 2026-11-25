@@ -8,6 +8,8 @@ import { Chibi, type ChibiLook } from "../../../scene/chibi";
 export interface AvatarView {
   /** 손 흔들기 한 번 */
   wave(): void;
+  /** 꾸미기를 바꾸면 캐릭터만 갈아 끼운다 (렌더러는 그대로, F17) */
+  setLook(look: ChibiLook): void;
   dispose(): void;
 }
 
@@ -46,8 +48,9 @@ export function mountAvatar(canvas: HTMLCanvasElement, look: ChibiLook): AvatarV
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 20);
-  camera.position.set(0, 0.88, 2.65);
-  camera.lookAt(0, 0.52, 0);
+  // 토끼 귀·갓·족두리까지 들어오게 조금 물러서 본다 (F17)
+  camera.position.set(0, 0.98, 3.1);
+  camera.lookAt(0, 0.68, 0);
 
   // 거리와 같은 조명: 차가운 달빛 + 따뜻한 등불 채움빛 (D-065)
   scene.add(new THREE.HemisphereLight("#a3a8e6", "#3d2c26", 1.4));
@@ -66,10 +69,11 @@ export function mountAvatar(canvas: HTMLCanvasElement, look: ChibiLook): AvatarV
   glow.position.y = 0.005;
   scene.add(stone, glow);
 
-  const chibi = new Chibi(look);
+  let chibi = new Chibi(look).compact();
   scene.add(chibi.root);
   // 팔은 Chibi 안쪽 값이라 직접 흔든다 (손 흔들기 동작이 따로 없을 때)
-  const arms = (chibi as unknown as { arms?: THREE.Object3D[] }).arms;
+  const armsOf = (c: Chibi) => (c as unknown as { arms?: THREE.Object3D[] }).arms;
+  let arms = armsOf(chibi);
 
   const resize = () => {
     const w = canvas.clientWidth || 240;
@@ -85,6 +89,8 @@ export function mountAvatar(canvas: HTMLCanvasElement, look: ChibiLook): AvatarV
   const clock = new THREE.Clock();
   let t = 0;
   let waveAt = 0.55; // 등장 직후 한 번 흔든다
+  /** 꾸미기를 바꾼 때 (살짝 통 튄다) */
+  let popAt = -1;
   let raf = 0;
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -98,7 +104,8 @@ export function mountAvatar(canvas: HTMLCanvasElement, look: ChibiLook): AvatarV
     const e = Math.min(t / 0.55, 1);
     const back = 1 + 2.2 * (e - 1) ** 3 + 1.2 * (e - 1) ** 2;
     chibi.root.scale.setScalar(reduce ? 1 : Math.max(0.01, back));
-    chibi.root.position.y = reduce ? 0 : Math.sin(Math.min(t / 0.55, 1) * Math.PI) * 0.18;
+    const pop = t - popAt < 0.3 ? Math.sin(((t - popAt) / 0.3) * Math.PI) * 0.08 : 0;
+    chibi.root.position.y = reduce ? 0 : Math.sin(Math.min(t / 0.55, 1) * Math.PI) * 0.18 + pop;
     chibi.root.rotation.y = reduce ? 0 : Math.sin(t * 0.7) * 0.22;
 
     // 손 흔들기 (1.8초). 6초마다 다시
@@ -120,6 +127,15 @@ export function mountAvatar(canvas: HTMLCanvasElement, look: ChibiLook): AvatarV
     wave() {
       if (t - waveAt > 1.8) waveAt = t;
     },
+    setLook(next) {
+      scene.remove(chibi.root);
+      chibi.dispose();
+      chibi = new Chibi(next).compact();
+      arms = armsOf(chibi);
+      scene.add(chibi.root);
+      // 바뀐 걸 알 수 있게 살짝 통 튄다
+      popAt = t;
+    },
     dispose() {
       cancelAnimationFrame(raf);
       ro.disconnect();
@@ -128,7 +144,8 @@ export function mountAvatar(canvas: HTMLCanvasElement, look: ChibiLook): AvatarV
       glow.geometry.dispose();
       (glow.material as THREE.MeshBasicMaterial).map?.dispose();
       (glow.material as THREE.Material).dispose();
-      // 캐릭터 지오메트리·재질은 모든 캐릭터가 공유하므로 지우지 않는다 (07 §5)
+      // 공유 지오메트리·재질은 남기고, 이 캐릭터만의 것(합친 메시·색 재질)만 지운다 (07 §5)
+      chibi.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
     },

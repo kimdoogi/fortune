@@ -48,3 +48,25 @@ describe("점집 거리 (07 §3·§4: 드로우콜 100·삼각형 15만·생성 
     });
   }
 });
+
+describe("문으로 걸어 들어가기 (D-094·D-095)", () => {
+  for (const shop of SHOPS) {
+    it(`${shop}: 길에서는 땅, 계단을 하나씩 밟고 올라 문 안에서는 기단 위`, () => {
+      const street = buildStreet(shop);
+      expect(street.groundAt(street.doorFront.z)).toBe(0);
+      expect(street.groundAt(street.spawn.z)).toBe(0);
+      const inside = street.groundAt(street.doorInside.z);
+      expect(inside).toBeGreaterThan(0.25);
+      // 문 앞에서 안쪽으로 갈수록 내려가지 않는다 (계단을 뚫고 지나가지 않게)
+      let last = 0;
+      for (let z = street.doorFront.z; z >= street.doorInside.z; z -= 0.02) {
+        const y = street.groundAt(z);
+        expect(y).toBeGreaterThanOrEqual(last);
+        // 한 번에 오르는 높이는 한 단 (0.25m 이하)
+        expect(y - last).toBeLessThanOrEqual(0.25);
+        last = y;
+      }
+      street.dispose();
+    });
+  }
+});

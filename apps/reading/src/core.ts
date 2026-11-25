@@ -19,9 +19,9 @@ import {
   checkPart,
   classifySchema,
   classifySystemPrompt,
-  followupMax,
   followupSystemPrompt,
   followupTarget,
+  followupThreadMax,
   followupVersion,
   outputParts,
   outputSchema,
@@ -296,23 +296,19 @@ export async function followupWith(
     fallback: FALLBACKS[input.shop],
     promptVersion: pv,
   });
-  const max = followupMax(input.product);
+  const max = followupThreadMax(input.product);
+  // 같이 본 풀이면 물은 사람을 붙인다 (D-091). 혼자 본 풀이는 예전과 같은 바이트
+  const q = (question: string, asker: string | undefined, turn: number) =>
+    JSON.stringify(asker ? { question, asker, turn, of: max } : { question, turn, of: max });
   const messages: Anthropic.MessageParam[] = [
     { role: "user", content: input.originalInput },
     { role: "assistant", content: input.originalOutput },
     // 몇 번째 대화인지 같이 보낸다 (신점 마지막 답은 정리, F07). 순번은 매번 같아 캐시가 유지된다
     ...input.history.flatMap((h, i): Anthropic.MessageParam[] => [
-      { role: "user", content: JSON.stringify({ question: h.question, turn: i + 1, of: max }) },
+      { role: "user", content: q(h.question, h.asker, i + 1) },
       { role: "assistant", content: h.answerJson },
     ]),
-    {
-      role: "user",
-      content: JSON.stringify({
-        question: input.question,
-        turn: input.history.length + 1,
-        of: max,
-      }),
-    },
+    { role: "user", content: q(input.question, input.asker, input.history.length + 1) },
   ];
   let maxTokens: number = CALL.followup.maxTokens;
   const retried = { api: false, truncated: false, parse: false };

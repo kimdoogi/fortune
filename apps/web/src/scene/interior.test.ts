@@ -36,6 +36,46 @@ describe("점집 내부 (07 §3: 드로우콜 60·삼각형 8만 이하)", () =>
     });
   }
 
+  for (const shop of SHOPS) {
+    it(`${shop}: 꾸민 두 사람이 나란히 앉아도 한도 안 (F17)`, () => {
+      const room = buildInterior(
+        shop,
+        {
+          gender: "male",
+          ageBand: "30대",
+          style: {
+            species: "bear",
+            hair: "pigtails",
+            outfit: "chima",
+            color: "navy",
+            acc: "gat",
+            hairColor: "blonde",
+            tone: 2,
+          },
+        },
+        {
+          gender: "female",
+          ageBand: "10대",
+          style: {
+            species: "rabbit",
+            hair: "curly",
+            outfit: "hoodie",
+            color: "pink",
+            acc: "beanie",
+            hairColor: "pink",
+            tone: 0,
+          },
+        },
+      );
+      room.resize(375, 812, 2);
+      room.update(0.016, 1);
+      const m = measure(room.scene);
+      expect(m.calls).toBeLessThanOrEqual(60);
+      expect(m.tris).toBeLessThanOrEqual(80_000);
+      room.dispose();
+    });
+  }
+
   it("세로 화면은 가로보다 시야가 넓고 카메라가 높다", () => {
     const p = cameraFor(375 / 812);
     const l = cameraFor(812 / 375);

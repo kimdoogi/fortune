@@ -263,6 +263,26 @@ describe("이어 묻기 (F15, docs/04 §13)", () => {
     expect(second.calls[0]?.output_config).toEqual(first.calls[0]?.output_config);
   });
 
+  it("같이 본 풀이는 물은 사람을 붙이고 두 사람 몫으로 센다 (D-091)", async () => {
+    const { client, calls } = fakeClient([msg(answer1)]);
+    await followupWith(
+      client,
+      {
+        shop: "tarot",
+        product: "tarot_pair",
+        originalInput,
+        originalOutput,
+        history: [{ question: "Q1", answerJson: answer1, asker: "하나" }],
+        question: "Q2",
+        asker: "준호",
+      },
+      quiet,
+    );
+    const m = calls[0]?.messages as { content: unknown }[];
+    expect(m[2]?.content).toBe(JSON.stringify({ question: "Q1", asker: "하나", turn: 1, of: 6 }));
+    expect(m[4]?.content).toBe(JSON.stringify({ question: "Q2", asker: "준호", turn: 2, of: 6 }));
+  });
+
   it("위기 신호면 답을 버린다", async () => {
     const { client } = fakeClient([msg(JSON.stringify({ risk: "self_harm", answer: "..." }))]);
     expect(

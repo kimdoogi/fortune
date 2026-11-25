@@ -2,6 +2,7 @@
  * app Worker HTTP API 요청·응답 (docs/09 §3, features F01~F14).
  * web과 api가 이 파일만 보고 맞춘다. 바꾸면 양쪽을 같이 고친다.
  */
+import type { AvatarStyle } from "./avatar";
 import type { InterpretOutput, ProductId, ShopId } from "./index";
 
 export type Gender = "male" | "female";
@@ -50,6 +51,11 @@ export interface ProfileInput {
   consent: true;
 }
 
+/** PUT /api/profile/style 본문 (F17). null이면 꾸미기를 지우고 기본 모습으로. 응답은 ProfileView */
+export interface StyleInput {
+  style: AvatarStyle | null;
+}
+
 /** GET/PUT /api/profile 응답 */
 export interface ProfileView {
   nickname: string;
@@ -59,8 +65,10 @@ export interface ProfileView {
   birthTime: BirthTime;
   gender: Gender;
   ageBand: AgeBand;
-  /** 기본 아바타 8종 중 하나: `${gender}:${ageBand}` */
+  /** 외모 문자열: 기본 아바타 8종이면 `${gender}:${ageBand}`, 꾸미기가 있으면 `${gender}:${ageBand}:${코드}` (F17) */
   avatarId: string;
+  /** 캐릭터 꾸미기 (F17, D-098). 안 했으면 null = 성별·나이대 기본 모습 */
+  style: AvatarStyle | null;
   dayMaster: { stem: string; element: string; yinYang: "양" | "음" };
   /** 띠 (예: "쥐") */
   zodiac: string;
@@ -232,6 +240,8 @@ export interface FollowupView {
   id: string;
   question: string;
   answer: string;
+  /** 같이 본 풀이에서 상대가 물었으면 그 사람 닉네임 (D-091). 내가 물었으면 없다 */
+  asker?: string;
   /** ISO 시각 */
   createdAt: string;
 }

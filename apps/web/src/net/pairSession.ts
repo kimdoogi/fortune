@@ -25,7 +25,7 @@ export interface PairState {
   partnerLeft: string | null;
   /** 방이 기억하는 지금 갈 곳 */
   place: Place | null;
-  /** 점집 안 풀이 소식 (picked·submitted·result_ready·result_failed). seq로 새 소식을 가린다 */
+  /** 점집 안 풀이 소식 (picked·submitted·result_ready·result_failed·asking·asked). seq로 새 소식을 가린다 */
   event: { seq: number; msg: ServerMessage } | null;
 }
 
@@ -133,6 +133,8 @@ function onMessage(m: ServerMessage) {
     case "submitted":
     case "result_ready":
     case "result_failed":
+    case "asking":
+    case "asked":
       seq += 1;
       patch({ event: { seq, msg: m } });
       break;

@@ -41,7 +41,15 @@ export function MeScreen(props: { profile: ProfileView }) {
       <div class="scroll">
         <div class="sub-body">
           <section class="card me-card">
-            <AvatarPreview gender={p.gender} ageBand={p.ageBand} size={200} />
+            <AvatarPreview gender={p.gender} ageBand={p.ageBand} style={p.style} size={200} />
+            <button
+              type="button"
+              class="btn-quiet me-style"
+              onClick={() => navigate({ name: "style" })}
+            >
+              <Icon.edit />
+              꾸미기
+            </button>
             <h1 class="me-name">{p.nickname}</h1>
             <div class="chips">
               <span class="chip">

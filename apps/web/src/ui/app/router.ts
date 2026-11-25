@@ -9,6 +9,8 @@ export type Route =
   | { name: "map" }
   | { name: "profile" }
   | { name: "me" }
+  /** 캐릭터 꾸미기 (F17) */
+  | { name: "style" }
   | { name: "street"; shop: ShopId }
   | { name: "inside"; shop: ShopId }
   | { name: "history"; id?: string }
@@ -30,6 +32,8 @@ export function parse(hash: string): Route {
       return { name: "profile" };
     case "me":
       return { name: "me" };
+    case "style":
+      return { name: "style" };
     case "daily":
       return { name: "daily" };
     case "history":
@@ -88,6 +92,13 @@ export function navigate(r: Route, opts: { replace?: boolean } = {}) {
 export function goBack(fallback: Route) {
   if (depth() > 0) history.back();
   else navigate(fallback, { replace: true });
+}
+
+/** 지도로 바로 (점집 안 "나가기"). 쌓인 기록(거리·점집 안)을 한 번에 되돌린다 */
+export function goToMap() {
+  const d = depth();
+  if (d > 0) history.go(-d);
+  else navigate({ name: "map" }, { replace: true });
 }
 
 /**

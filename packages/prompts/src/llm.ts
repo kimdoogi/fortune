@@ -285,6 +285,17 @@ export const FOLLOWUP_MAX = 3;
 export const SINJEOM_TALK_MAX = 5;
 export const followupMax = (product: ProductId): number =>
   product === "sinjeom" ? SINJEOM_TALK_MAX : FOLLOWUP_MAX;
+/** 같이 보는 점 (F16, D-090) */
+export const PAIR_PRODUCTS: readonly ProductId[] = [
+  "gunghap",
+  "tarot_pair",
+  "sinjeom_pair",
+  "dream_pair",
+];
+export const isPairProduct = (product: ProductId) => PAIR_PRODUCTS.includes(product);
+/** 대화 전체의 이어 묻기 수 (LLM 입력 `of`). 같이 본 풀이는 두 사람 몫 (D-091) */
+export const followupThreadMax = (product: ProductId): number =>
+  followupMax(product) * (isPairProduct(product) ? 2 : 1);
 export const FOLLOWUP_MAX_CHARS = 100;
 export const FOLLOWUP_TARGET = 200;
 

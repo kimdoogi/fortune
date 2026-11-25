@@ -3,6 +3,7 @@
  * 처마 쪽은 완만하고 용마루 쪽은 가파르며, 네 귀퉁이 처마가 위로 들린다.
  */
 import * as THREE from "three";
+import type { Doorway } from "./door-anim";
 import { at, beam, colored, gradient } from "./geo";
 import type { GlowSpot } from "./glow";
 
@@ -29,6 +30,10 @@ export interface Hanok {
   sign: { x: number; y: number; z: number; w: number; h: number };
   /** 문 탭 판정 상자 */
   door: { x: number; y: number; z: number };
+  /** 들어갈 때 열리는 문 (D-094) */
+  doorway: Doorway;
+  /** 계단 두 단과 기단: [앞면 z, 윗면 y] */
+  steps: [number, number][];
   /** 계단 앞 걸을 수 있는 경계 (이보다 +z 쪽만 걸을 수 있음) */
   frontEdge: number;
 }
@@ -301,6 +306,22 @@ export function buildHanok(style: HanokStyle, bz: number): Hanok {
     glows,
     sign: { x: 0, y: 2.66, z: beamFront + 0.03, w: 1.5, h: 0.48 },
     door: { x: 0, y: doorY, z: zf + 0.3 },
+    doorway: {
+      z: zf,
+      shape: "rect",
+      w: 1.84,
+      h: doorH,
+      y0: doorY - doorH / 2,
+      leaves: 2,
+      leaf: style.paper,
+      frame: "#4a2e1c",
+      paper: true,
+    },
+    steps: [
+      [front + 0.64, 0.15],
+      [front + 0.32, 0.3],
+      [front, baseH + 0.04],
+    ],
     frontEdge: front + 0.64,
   };
 }

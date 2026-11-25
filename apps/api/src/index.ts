@@ -8,7 +8,7 @@ import { createInvite, joinInvite, viewInvite } from "./gunghap/invites";
 import { HttpError, fail, json } from "./http";
 import { getMenu } from "./menu";
 import { createPairReading, getPairResult, submitPairDream } from "./pair/readings";
-import { getProfile, putProfile } from "./profile";
+import { getProfile, putProfile, putStyle } from "./profile";
 import { checkDream } from "./readings/check";
 import { createReading } from "./readings/create";
 import { createFollowup } from "./readings/followups";
@@ -43,6 +43,7 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
     if (method === "GET") return getProfile(env, user);
     if (method === "PUT") return putProfile(req, env, user);
   }
+  if (path === "/api/profile/style" && method === "PUT") return putStyle(req, env, user);
   if (path === "/api/menu" && method === "GET") return getMenu(url, env, user);
   if (path === "/api/daily" && method === "GET") return getDaily(env, ctx, user);
   if (path === "/api/readings/check" && method === "POST") return checkDream(req, env, user);

@@ -114,3 +114,11 @@
   color: rgba(243, 231, 207, 0.55);
   word-break: keep-all;
 }
+
+/* 꾸미기 (F17) */
+.me-style {
+  height: 40px;
+  min-width: 0;
+  margin-top: -4px;
+  padding: 0 18px;
+}

@@ -11,7 +11,7 @@ import { leavePair, pairState, sendPair, travel } from "../../../net/pairSession
 import type { NpcAction, Stage } from "../../../scene/stage";
 import { Icon, Plaque, SoundButton } from "../../app/kit";
 import { hasWebGL2, loadStage } from "../../app/preload";
-import { goBack, navigate } from "../../app/router";
+import { goBack, goToMap, navigate } from "../../app/router";
 import { SHOP_INFO } from "../../app/shops";
 import { callsLeft, lookOf } from "../../app/state";
 import { ShopScreen } from "../../shop/ShopScreen";
@@ -111,6 +111,11 @@ export function StreetScreen(props: {
         if (!s || want.current === s.inside) break;
         const ms = fadeMs();
         sfx("door");
+        // 문이 열리고 캐릭터가 걸어 들어간 뒤 어두워진다 (D-094)
+        if (want.current && !s.inside && !reduceMotion()) {
+          await s.playEnter();
+          if (stage.current !== s) break;
+        }
         setDark(true);
         await sleep(ms);
         if (stage.current !== s) break;
@@ -120,6 +125,7 @@ export function StreetScreen(props: {
             if (s.inside) setShown("inside");
           } catch {
             // F04: 내부 생성 실패 → 거리에 남고 다시 시도 안내
+            s.cancelEnter();
             if (want.current) {
               want.current = false;
               setEnterFailed(true);
@@ -144,7 +150,8 @@ export function StreetScreen(props: {
     setEnterFailed(false);
     navigate({ name: "inside", shop });
   };
-  const exit = () => goBack({ name: "street", shop });
+  // 점집 안 "나가기"는 거리를 거치지 않고 바로 지도로
+  const exit = () => goToMap();
   const ps = code ? pairState.value : null;
   const host = ps?.role === "host";
   const room = usePairStage({ active: !!code, stage, ready: status === "ready", walkRef });

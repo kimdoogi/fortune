@@ -5,7 +5,7 @@
  */
 import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
-import type { AgeBand, ChibiLook, Gender } from "./chibi";
+import type { ChibiLook } from "./chibi";
 import { type Interior, buildInterior } from "./interior";
 import type { NpcAction } from "./npc";
 import { PAIR_DOOR_REACH, StreetView } from "./street-view";
@@ -25,7 +25,7 @@ export interface StageEvents {
 
 export interface StageOptions {
   shop: ShopId;
-  look: { gender: Gender; ageBand: AgeBand };
+  look: ChibiLook;
 }
 
 /** 점집 안에 이보다 오래 있으면 거리 장면을 해제한다 (07 §5) */
@@ -180,6 +180,16 @@ export class Stage {
     this.renderer.render(room.scene, room.camera);
     await nextFrame();
     if (token !== this.token || this.disposed) throw new Error("enter cancelled");
+  }
+
+  /** 들어가기 연출: 문이 열리고 캐릭터가 걸어 들어간다 (D-094). 거리가 없으면 바로 끝 */
+  playEnter(): Promise<void> {
+    return this.street && !this._inside ? this.street.playEnter() : Promise.resolve();
+  }
+
+  /** 들어가기가 실패했으면 문 앞으로 되돌린다 */
+  cancelEnter() {
+    if (!this._inside) this.street?.standAtDoor();
   }
 
   /** 거리로: 캐릭터가 문 앞에 서서 거리 쪽을 본다 */

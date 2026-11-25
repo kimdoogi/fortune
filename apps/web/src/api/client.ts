@@ -23,6 +23,7 @@ import type {
   ReadingResult,
   SessionResponse,
   ShopId,
+  StyleInput,
 } from "@fortune/shared-types";
 
 export class ApiFailure extends Error {
@@ -71,6 +72,8 @@ export const api = {
   deleteMe: () => call<void>("DELETE", "/api/session"),
   getProfile: () => call<ProfileView>("GET", "/api/profile"),
   putProfile: (input: ProfileInput) => call<ProfileView>("PUT", "/api/profile", input),
+  /** F17: 캐릭터 꾸미기만 바꾼다 (null이면 기본 모습) */
+  putStyle: (input: StyleInput) => call<ProfileView>("PUT", "/api/profile/style", input),
   menu: (shop: ShopId) => call<MenuResponse>("GET", `/api/menu?shop=${shop}`),
   check: (req: CheckRequest) => call<CheckResponse>("POST", "/api/readings/check", req),
   read: (req: ReadingRequest) => call<ReadingResult>("POST", "/api/readings", req),

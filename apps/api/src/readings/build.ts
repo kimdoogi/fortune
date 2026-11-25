@@ -30,6 +30,7 @@ import {
   tarotSeedKey,
   throwRice,
 } from "../seed";
+import { pickThemes } from "./themes";
 
 /** 꿈 검사 결과 (checks 행) */
 export interface DreamCheck {
@@ -85,6 +86,8 @@ function base(ctx: PlanContext, shop: ShopId, product: ProductId, facts: string[
       vocative: vocativeFor(shop, ctx.profile.nickname),
     },
     facts,
+    // 나이대 관심사로만 흐르지 않게 생활 주제 둘 (D-096)
+    themes: pickThemes(),
     question: null,
   };
 }

@@ -590,3 +590,10 @@
 .ampm .seg button {
   height: 40px;
 }
+
+/* 꾸미기 (F17) */
+.pf-style {
+  height: 40px;
+  min-width: 0;
+  padding: 0 18px;
+}

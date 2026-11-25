@@ -172,6 +172,9 @@ export function SajuFlow(props: FlowProps): JSX.Element {
 
 const TAROT_CATS: TarotCategory[] = ["연애", "재물", "직장", "오늘"];
 
+/** 세 장은 고른 순서대로 과거·현재·미래 자리에 놓인다 */
+const TAROT_POS = ["과거", "현재", "미래"] as const;
+
 export function TarotFlow(
   props: FlowProps & { product: "tarot_one" | "tarot_three" },
 ): JSX.Element {
@@ -203,19 +206,20 @@ export function TarotFlow(
       sfx("shuffle");
       props.say(
         need === 3
-          ? "마음속으로 질문을 떠올리고, 끌리는 카드 세 장을 골라 봐요."
-          : "숨을 한 번 고르고, 끌리는 카드 한 장을 골라 봐요.",
+          ? "마음속으로 질문을 떠올리고 과거, 현재, 미래 순서로 한 장씩 골라 봐요. 고른 카드를 다시 누르면 내려놓을 수 있어요."
+          : "숨을 한 번 고르고, 끌리는 카드 한 장을 골라 봐요. 다시 누르면 내려놓을 수 있어요.",
       );
     }
   }, [stage]);
 
-  // 다 고르면 잠시 뒤 가운데로
-  // biome-ignore lint/correctness/useExhaustiveDependencies: 단계가 바뀔 때만 실행한다 (콜백은 렌더마다 새로 만들어짐)
-  useEffect(() => {
-    if (picked.length < need) return;
-    const t = setTimeout(() => setStage("reveal"), 550);
-    return () => clearTimeout(t);
-  }, [picked.length]);
+  /** 고른 카드를 다시 누르면 내려놓는다. 뒤에 고른 카드는 한 자리씩 앞당겨진다 */
+  const toggle = (i: number) => {
+    if (stage !== "fan") return;
+    sfx("flip");
+    if (picked.includes(i)) setPicked(picked.filter((x) => x !== i));
+    else if (picked.length < need) setPicked([...picked, i]);
+  };
+  const full = picked.length >= need;
 
   const result = job.value;
   const cards = result?.visual.shop === "tarot" ? result.visual.cards : [];
@@ -258,28 +262,40 @@ export function TarotFlow(
       <div class="sh-block">
         <div class={stage === "reveal" ? "sh-fan sh-fan-out" : "sh-fan"}>
           {angles.map((a, i) => {
-            const on = picked.includes(i);
+            const order = picked.indexOf(i);
+            const on = order >= 0;
+            const pos = need === 3 ? TAROT_POS[order] : "오늘";
             return (
               <button
                 type="button"
                 key={a}
                 class={on ? "sh-fcard sh-fcard-on" : "sh-fcard"}
                 style={{ "--a": `${a}deg`, "--i": i }}
-                aria-label={`${i + 1}번째 카드`}
-                disabled={on || picked.length >= need}
-                onClick={() => {
-                  sfx("flip");
-                  setPicked([...picked, i]);
-                }}
+                aria-label={on ? `${pos} 카드 (다시 누르면 내려놓아요)` : `${i + 1}번째 카드`}
+                aria-pressed={on}
+                disabled={stage !== "fan" || (!on && full)}
+                onClick={() => toggle(i)}
               >
                 <TarotBack />
+                {on && <span class="sh-fcard-tag">{pos}</span>}
               </button>
             );
           })}
         </div>
-        <p class="sh-count">
-          {Math.min(picked.length, need)} / {need}장
-        </p>
+        {stage === "fan" && full ? (
+          <div class="sh-fan-go">
+            <Primary onClick={() => setStage("reveal")}>
+              {need === 3 ? "이 세 장으로 펼치기" : "이 카드로 볼게요"}
+            </Primary>
+            <p class="sh-count">바꾸고 싶으면 고른 카드를 다시 눌러요</p>
+          </div>
+        ) : (
+          <p class="sh-count">
+            {need === 3
+              ? `${TAROT_POS[picked.length] ?? "미래"} 카드를 골라 주세요 · ${picked.length} / 3장`
+              : "끌리는 카드를 한 장 골라 주세요"}
+          </p>
+        )}
       </div>
 
       {stage === "reveal" && (

@@ -114,9 +114,11 @@ export interface FollowupInput {
   originalInput: string;
   /** 원래 풀이 출력 (readings.output_json 그대로) */
   originalOutput: string;
-  /** 앞선 문답. answerJson은 저장된 출력 문자열 그대로 */
-  history: { question: string; answerJson: string }[];
+  /** 앞선 문답. answerJson은 저장된 출력 문자열 그대로. asker는 같이 본 풀이에서 물은 사람 (D-091) */
+  history: { question: string; answerJson: string; asker?: string }[];
   question: string;
+  /** 같이 본 풀이(F16)에서 이번에 묻는 사람 닉네임 (D-091) */
+  asker?: string;
 }
 
 export type FollowupResult =
@@ -158,7 +160,7 @@ export type ClientMessage =
 export interface PlayerState {
   id: string;
   nickname: string;
-  /** "성별:나이대" (예: "female:20대"). 상대 캐릭터를 그린다 */
+  /** "성별:나이대[:꾸미기 코드]" (예: "female:20대", F17). 상대 캐릭터를 그린다 */
   avatar: string;
   x: number;
   z: number;
@@ -186,6 +188,10 @@ export type ServerMessage =
   | { t: "picked"; id: string; relation: string; product?: ProductId }
   | { t: "submitted"; id: string; product: ProductId }
   | { t: "result_ready"; product?: ProductId }
-  | { t: "result_failed"; message: string; product?: ProductId };
+  | { t: "result_failed"; message: string; product?: ProductId }
+  /** 같이 본 풀이의 이어 묻기 (D-091): 묻는 중 / 답이 나왔다(ok) 또는 실패 */
+  | { t: "asking"; id: string; product: ProductId }
+  | { t: "asked"; id: string; product: ProductId; ok: boolean };
 export { type WsTokenPayload, signWsToken, verifyWsToken } from "./wsToken";
 export * from "./api";
+export * from "./avatar";

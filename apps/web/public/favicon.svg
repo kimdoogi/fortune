@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 점집 거리 아이콘 (docs/16 §1): 밤하늘, 보름달, 등불 -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141634"/>
+      <stop offset="1" stop-color="#3b2d5c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".55" r=".5">
+      <stop offset="0" stop-color="#ffd08a" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#ffb85c" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lamp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe2a8"/>
+      <stop offset="1" stop-color="#f0903c"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#sky)"/>
+  <circle cx="48" cy="15" r="7" fill="#f6e7b8"/>
+  <circle cx="32" cy="36" r="22" fill="url(#glow)"/>
+  <path d="M32 9v6" stroke="#f2d38a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M23 18h18l-3 4H26z" fill="#6e4429"/>
+  <rect x="21" y="22" width="22" height="24" rx="10" fill="url(#lamp)" stroke="#a83a35" stroke-width="2"/>
+  <path d="M32 22v24M22 34h20" stroke="#a83a35" stroke-opacity=".45" stroke-width="1.4"/>
+  <path d="M26 46h12l-2 4H28z" fill="#6e4429"/>
+  <path d="M32 50v6" stroke="#a83a35" stroke-width="2" stroke-linecap="round"/>
+</svg>

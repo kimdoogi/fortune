@@ -1,0 +1,7 @@
+# 점집 거리 (docs/16 §2·§3). 검색 엔진과 AI 수집기 모두 허용, API만 막는다
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /ws/
+
+Sitemap: https://fortune-app.dugiz94.workers.dev/sitemap.xml

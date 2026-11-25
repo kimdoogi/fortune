@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#141634" />
+    <!-- 정적 소개 페이지 (docs/16 §3, D-082). 자바스크립트 없이 읽힌다. 내용을 바꾸면 아래 FAQPage도 같이 -->
+    <title>점집 거리 소개 — 무료 사주·월별 운세·타로·신점·꿈해몽</title>
+    <meta
+      name="description"
+      content="점집 거리는 가입 없이 무료로 보는 모바일 점집이에요. 사주팔자와 앞으로 12달 좋은 달·조심할 달, 오늘의 운세 점수와 행운의 숫자, 타로, 아기도령 신점, 꿈해몽을 어떻게 보는지와 자주 묻는 질문을 정리했어요."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://fortune-app.dugiz94.workers.dev/about" />
+    <meta name="geo.region" content="KR" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="점집 거리" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:url" content="https://fortune-app.dugiz94.workers.dev/about" />
+    <meta property="og:title" content="점집 거리 소개 — 무료 사주·타로·신점·꿈해몽" />
+    <meta
+      property="og:description"
+      content="가입 없이 무료로 보는 점집 네 곳. 무엇을 볼 수 있고 어떻게 풀어 주는지 알아봐요."
+    />
+    <meta property="og:image" content="https://fortune-app.dugiz94.workers.dev/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Gowun+Dodum&display=swap"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "inLanguage": "ko-KR",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "점집 거리는 무료인가요?",
+            "acceptedAnswer": { "@type": "Answer", "text": "네, 모든 점이 무료예요. 한 사람이 하루에 30번까지 볼 수 있어요." }
+          },
+          {
+            "@type": "Question",
+            "name": "회원가입을 해야 하나요?",
+            "acceptedAnswer": { "@type": "Answer", "text": "아니요. 별명, 생년월일, 태어난 시간(몰라도 돼요), 성별만 넣으면 바로 볼 수 있어요. 기록은 지금 쓰는 브라우저에 연결돼요." }
+          },
+          {
+            "@type": "Question",
+            "name": "사주는 어떻게 계산하나요?",
+            "acceptedAnswer": { "@type": "Answer", "text": "만세력과 24절기 시각으로 네 기둥(사주팔자)을 세우고, 오행·십신·신강신약·용신·대운·세운·월운을 코드로 계산해요. 앞으로 12달 중 좋은 달과 조심할 달도 용신과 합충으로 점수를 매겨 골라요. AI는 계산된 결과를 점술가 말투로 풀어 줄 뿐 계산을 바꾸지 않아요." }
+          },
+          {
+            "@type": "Question",
+            "name": "태어난 시간을 모르면 어떻게 되나요?",
+            "acceptedAnswer": { "@type": "Answer", "text": "시주 없이 세 기둥으로 풀어요. 사주판에 시주 자리는 비워 두고 알려 드려요." }
+          },
+          {
+            "@type": "Question",
+            "name": "오늘의 운세 점수와 행운의 숫자는 어떻게 정해지나요?",
+            "acceptedAnswer": { "@type": "Answer", "text": "오늘 일진이 내 일간과 어떤 관계(십신, 합과 충)인지로 40점에서 99점 사이 점수를 매기고, 아주 좋음·좋음·보통·조심 네 등급으로 보여 줘요. 행운의 숫자는 행운의 색과 같은 오행의 숫자 두 개예요." }
+          },
+          {
+            "@type": "Question",
+            "name": "생년월일 같은 개인정보는 안전한가요?",
+            "acceptedAnswer": { "@type": "Answer", "text": "생년월일과 태어난 시간은 암호화해서 저장하고, 이름은 받지 않아요. 내 정보 화면에서 캐릭터, 프로필, 점 기록을 모두 지울 수 있어요." }
+          },
+          {
+            "@type": "Question",
+            "name": "풀이가 꼭 맞나요?",
+            "acceptedAnswer": { "@type": "Answer", "text": "재미로 보는 풀이예요. 좋은 점과 조심할 점을 시원하게 말해 주지만, 중요한 결정은 스스로, 필요하면 전문가와 함께 내려 주세요." }
+          }
+        ]
+      }
+    </script>
+    <style>
+      :root {
+        --night: #141634;
+        --dusk: #3b2d5c;
+        --lamp: #ffb85c;
+        --hanji: #f3e7cf;
+        --wood: #6e4429;
+        --wood-deep: #4a2c1a;
+        --gold: #f2d38a;
+        --ink: #3a2a1e;
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--night); }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg, var(--night) 0%, #221d48 40%, var(--dusk) 100%) fixed;
+        color: var(--ink);
+        font-family: "Gowun Dodum", system-ui, sans-serif;
+        line-height: 1.75;
+        word-break: keep-all;
+      }
+      .wrap { max-width: 720px; margin: 0 auto; padding: 32px 16px 56px; }
+      header { text-align: center; color: var(--hanji); padding: 24px 0 28px; }
+      header img { display: block; width: 100%; height: auto; max-width: 600px; margin: 0 auto; border-radius: 14px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45); }
+      h1 {
+        display: inline-block;
+        margin: 24px 0 8px;
+        padding: 10px 26px 12px;
+        border-radius: 8px;
+        background: linear-gradient(180deg, var(--wood), var(--wood-deep));
+        border: 2px solid var(--gold);
+        box-shadow: inset 0 0 0 3px var(--wood-deep), inset 0 0 0 4px rgba(242, 211, 138, 0.5);
+        color: #f6dc97;
+        font-family: "Gowun Batang", serif;
+        font-size: clamp(24px, 6vw, 34px);
+        letter-spacing: 0.08em;
+      }
+      header p { margin: 8px 0 0; font-size: 17px; color: rgba(243, 231, 207, 0.85); }
+      .cta {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 14px 32px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #ffd08a, var(--lamp));
+        color: #3a2418;
+        font-weight: 700;
+        font-size: 17px;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(255, 184, 92, 0.35);
+      }
+      section {
+        margin: 18px 0;
+        padding: 22px 20px;
+        border-radius: 16px;
+        background: linear-gradient(180deg, #fbf3e2, var(--hanji));
+        box-shadow: 0 10px 28px rgba(8, 6, 20, 0.4);
+      }
+      h2 { margin: 0 0 10px; font-family: "Gowun Batang", serif; font-size: 22px; color: var(--wood); }
+      h3 { margin: 18px 0 4px; font-family: "Gowun Batang", serif; font-size: 18px; color: var(--wood-deep); }
+      p, li { font-size: 16px; }
+      ul { padding-left: 20px; margin: 6px 0; }
+      dt { margin-top: 14px; font-weight: 700; color: var(--wood-deep); }
+      dd { margin: 4px 0 0; }
+      .note { font-size: 14px; color: #6b4e36; }
+      footer { text-align: center; color: rgba(243, 231, 207, 0.6); font-size: 13px; margin-top: 28px; }
+      footer a { color: var(--gold); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <img src="/og.jpg" width="1200" height="630" alt="점집 거리 — 사주·타로·신점·꿈해몽 점술가 네 명과 밤의 점집 골목" />
+        <h1>점집 거리</h1>
+        <p>달 밝은 밤, 골목 끝 등불 아래 점집 네 곳.<br />가입 없이 무료로 사주·타로·신점·꿈해몽을 봐요.</p>
+        <a class="cta" href="/">점집 거리 들어가기</a>
+      </header>
+
+      <main>
+        <section>
+          <h2>점집 거리는 어떤 곳인가요?</h2>
+          <p>
+            점집 거리는 휴대폰 브라우저에서 바로 여는 <strong>무료 점집 메타버스</strong>예요. 지도에서 점집을 고르면
+            밤의 한옥 골목에 2등신 캐릭터로 들어가 걸어 다니고, 점집 문을 열면 점술가와 마주 앉아 점을 봐요.
+            회원가입 없이 별명과 생년월일만 넣으면 되고, 한 사람이 하루에 30번까지 볼 수 있어요.
+          </p>
+        </section>
+
+        <section>
+          <h2>점집 네 곳에서 볼 수 있는 것</h2>
+
+          <h3>사주집 · 청운 선생 — 사주팔자와 월별 운세</h3>
+          <ul>
+            <li><strong>사주 정밀:</strong> 네 기둥 사주판, 오행 분포, 신강·신약, 용신, 지금 대운, 올해(연말이면 내년까지) 운세, 재물·일·연애</li>
+            <li><strong>앞으로 12달 월별 운세:</strong> 좋은 달과 조심할 달을 2~3개씩 골라 "몇 월에 무엇이 생기고 어떻게 하라"고 짚어 줘요</li>
+            <li><strong>오늘의 운세:</strong> 매일 바뀌는 운세 점수(40~99점)와 등급, 행운의 숫자, 행운의 색, 오늘 해 볼 일 하나</li>
+          </ul>
+
+          <h3>타로집 · 달님 언니 — 타로점</h3>
+          <ul>
+            <li>연애·재물·직장·오늘 중 하나를 고르고, 메이저 아르카나 22장 중에서 카드를 뽑아요</li>
+            <li>한 장 타로(오늘의 메시지)와 세 장 타로(과거·현재·미래 + 조언)</li>
+          </ul>
+
+          <h3>아기도령 신당 — 신점 대화</h3>
+          <ul>
+            <li>들어가자마자 아기도령이 방울을 흔들고 나이대·성별에 흔한 고민을 먼저 짚어요</li>
+            <li>짧게 다섯 번 주고받으며 할 일과 조심할 것, 좋은 때를 알려 주고 마지막에 오늘의 점괘를 정리해요</li>
+          </ul>
+
+          <h3>꿈해몽 찻집 · 몽실 할매 — 꿈 풀이</h3>
+          <ul>
+            <li>간밤의 꿈을 적으면 꿈 속 상징(돼지, 뱀, 물, 이빨 등 150가지)을 찾아 뜻을 풀어 줘요</li>
+            <li>"뱀 꿈", "이빨 빠짐"처럼 짧게 써도 가장 가까운 상징으로 풀어요</li>
+          </ul>
+
+          <p class="note">모든 풀이에서 궁금한 점을 이어서 물어볼 수 있어요 (풀이마다 3번, 아기도령 신점은 5번).</p>
+        </section>
+
+        <section>
+          <h2>어떻게 풀어 주나요?</h2>
+          <p>
+            <strong>계산은 코드가, 말은 AI 점술가가</strong> 해요. 사주는 만세력과 24절기 시각으로 네 기둥을 세우고
+            오행·십신·용신·대운·세운·월운·합충을 계산해요. 월별 운세의 좋은 달·조심할 달, 오늘의 운세 점수와
+            행운의 숫자도 정해진 규칙으로 계산해요. 타로 카드와 꿈 상징의 뜻은 직접 만든 의미표에서 가져와요.
+          </p>
+          <p>
+            AI는 이렇게 계산된 결과를 점술가 말투로 쉽게 풀어 줄 뿐, 결과를 바꾸거나 새 점괘를 지어내지 않아요.
+            좋은 점만이 아니라 약점과 조심할 점도 솔직하게 말해요.
+          </p>
+        </section>
+
+        <section>
+          <h2>자주 묻는 질문</h2>
+          <dl>
+            <dt>점집 거리는 무료인가요?</dt>
+            <dd>네, 모든 점이 무료예요. 한 사람이 하루에 30번까지 볼 수 있어요.</dd>
+            <dt>회원가입을 해야 하나요?</dt>
+            <dd>아니요. 별명, 생년월일, 태어난 시간(몰라도 돼요), 성별만 넣으면 바로 볼 수 있어요. 기록은 지금 쓰는 브라우저에 연결돼요.</dd>
+            <dt>사주는 어떻게 계산하나요?</dt>
+            <dd>만세력과 24절기 시각으로 네 기둥(사주팔자)을 세우고, 오행·십신·신강신약·용신·대운·세운·월운을 코드로 계산해요. 앞으로 12달 중 좋은 달과 조심할 달도 용신과 합충으로 점수를 매겨 골라요. AI는 계산된 결과를 점술가 말투로 풀어 줄 뿐 계산을 바꾸지 않아요.</dd>
+            <dt>태어난 시간을 모르면 어떻게 되나요?</dt>
+            <dd>시주 없이 세 기둥으로 풀어요. 사주판에 시주 자리는 비워 두고 알려 드려요.</dd>
+            <dt>오늘의 운세 점수와 행운의 숫자는 어떻게 정해지나요?</dt>
+            <dd>오늘 일진이 내 일간과 어떤 관계(십신, 합과 충)인지로 40점에서 99점 사이 점수를 매기고, 아주 좋음·좋음·보통·조심 네 등급으로 보여 줘요. 행운의 숫자는 행운의 색과 같은 오행의 숫자 두 개예요.</dd>
+            <dt>생년월일 같은 개인정보는 안전한가요?</dt>
+            <dd>생년월일과 태어난 시간은 암호화해서 저장하고, 이름은 받지 않아요. 내 정보 화면에서 캐릭터, 프로필, 점 기록을 모두 지울 수 있어요.</dd>
+            <dt>풀이가 꼭 맞나요?</dt>
+            <dd>재미로 보는 풀이예요. 좋은 점과 조심할 점을 시원하게 말해 주지만, 중요한 결정은 스스로, 필요하면 전문가와 함께 내려 주세요.</dd>
+          </dl>
+        </section>
+
+        <p style="text-align: center"><a class="cta" href="/">점집 거리 들어가기</a></p>
+      </main>
+
+      <footer>
+        <p>점집 거리 · 재미로 보는 풀이예요 · 배경음·효과음: ElevenLabs로 만들었어요</p>
+        <p><a href="/">처음으로</a> · <a href="/llms.txt">llms.txt</a></p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -34,6 +34,7 @@
 | 13 | [기술 구조·코딩 규칙](13-tech-architecture.md) | 스택, 저장소 구조, 테스트 | ✅ |
 | 14 | [마일스톤](14-milestones.md) | 단계별 범위와 완료 기준 | 🟡 |
 | 15 | [인프라 설계](15-infrastructure.md) | Cloudflare 구성, reading Worker, 멀티플레이, 배포 | ✅ |
+| 16 | [공유·검색·AI 검색](16-seo-share.md) | OG 이미지, 메타 태그, 소개 페이지, robots·sitemap·llms.txt | ✅ |
 
 - [결정 기록](decisions/README.md) — 확정된 결정과 이유
 - [MVP 기능 명세 14개](features/README.md) — 사용자 흐름도와 F01~F14

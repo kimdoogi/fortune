@@ -1,8 +1,9 @@
+import { analyzePillars, computeDaewoon, sewoonOfYear } from "@fortune/fortune-engine";
 /**
  * 상품별 seed_key 와 해석 입력 만들기 (docs/04 §3, docs/03, F05~F08).
  * 엔진 계산·카드·깃발 결정은 모두 여기(서버)에서 한다.
  */
-import { analyzePillars, computeDaewoon, sewoonOfYear } from "@fortune/fortune-engine";
+import { fillTemplate } from "@fortune/prompts";
 import type {
   AgeBand,
   ClassifyRisk,
@@ -60,7 +61,13 @@ function base(ctx: PlanContext, shop: ShopId, product: ProductId, facts: string[
     shop,
     product,
     today: ctx.today,
-    user: { nickname: ctx.profile.nickname, gender: ctx.profile.gender, ageBand: ctx.ageBand },
+    user: {
+      nickname: ctx.profile.nickname,
+      gender: ctx.profile.gender,
+      ageBand: ctx.ageBand,
+      // 아기도령이 받침에 맞게 부르도록 코드가 정한다 (하나야, 민준아)
+      vocative: fillTemplate("{닉네임}아", ctx.profile.nickname),
+    },
     facts,
     question: null,
   };

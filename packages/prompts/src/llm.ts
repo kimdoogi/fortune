@@ -25,7 +25,7 @@ export const SECTION_TARGETS: Record<ProductId, Record<string, number>> = {
   tarot_one: { card: 200, message: 130 },
   tarot_three: { past: 220, present: 250, future: 250, advice: 180 },
   obanggi: { flag: 250, message: 380, advice: 220 },
-  sinjeom: { gongsu: 150 },
+  sinjeom: { gongsu: 170 },
   dream: { symbols: 300, meaning: 350, advice: 200 },
 };
 
@@ -219,7 +219,7 @@ export function followupVersion(shop: ShopId, product: ProductId): string {
 
 /** 이어 묻기 답 목표 글자 수 (신점 대화는 짧게) */
 export const followupTarget = (product: ProductId) =>
-  product === "sinjeom" ? 80 : FOLLOWUP_TARGET;
+  product === "sinjeom" ? 110 : FOLLOWUP_TARGET;
 
 /** 이어 묻기 출력 스키마. 바꾸면 캐시가 깨지므로 고정한다 */
 export const FOLLOWUP_SCHEMA = {

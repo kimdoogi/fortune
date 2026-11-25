@@ -39,7 +39,13 @@ export interface InterpretInput {
   shop: ShopId;
   product: ProductId;
   today: string;
-  user: { nickname: string; gender: "male" | "female"; ageBand: string };
+  user: {
+    nickname: string;
+    gender: "male" | "female";
+    ageBand: string;
+    /** 반말 호칭 (받침에 맞춘 아/야, 예: "하나야", "민준아"). 코드가 만든다 */
+    vocative?: string;
+  };
   facts: string[];
   question: string | null;
   [shopSpecific: string]: unknown;

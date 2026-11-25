@@ -9,7 +9,8 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { ApiFailure, api, newRequestId } from "../../api/client";
 import type { FlowProps } from "./flows";
 
-const CHIPS = ["맞아! 어떻게 알았어?", "음… 그건 아닌데", "더 말해 줘!"];
+/** 빠른 답: 맞히기 놀이가 아니라 도움(할 일·조심할 것)으로 이어지게 (F07, D-074) */
+const CHIPS = ["맞아! 어떻게 해야 돼?", "음… 그건 아닌데", "뭘 조심해야 돼?"];
 const MAX_CHARS = 60;
 
 /** 한 줄을 읽을 시간 (글자 수에 비례) */
@@ -88,7 +89,7 @@ export function SinjeomFlow(props: FlowProps): JSX.Element {
       setLeft(res.followupsLeft);
       props.onCallsLeft?.(res.todayCallsLeft);
       props.say(res.followup.answer);
-      if (/맞아|어떻게 알았/.test(question)) props.npc("celebrate");
+      if (/^맞아/.test(question)) props.npc("celebrate");
       if (res.followupsLeft === 0) {
         later(
           () => props.say("오늘은 여기까지! 방울이 쉬고 싶대. 내일 또 와!"),

@@ -166,7 +166,10 @@ describe("이어 묻기 (F15, docs/04 §13)", () => {
     expect(calls[0]?.messages).toEqual([
       { role: "user", content: originalInput },
       { role: "assistant", content: originalOutput },
-      { role: "user", content: JSON.stringify({ question: "그 사람이 연락할까요?" }) },
+      {
+        role: "user",
+        content: JSON.stringify({ question: "그 사람이 연락할까요?", turn: 1, of: 3 }),
+      },
     ]);
   });
 

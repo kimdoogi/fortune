@@ -55,7 +55,7 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
   "shop": "saju | tarot | dolyeong | dream",
   "product": "상품 ID (§4)",
   "today": "2026-11-24",
-  "user": { "nickname": "별빛", "gender": "female", "ageBand": "20대" },
+  "user": { "nickname": "별빛", "gender": "female", "ageBand": "20대", "vocative": "별빛아" },
   "facts": ["코드가 해석 데이터 표에서 붙인 의미 문장들"],
   "question": null
 }
@@ -263,8 +263,8 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
 1. system: 공통 규칙 + 캐릭터 + 이어 묻기 지시 (점집마다 고정, `cache_control`)
 2. user: 원래 풀이 입력 JSON (저장된 `input_json` 그대로)
 3. assistant: 원래 풀이 출력 JSON (저장된 `output_json` 그대로)
-4. user: `{"question": "첫 질문"}` / assistant: `{"risk":"none","answer":"…"}` … 앞선 문답을 저장된 순서대로
-5. user: `{"question": "이번 질문"}` ← 요청 최상위 `cache_control`(자동 캐시)이 여기에 중단점을 둔다
+4. user: `{"question": "첫 질문", "turn": 1, "of": 3}` / assistant: `{"risk":"none","answer":"…"}` … 앞선 문답을 저장된 순서대로 (`of`는 상품별 한도: 3, 신점 5)
+5. user: `{"question": "이번 질문", "turn": n, "of": 3}` ← 요청 최상위 `cache_control`(자동 캐시)이 여기에 중단점을 둔다
 
 - 다음 이어 묻기는 1~5를 그대로 다시 보내고 뒤에 새 문답을 붙이므로, 앞부분이 캐시에서 읽힌다 (5분 TTL 안). 저장값을 다시 직렬화하지 않고 **저장된 문자열을 그대로** 쓴다 (키 순서가 바뀌면 캐시가 깨진다)
 - 위험 검사는 이 호출이 같이 한다. `risk`별 처리는 F15

@@ -17,6 +17,7 @@ import {
   checkOutput,
   classifySchema,
   classifySystemPrompt,
+  followupMax,
   followupSystemPrompt,
   followupTarget,
   followupVersion,
@@ -246,14 +247,23 @@ export async function followupWith(
     fallback: FALLBACKS[input.shop],
     promptVersion: pv,
   });
+  const max = followupMax(input.product);
   const messages: Anthropic.MessageParam[] = [
     { role: "user", content: input.originalInput },
     { role: "assistant", content: input.originalOutput },
-    ...input.history.flatMap((h): Anthropic.MessageParam[] => [
-      { role: "user", content: JSON.stringify({ question: h.question }) },
+    // 몇 번째 대화인지 같이 보낸다 (신점 마지막 답은 정리, F07). 순번은 매번 같아 캐시가 유지된다
+    ...input.history.flatMap((h, i): Anthropic.MessageParam[] => [
+      { role: "user", content: JSON.stringify({ question: h.question, turn: i + 1, of: max }) },
       { role: "assistant", content: h.answerJson },
     ]),
-    { role: "user", content: JSON.stringify({ question: input.question }) },
+    {
+      role: "user",
+      content: JSON.stringify({
+        question: input.question,
+        turn: input.history.length + 1,
+        of: max,
+      }),
+    },
   ];
   let maxTokens: number = CALL.followup.maxTokens;
   const retried = { api: false, truncated: false, parse: false };

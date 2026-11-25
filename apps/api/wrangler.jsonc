@@ -14,6 +14,8 @@
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*", "/ws/*"]
   },
+  // IP당 하루 새 계정 수 (F14). "0" = 제한 없음 (테스트 기간에 꺼 둠, Turnstile을 켜면 다시 5로)
+  "vars": { "ACCOUNTS_PER_IP": "0" },
   "services": [{ "binding": "READING", "service": "fortune-reading" }],
   "durable_objects": {
     "bindings": [

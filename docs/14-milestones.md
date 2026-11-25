@@ -22,7 +22,7 @@
 - ✅ 배포 (2026-11-25): Worker 3개 배포, D1 `fortune-prod`(APAC)·KV 생성, 원격 마이그레이션, 비밀값 `WS_TOKEN_KEY`·`PII_KEY` 등록. 공개 주소는 app Worker 하나 (`https://fortune-app.dugiz94.workers.dev`, 도메인을 정하면 옮긴다). reading·realtime은 공개 주소 없음
 - 🟡 AI Gateway 경로 확인 (D-066): 바인딩 → `default` 게이트웨이 → Anthropic 경로 동작 확인. **남은 것:** Anthropic 키 등록(BYOK 또는 reading secret), 대시보드에서 하루 $10 한도·"Require provider credentials" 켜기
 - [ ] 목표 기기에서 [07](07-mobile-performance.md) 기준 충족 (30 FPS) — **실기기 필요**. 첫 화면 JS 30KB(gzip), three.js는 지도 뒤에 따로 불러온다
-- [ ] F14 Turnstile: 위젯을 만들고 `TURNSTILE_SECRET`을 넣으면 켜진다 (지금은 IP당 하루 5개 제한만)
+- [ ] F14 Turnstile: 위젯을 만들고 `TURNSTILE_SECRET`을 넣으면 켜진다. **IP당 하루 계정 제한은 테스트 기간이라 꺼 둠** (`ACCOUNTS_PER_IP="0"`, 2026-11-25). Turnstile을 켤 때 다시 5로 올린다
 
 ## M2. 점 보기
 M1에서 남았던 F14(비회원 계정)·F02(프로필)·F01(지도)도 이번에 함께 만들었다.
@@ -30,7 +30,7 @@ M1에서 남았던 F14(비회원 계정)·F02(프로필)·F01(지도)도 이번�
 - ✅ 점집 4개 내부 + 화면 전환 (F04): 점술가 4명(각 5,000 삼각형 이하), 내부 드로우콜 28~30·삼각형 3.3만 이하, 0.6초 페이드, 문 앞에서 내부를 미리 생성
 - ✅ 점집별 풀이 화면 (F05~F08): 사주판, 타로 22장 SVG와 부채꼴 뽑기, 오방기 펼치기, 꿈 검사(개인정보·위기 안내), 한 글자씩 나오는 결과
 - ✅ 결과 저장 / 다시 보기 (F10), 오늘의 운세 (F13, KV 저장·일간별 공유, Cron 미리 생성은 남음)
-- 🟡 reading Worker + AI Gateway 연동: 구현·재시도 규칙(04 §9)·구조화 출력·캐싱 완료, 고정 응답으로 전체 흐름 확인. **실제 풀이는 Anthropic 키를 넣으면 바로 동작**
+- ✅ reading Worker 실제 풀이 동작 (2026-11-25): 배포 서버에서 타로 풀이 확인 (응답 약 4.6초, 입력 352·출력 515 토큰, 캐시 쓰기 2,395). 지금은 Anthropic 직접 호출 (D-067), 게이트웨이 BYOK는 남음
 - [ ] LLM 기준 샘플 평가 통과: 평가 도구 준비 완료 (`ANTHROPIC_API_KEY=… pnpm --filter @fortune/reading eval`, 해석 28·분류 5). 키가 있어야 돌릴 수 있다
 - 정한 것 (api 구현 중): 진행 중인 같은 requestId는 429 `RATE_LIMITED`, LLM 실패도 하루 30회에 센다(04 §9), 오늘의 운세 행운의 색은 일간을 생하는 오행 색(일간별 공유라 용신을 모름)
 

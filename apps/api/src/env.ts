@@ -11,6 +11,8 @@ export interface Env {
   WS_TOKEN_KEY: string;
   /** 생년월일 암호화 키. base64 32바이트 (docs/15 §8) */
   PII_KEY: string;
+  /** IP당 하루 새 계정 수. "0"이면 제한 없음, 없으면 5 (F14) */
+  ACCOUNTS_PER_IP?: string;
   /** 없으면 Turnstile 검사를 건너뛴다 (F14, 위젯을 아직 만들지 않음) */
   TURNSTILE_SECRET?: string;
 }

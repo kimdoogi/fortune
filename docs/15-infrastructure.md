@@ -138,6 +138,7 @@ sequenceDiagram
   - 확인 결과: 바인딩 요청이 `default` 게이트웨이에 기록되고(게이트웨이는 첫 요청에 자동 생성), 키 없이 보내면 Unified Billing으로 넘어가 402(크레딧 부족)가 난다 → **"Require provider credentials"를 켜서** 크레딧 결제로 새지 않게 한다
   - 키: 게이트웨이 BYOK가 기본. BYOK를 아직 안 했으면 reading Worker secret `ANTHROPIC_API_KEY`를 `x-api-key`로 보낸다 (D-022 허용 범위)
   - 게이트웨이 ID는 `AI_GATEWAY_ID` 변수. 환경별 게이트웨이(staging/prod)를 만들면 바꾼다
+- 🟡 **지금은 직접 호출 (D-067, 2026-11-25):** 바인딩으로 보낸 요청은 secret 키를 붙여도 게이트웨이가 Unified Billing으로 처리해 402가 났다. 그래서 `LLM_ROUTE=direct`로 Anthropic API를 바로 부른다. 게이트웨이 로그·하루 $10 한도 대신 **Anthropic 콘솔 월 한도**가 안전장치다. 대시보드에서 게이트웨이 BYOK를 마치면 `LLM_ROUTE=gateway`로 바꾼다
 - ✅ **AI Gateway 비용 한도:** 게이트웨이 전체 하루 $10 (넘으면 그날 LLM 호출 차단 → 대체 문장). 50% 도달 시 알림
 - ✅ Anthropic 콘솔에도 월 사용 한도 $300을 걸어 이중 안전장치로 둔다
 - ✅ Cloudflare 결제 설정에서 Workers·Durable Objects 사용 금액 알림을 건다 (월 $20, $50)

@@ -70,6 +70,7 @@
 | D-064 | 2026-11-25 | 1인 개발 동안은 **`main`에 바로 커밋**한다 (기능 브랜치·PR 없음). 3D 생성 코드는 점집 내부가 생길 때까지 `apps/web/src/scene`에 둔다 | 혼자 개발할 때는 PR 절차가 이득보다 비용이 큼. 코드를 쓰는 곳이 web 하나뿐 | `main` 보호 + `feat/F05-saju` 기능 브랜치, 처음부터 `packages/models` 분리 |
 | D-065 | 2026-11-25 | 아트 방향: **밤의 한옥 골목 + 따뜻한 등불**, 로우폴리 + 색 그라데이션, 조명은 바닥 버텍스 컬러와 가산 혼합 점으로 구워 넣음. 글꼴은 고운바탕·고운돋움 ([08 §1](../08-art-assets.md#1-스타일-가이드)) | 등불 연출이 점집 컨셉과 맞고, 진짜 광원·그림자 없이도 모바일 한도 안에서 분위기를 낼 수 있음 | 낮 배경, 툰 외곽선, 실시간 점광원 |
 | D-066 | 2026-11-25 | LLM 호출은 **공식 Anthropic SDK + AI 바인딩 `gateway().run()`** 으로 한다 (SDK의 fetch를 바인딩으로 교체). 프롬프트 md는 `packages/prompts/scripts/build.mjs`로 TS 하나에 묶어 Worker와 평가가 같이 쓴다 | 요청 본문이 Anthropic 원형 그대로라 구조화 출력·캐싱이 유지되고, 게이트웨이 토큰(계정 전체 권한)을 쓰지 않는다. md를 직접 import하면 Worker 빌드와 Vitest가 다르게 동작 | 게이트웨이 공개 URL + `cf-aig-authorization` 토큰, 게이트웨이 카탈로그 `env.AI.run("anthropic/...")` (원형 파라미터 전달 불확실), md를 Wrangler Text 모듈로 import |
+| D-067 | 2026-11-25 | 당분간 reading Worker는 **AI Gateway를 거치지 않고 Anthropic API를 직접** 부른다 (`LLM_ROUTE=direct`, 키는 reading secret `ANTHROPIC_API_KEY`). 비용 상한은 Anthropic 콘솔 월 한도로 건다. 게이트웨이 BYOK 설정을 마치면 `gateway`로 되돌린다 (D-066 경로는 코드에 그대로 둠) | 게이트웨이 바인딩으로 보내면 요청에 넣은 키를 쓰지 않고 Unified Billing(Cloudflare 크레딧)으로 처리해 402가 났다. 같은 키로 직접 부르면 정상 | 지금 바로 게이트웨이 BYOK 대시보드 설정 (사용자 작업이 필요해 뒤로 미룸) |
 
 ## 새 결정 쓰는 법
 

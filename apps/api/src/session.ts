@@ -12,6 +12,12 @@ const MAX_AGE = 365 * 24 * 3600;
 /** IP당 하루 새 계정 수 (F14) */
 export const ACCOUNTS_PER_IP = 5;
 
+/** IP당 하루 새 계정 수 (F14). 변수 ACCOUNTS_PER_IP로 바꾸고, 0이면 제한을 끈다 */
+export function accountsPerIp(env: Pick<Env, "ACCOUNTS_PER_IP">): number {
+  const n = Number(env.ACCOUNTS_PER_IP ?? ACCOUNTS_PER_IP);
+  return Number.isFinite(n) && n >= 0 ? Math.floor(n) : ACCOUNTS_PER_IP;
+}
+
 export interface User {
   id: string;
   lastSeenAt: string;
@@ -104,20 +110,24 @@ export async function postSession(req: Request, env: Env): Promise<Response> {
     throw new HttpError("INVALID_INPUT", "자동 접속 확인에 실패했어요. 다시 시도해 주세요");
   }
 
-  // IP는 날짜를 섞어 해시만 남긴다. 6번째부터는 그날 새 계정을 만들지 않는다
+  // IP는 날짜를 섞어 해시만 남긴다. 한도를 넘으면 그날 새 계정을 만들지 않는다 (0이면 제한 없음)
+  const limit = accountsPerIp(env);
   const date = todayKst();
   const ipHash = await sha256Hex(`account:${date}:${ip}`);
-  const slot = await env.DB.prepare(
-    `INSERT INTO account_creations (ip_hash, date, count) VALUES (?1, ?2, 1)
+  const slot =
+    limit === 0
+      ? { count: 0 }
+      : await env.DB.prepare(
+          `INSERT INTO account_creations (ip_hash, date, count) VALUES (?1, ?2, 1)
      ON CONFLICT (ip_hash, date) DO UPDATE SET count = count + 1 WHERE count < ?3
      RETURNING count`,
-  )
-    .bind(ipHash, date, ACCOUNTS_PER_IP)
-    .first<{ count: number }>();
+        )
+          .bind(ipHash, date, limit)
+          .first<{ count: number }>();
   if (!slot) {
     throw new HttpError(
       "ACCOUNT_LIMIT",
-      "오늘은 이 곳에서 새로 시작할 수 있는 횟수를 다 썼어요. 내일 다시 와 주세요",
+      "오늘은 이곳에서 새로 시작할 수 있는 횟수를 다 썼어요. 내일 다시 와 주세요",
     );
   }
 

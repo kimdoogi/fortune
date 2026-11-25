@@ -1,6 +1,7 @@
 /**
  * M1 프로토타입: 점집 거리 1개 + 2등신 캐릭터 탭 이동 (혼자 모드, docs/14 M1).
  * 주소 파라미터: ?shop=saju|tarot|dolyeong|dream &gender=female|male &age=20대 &debug=1
+ * 화면 모양은 08 §1 UI 규칙을 따른다 (한지 카드 + 목재 현판 + 등불색 강조 버튼).
  */
 import type { ShopId } from "@fortune/shared-types";
 import { signal } from "@preact/signals";
@@ -9,6 +10,7 @@ import { useEffect, useRef } from "preact/hooks";
 import type { AgeBand, Gender } from "./scene/chibi";
 import { THEMES } from "./scene/street";
 import { World } from "./scene/world";
+import "./ui/styles.css";
 
 const params = new URLSearchParams(location.search);
 const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
@@ -20,19 +22,42 @@ const debug = params.get("debug") === "1";
 
 const nearDoor = signal(false);
 const entered = signal(false);
+const walked = signal(false);
 const stats = signal<{ fps: number; calls: number; triangles: number } | null>(null);
 
-const button = {
-  border: "none",
-  borderRadius: "999px",
-  padding: "12px 22px",
-  fontSize: "16px",
-  fontWeight: 700,
-  boxShadow: "0 4px 14px rgba(0,0,0,.35)",
-} as const;
+const BackIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    aria-hidden="true"
+  >
+    <path d="M15 5l-7 7 7 7" />
+  </svg>
+);
+
+/** 문 모양 아이콘 (들어가기) */
+const DoorIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M3 9l9-5 9 5" />
+    <path d="M5 9v11h14V9" />
+    <path d="M10 20v-6h4v6" />
+  </svg>
+);
 
 function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const name = THEMES[shop].name;
+
   useEffect(() => {
     if (!canvas.current) return;
     if (!canvas.current.getContext("webgl2")) {
@@ -48,6 +73,9 @@ function App() {
         onNearDoor: (v) => {
           nearDoor.value = v;
         },
+        onFirstMove: () => {
+          walked.value = true;
+        },
         onStats: debug
           ? (s) => {
               stats.value = s;
@@ -59,93 +87,68 @@ function App() {
   }, []);
 
   return (
-    <div style={{ position: "relative", height: "100%" }}>
+    <div class="stage">
       <canvas ref={canvas} />
-      <div
-        style={{
-          position: "absolute",
-          top: "calc(env(safe-area-inset-top) + 12px)",
-          left: 12,
-          right: 12,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          pointerEvents: "none",
-        }}
-      >
-        <button
-          type="button"
-          style={{ ...button, background: "#fff7e0", color: "#3b2b22", pointerEvents: "auto" }}
-        >
-          ← 지도
+
+      <div class="hud-top">
+        <button type="button" class="btn-map">
+          <BackIcon />
+          지도
         </button>
-        <span style={{ fontSize: 18, fontWeight: 800, textShadow: "0 2px 6px rgba(0,0,0,.6)" }}>
-          {THEMES[shop].name} 거리
-        </span>
+        <div class="plaque">{name} 거리</div>
       </div>
 
-      {nearDoor.value && !entered.value && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "calc(env(safe-area-inset-bottom) + 28px)",
-            left: 0,
-            right: 0,
-            textAlign: "center",
-          }}
-        >
-          <button
-            type="button"
-            style={{ ...button, background: "#ffb347", color: "#2b1b14", fontSize: 18 }}
-            onClick={() => {
-              entered.value = true;
-            }}
-          >
-            {THEMES[shop].name}에 들어가기
-          </button>
+      {!entered.value && (
+        <div class="hud-bottom">
+          {nearDoor.value ? (
+            <>
+              <div class="arrived">문 앞에 도착했어요</div>
+              <button
+                type="button"
+                class="btn-enter"
+                onClick={() => {
+                  entered.value = true;
+                }}
+              >
+                <DoorIcon />
+                {name}에 들어가기
+              </button>
+            </>
+          ) : (
+            <div class={walked.value ? "hint gone" : "hint"}>
+              <span class="dot" />
+              바닥을 눌러 걸어가요 · 문을 누르면 바로 가요
+            </div>
+          )}
         </div>
       )}
 
       {entered.value && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(10,8,20,.85)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 16,
-          }}
-        >
-          <p style={{ fontSize: 18 }}>점집 내부는 M2에서 만들어요</p>
-          <button
-            type="button"
-            style={{ ...button, background: "#fff7e0", color: "#3b2b22" }}
-            onClick={() => {
-              entered.value = false;
-            }}
-          >
-            나가기
-          </button>
+        <div class="veil">
+          <div class="card">
+            <div class="plaque">{name}</div>
+            <p>
+              점집 안은 곧 문을 열어요.
+              <br />
+              조금만 기다려 주세요.
+            </p>
+            <button
+              type="button"
+              class="btn-quiet"
+              onClick={() => {
+                entered.value = false;
+              }}
+            >
+              거리로 나가기
+            </button>
+          </div>
         </div>
       )}
 
       {debug && stats.value && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: 8,
-            left: 8,
-            fontSize: 12,
-            fontFamily: "ui-monospace, monospace",
-            background: "rgba(0,0,0,.55)",
-            padding: "4px 8px",
-            borderRadius: 6,
-          }}
-        >
-          FPS {stats.value.fps} · draw {stats.value.calls} · tri {stats.value.triangles}
+        <div class="stats">
+          FPS {stats.value.fps} · draw {stats.value.calls} · tri{" "}
+          {stats.value.triangles.toLocaleString()}
         </div>
       )}
     </div>

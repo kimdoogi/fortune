@@ -7,6 +7,9 @@
   "workers_dev": false,
   "preview_urls": false,
   "observability": { "enabled": true },
-  // fixture: 저장된 응답을 돌려준다 (비용 없이 개발). live: Anthropic 호출 (M2)
-  "vars": { "LLM_MODE": "fixture" }
+  // AI Gateway를 AI 바인딩으로 거친다 (docs/15 §6). DB·KV 바인딩은 주지 않는다
+  "ai": { "binding": "AI" },
+  // fixture: 저장된 응답을 돌려준다 (비용 없이 개발). live: Anthropic 호출
+  // ANTHROPIC_API_KEY는 secret (게이트웨이 BYOK를 쓰면 없어도 된다)
+  "vars": { "LLM_MODE": "live", "AI_GATEWAY_ID": "default" }
 }

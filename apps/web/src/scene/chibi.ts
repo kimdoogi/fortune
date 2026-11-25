@@ -4,6 +4,7 @@
  * 같은 모양의 지오메트리는 모듈에서 한 번만 만들어 모든 캐릭터가 공유한다 (07 §4). 1명 3,000 삼각형 이하.
  */
 import * as THREE from "three";
+import { flatMaterial, mergeRig, selfLitMaterial } from "./rig";
 
 export type AgeBand = "10대" | "20대" | "30대" | "40대 이상";
 export type Gender = "male" | "female";
@@ -150,6 +151,10 @@ export class Chibi {
   private phase = 0;
   private time = Math.random() * 10;
   private nextBlink = 2 + Math.random() * 3;
+  /** 점집 안에서 방석에 앉은 자세 */
+  private seated = false;
+  /** 이 캐릭터만 쓰는 재질·지오메트리 (공유 GEO·MAT는 빼고) */
+  private readonly owned: { dispose(): void }[] = [];
 
   constructor(look: ChibiLook) {
     const pal = PALETTE[look.gender][look.ageBand];
@@ -158,6 +163,7 @@ export class Chibi {
     const hair = mat(pal.hair);
     const accent = mat(pal.accent);
     const shoe = mat(pal.shoe);
+    this.owned.push(top, bottom, hair, accent, shoe);
     const female = look.gender === "female";
 
     const shadow = mesh(GEO.shadow, MAT.shadow, 0, 0.01, 0);
@@ -295,6 +301,28 @@ export class Chibi {
     return Math.round(n);
   }
 
+  /**
+   * 뼈마다 메시를 합쳐 드로우콜을 줄인다 (약 37 → 12). 점집 내부처럼 드로우콜 한도가 낮은 곳에서 쓴다 (07 §3).
+   * 합친 뒤에는 이 캐릭터만의 지오메트리가 생기므로 dispose()를 불러야 한다.
+   */
+  compact(): this {
+    const lit = selfLitMaterial(0.22);
+    const flat = flatMaterial();
+    this.owned.push(lit, flat, ...mergeRig(this.root, lit, flat));
+    return this;
+  }
+
+  /** 방석에 앉는다 (점집 안). 다리를 앞으로 접고 손은 무릎 위 */
+  sit(): this {
+    this.seated = true;
+    return this;
+  }
+
+  dispose() {
+    for (const d of this.owned) d.dispose();
+    this.owned.length = 0;
+  }
+
   /** 걸을 때는 통통 튀며 팔다리를 흔들고, 서 있을 때는 숨쉬듯 움직이고 눈을 깜빡인다 */
   update(dt: number, moving: boolean) {
     this.time += dt;
@@ -307,10 +335,18 @@ export class Chibi {
     this.head.rotation.z = moving
       ? Math.sin(this.phase * 0.5) * 0.05
       : Math.sin(this.time * 0.9) * 0.04;
-    this.legs[0]?.rotation.set(s * 0.6, 0, 0);
-    this.legs[1]?.rotation.set(-s * 0.6, 0, 0);
-    if (this.arms[0]) this.arms[0].rotation.x = -s * 0.55;
-    if (this.arms[1]) this.arms[1].rotation.x = s * 0.55;
+    if (this.seated) {
+      this.body.position.y = -0.13;
+      this.body.rotation.x = 0.04;
+      this.legs[0]?.rotation.set(-1.45, 0.25, 0);
+      this.legs[1]?.rotation.set(-1.45, -0.25, 0);
+      for (const arm of this.arms) arm.rotation.x = -0.55 + breathe * 2;
+    } else {
+      this.legs[0]?.rotation.set(s * 0.6, 0, 0);
+      this.legs[1]?.rotation.set(-s * 0.6, 0, 0);
+      if (this.arms[0]) this.arms[0].rotation.x = -s * 0.55;
+      if (this.arms[1]) this.arms[1].rotation.x = s * 0.55;
+    }
 
     // 깜빡임
     this.nextBlink -= dt;

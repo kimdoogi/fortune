@@ -1,0 +1,173 @@
+/* F13 오늘의 운세: 두루마리(ResultSheet) 안 머리 부분 */
+.daily .rd-veil {
+  background: radial-gradient(120% 80% at 50% 20%, rgba(30, 24, 60, 0.35), rgba(8, 7, 22, 0.6));
+}
+
+.dy-head {
+  margin: -4px 0 18px;
+  text-align: center;
+}
+
+.dy-date {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 15px;
+  color: #7a5236;
+  letter-spacing: 0.04em;
+}
+
+.dy-pair {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0 12px;
+}
+
+.dy-cell {
+  flex: 1;
+  max-width: 150px;
+  padding: 10px 6px 12px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--wood), var(--wood-deep));
+  box-shadow: inset 0 0 0 1.5px rgba(242, 211, 138, 0.6), inset 0 0 0 4px var(--wood-deep), inset 0
+    0 0 5px rgba(242, 211, 138, 0.3), 0 6px 14px rgba(42, 23, 13, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dy-cell span {
+  font-size: 11.5px;
+  color: rgba(246, 220, 151, 0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.dy-cell b {
+  font-family: var(--font-title);
+  font-size: 28px;
+  line-height: 1.1;
+  color: #f6dc97;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.dy-cell b small {
+  margin-left: 2px;
+  font-size: 15px;
+  letter-spacing: 0;
+  opacity: 0.8;
+}
+
+.dy-x {
+  align-self: center;
+  font-size: 12px;
+  color: #b0906c;
+}
+
+.dy-master {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px 4px 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(110, 68, 41, 0.16);
+  font-size: 13px;
+  font-weight: 700;
+  color: #6a4a30;
+}
+
+.dy-wait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 40px 8px 30px;
+  text-align: center;
+}
+
+.dy-bubble {
+  position: relative;
+  margin: 6px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #fffaf0;
+  border: 1.5px solid rgba(110, 68, 41, 0.2);
+  font-family: var(--font-title);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink);
+  word-break: keep-all;
+}
+
+.dy-bubble::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  transform: rotate(45deg);
+  background: #fffaf0;
+  border-left: 1.5px solid rgba(110, 68, 41, 0.2);
+  border-top: 1.5px solid rgba(110, 68, 41, 0.2);
+}
+
+.dy-dots {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.dy-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--wood);
+  animation: dy-dot 1.2s ease-in-out infinite;
+}
+
+.dy-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dy-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.dy-foot .row {
+  margin-top: 4px;
+}
+
+.dy-foot .btn-primary {
+  min-width: 0;
+  height: 48px;
+  font-size: 16px;
+}
+
+.dy-foot .btn-quiet {
+  min-width: 0;
+}
+
+.dy-soon {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  color: #a88a6c;
+}
+
+@keyframes dy-dot {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}

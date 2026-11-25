@@ -45,9 +45,47 @@ export interface InterpretOutput {
   luckyColor?: string;
 }
 
+/** 해석 결과. 실패하면 점집 말투의 대체 문장(docs/04a)을 돌려주고 저장하지 않는다 (docs/04 §9) */
+export type InterpretResult =
+  | { ok: true; output: InterpretOutput; promptVersion: string }
+  | {
+      ok: false;
+      reason: "refusal" | "timeout" | "api_error" | "invalid_output" | "banned" | "truncated";
+      fallback: string;
+      promptVersion: string;
+    };
+
+/** 분류 호출 (docs/04 §6). 꿈해몽은 symbolIds 안에서만 고른다 */
+export interface ClassifyInput {
+  kind: "dream" | "question";
+  text: string;
+  /** 꿈 사전 상징 ID 목록 (kind = dream일 때) */
+  symbolIds?: string[];
+}
+
+export type ClassifyRisk =
+  | "none"
+  | "self_harm"
+  | "medical"
+  | "legal"
+  | "investment"
+  | "sexual"
+  | "violence"
+  | "other";
+
+export type ClassifyResult =
+  | {
+      ok: true;
+      category: "연애" | "재물" | "직장" | "건강" | "가족" | "기타";
+      risk: ClassifyRisk;
+      symbols: string[];
+    }
+  | { ok: false; reason: "refusal" | "timeout" | "api_error" | "invalid_output" };
+
 /** reading Worker RPC (docs/15 §6) */
 export interface ReadingService {
-  interpret(input: InterpretInput): Promise<InterpretOutput>;
+  interpret(input: InterpretInput): Promise<InterpretResult>;
+  classify(input: ClassifyInput): Promise<ClassifyResult>;
 }
 
 /** 멀티플레이 메시지 (docs/15 §4) */
@@ -77,3 +115,4 @@ export type ServerMessage =
   | { t: "hidden"; id: string }
   | { t: "shown"; id: string };
 export { type WsTokenPayload, signWsToken, verifyWsToken } from "./wsToken";
+export * from "./api";

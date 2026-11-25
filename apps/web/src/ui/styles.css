@@ -198,6 +198,7 @@ button:active {
 
 .card {
   position: relative;
+  box-sizing: border-box;
   width: min(320px, 100%);
   padding: 34px 22px 22px;
   border-radius: 16px;
@@ -288,4 +289,434 @@ button:active {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ───────────── 앱 공통 (ui/app/kit.tsx) ───────────── */
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #141634 0%, #231d48 55%, #3b2d5c 100%);
+}
+
+.screen.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 24px;
+}
+
+/* 세로로 길게 내려 보는 화면 (기록·운세·내 캐릭터) */
+.scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hud-right {
+  margin-left: auto;
+  pointer-events: auto;
+}
+
+.plaque.big {
+  position: relative;
+  left: auto;
+  transform: none;
+  font-size: 28px;
+  padding: 12px 30px 13px;
+  letter-spacing: 0.2em;
+}
+
+/* 등불색 강조 버튼 (08 §1: 강조 버튼만 등불색) */
+.btn-primary {
+  height: 52px;
+  min-width: 140px;
+  padding: 0 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px solid #fff1c8;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffd889, var(--lantern-deep));
+  color: #3a1f0c;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 17px;
+  box-shadow: 0 0 0 4px rgba(255, 184, 92, 0.16), 0 8px 22px rgba(255, 140, 50, 0.35);
+}
+
+.btn-primary.wide {
+  width: 100%;
+  height: 56px;
+  font-size: 18px;
+}
+
+.btn-primary:disabled,
+.btn-danger:disabled,
+.btn-quiet:disabled {
+  filter: grayscale(0.7) brightness(0.85);
+  opacity: 0.6;
+  box-shadow: none;
+  cursor: default;
+  transform: none;
+}
+
+.btn-primary svg,
+.btn-quiet svg,
+.btn-danger svg {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-danger {
+  height: 48px;
+  min-width: 120px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #c8503f, #9c3427);
+  color: #fff4e6;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 6px 16px rgba(120, 30, 20, 0.35);
+}
+
+.btn-quiet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.row > button {
+  flex: 1;
+  min-width: 0;
+}
+
+.card .plaque {
+  top: -19px;
+}
+
+/* 확인 창 */
+.veil {
+  z-index: 40;
+}
+
+.card.confirm {
+  padding: 36px 20px 20px;
+}
+
+.confirm-body {
+  margin: 6px 0 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #5a4230;
+}
+
+.confirm-body b {
+  color: #9c3427;
+}
+
+/* 로딩: 숨쉬는 등불 */
+.loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 15px;
+  color: rgba(243, 231, 207, 0.85);
+}
+
+.splash .loading,
+.inline-loading .loading {
+  position: static;
+}
+
+.lamp {
+  position: relative;
+  width: 34px;
+  height: 44px;
+  border-radius: 46% 46% 40% 40%;
+  background: radial-gradient(circle at 50% 45%, #fff3cf, #ffb85c 45%, #d66a2a 100%);
+  box-shadow: 0 0 24px 6px rgba(255, 184, 92, 0.45);
+  animation: lamp 1.8s ease-in-out infinite;
+}
+
+.lamp::before,
+.lamp::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 20px;
+  height: 5px;
+  margin-left: -10px;
+  border-radius: 3px;
+  background: var(--wood);
+}
+
+.lamp::before {
+  top: -4px;
+}
+
+.lamp::after {
+  bottom: -4px;
+}
+
+.lamp span {
+  position: absolute;
+  inset: 6px 9px;
+  border-left: 1px solid rgba(110, 68, 41, 0.35);
+  border-right: 1px solid rgba(110, 68, 41, 0.35);
+}
+
+@keyframes lamp {
+  0%,
+  100% {
+    box-shadow: 0 0 18px 4px rgba(255, 184, 92, 0.35);
+    transform: rotate(-3deg);
+  }
+  50% {
+    box-shadow: 0 0 34px 10px rgba(255, 184, 92, 0.6);
+    transform: rotate(3deg);
+  }
+}
+
+/* 알림 */
+.toasts {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  top: calc(var(--safe-top) + 72px);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  max-width: 340px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--wood), var(--wood-deep));
+  border: 1.5px solid rgba(242, 211, 138, 0.7);
+  color: #f6e4b8;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+  animation: rise 0.3s ease both;
+}
+
+/* 밤하늘 배경 */
+.night {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff6dc;
+  box-shadow: 0 0 4px rgba(255, 246, 220, 0.8);
+  animation: twinkle 3.6s ease-in-out infinite;
+}
+
+.night-moon {
+  position: absolute;
+  top: calc(var(--safe-top) + 64px);
+  right: 9%;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 38%, #fffbe9, #f6e7b8 60%, #e6cf8e);
+  box-shadow: 0 0 40px 14px rgba(255, 236, 180, 0.22), 0 0 120px 40px rgba(180, 170, 255, 0.12);
+}
+
+.night-hills {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: 0;
+  height: 26%;
+  background: radial-gradient(120% 90% at 30% 100%, #2a2350 60%, transparent 61%),
+    radial-gradient(90% 80% at 85% 100%, #1f1a3d 62%, transparent 63%);
+  opacity: 0.9;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* 첫 화면 */
+.splash-title {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.splash-sub {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  color: rgba(243, 231, 207, 0.75);
+}
+
+.splash .loading {
+  position: relative;
+}
+
+.splash-card {
+  padding-top: 22px;
+}
+
+.splash-card p {
+  margin: 0 0 16px;
+}
+
+/* 07 §1: 가로 화면이면 세로로 돌려 달라고 한다 */
+.rotate-notice {
+  display: none;
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .rotate-notice {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--night);
+  }
+  .rotate-notice .card {
+    padding: 24px;
+  }
+  .rotate-notice p {
+    margin: 0;
+    font-family: var(--font-title);
+    font-size: 18px;
+  }
+}
+
+input,
+textarea {
+  font: inherit;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(110, 68, 41, 0.1);
+  border: 1px solid rgba(110, 68, 41, 0.22);
+  color: #5a3a24;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.link {
+  border: none;
+  background: none;
+  padding: 6px 0;
+  color: #8a5a32;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* 지도에서 들어가는 화면 (기록·운세·내 캐릭터) 공통 틀 */
+.sub .hud-top {
+  z-index: 5;
+}
+
+.sub .scroll {
+  z-index: 1;
+}
+
+.sub-body {
+  box-sizing: border-box;
+  max-width: 520px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: calc(var(--safe-top) + 84px) 14px calc(var(--safe-bottom) + 28px);
+}
+
+/* 위쪽 막대 뒤가 비치지 않게 살짝 어둡게 */
+.sub::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(var(--safe-top) + 76px);
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(13, 15, 42, 0.96) 55%, rgba(13, 15, 42, 0));
+  pointer-events: none;
+}
+
+.inline-loading {
+  padding: 60px 0;
+}
+
+.card.empty {
+  margin: 40px auto 0;
+  padding: 26px 22px 24px;
+}
+
+.card.empty h2 {
+  margin: 4px 0 6px;
+  font-family: var(--font-title);
+  font-size: 20px;
+}
+
+.card.empty p {
+  margin: 0 0 20px;
+}
+
+.btn-quiet.light {
+  border-color: rgba(243, 231, 207, 0.4);
+  color: var(--hanji);
+}
+
+.link.light {
+  color: var(--lantern);
 }

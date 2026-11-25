@@ -1,58 +1,34 @@
 import { WorkerEntrypoint } from "cloudflare:workers";
 /**
- * reading Worker (docs/15 §6). app Worker가 Service Binding RPC로만 부른다.
- * M1: LLM_MODE=fixture만 지원. 실제 Haiku 호출(AI Gateway 경유)은 M2에서 docs/04 대로 붙인다.
+ * reading Worker (docs/15 §6). app Worker가 Service Binding RPC로만 부른다. DB·KV 바인딩 없음.
+ * interpret: 코드가 계산한 결과를 캐릭터 말투로 풀이 (docs/04 §1)
+ * classify: 꿈·질문 글의 위험 여부와 꿈 상징 고르기 (docs/04 §6)
+ * 실패 처리는 docs/04 §9 (core.ts): 경우마다 최대 1회 재시도, 그다음 점집 말투 대체 문장.
  */
 import type {
+  ClassifyInput,
+  ClassifyResult,
   InterpretInput,
-  InterpretOutput,
-  ProductId,
+  InterpretResult,
   ReadingService,
 } from "@fortune/shared-types";
+import { classifyWith, fixture, fixtureClassify, interpretWith } from "./core";
+import { type LlmEnv, makeClient } from "./llm";
 
-interface Env {
+interface Env extends LlmEnv {
   LLM_MODE: "fixture" | "live";
 }
 
-/** 상품별 섹션 키 (docs/04 §4) */
-const SECTIONS: Record<ProductId, string[]> = {
-  daily: ["overall", "tip"],
-  saju_full: [
-    "overall",
-    "personality",
-    "elements",
-    "yongsin",
-    "daewoon",
-    "thisYear",
-    "love",
-    "money",
-    "work",
-  ],
-  tarot_one: ["card", "message"],
-  tarot_three: ["past", "present", "future", "advice"],
-  obanggi: ["flag", "message", "advice"],
-  dream: ["symbols", "meaning", "advice"],
-};
-
-function fixture(input: InterpretInput): InterpretOutput {
-  const sections = Object.fromEntries(
-    SECTIONS[input.product].map((k) => [
-      k,
-      `[고정 응답] ${input.shop}/${input.product}의 ${k} 섹션`,
-    ]),
-  );
-  return {
-    greeting: "[고정 응답] 어서 오세요",
-    summary: "[고정 응답] 개발용 결과입니다",
-    sections,
-    advice: "[고정 응답] 실제 풀이는 LLM_MODE=live에서 나옵니다",
-  };
-}
-
 export default class Reading extends WorkerEntrypoint<Env> implements ReadingService {
-  async interpret(input: InterpretInput): Promise<InterpretOutput> {
-    if (this.env.LLM_MODE === "fixture") return fixture(input);
-    throw new Error("LLM_MODE=live is implemented in M2 (docs/04)");
+  async interpret(input: InterpretInput): Promise<InterpretResult> {
+    if (this.env.LLM_MODE === "fixture")
+      return { ok: true, output: fixture(input), promptVersion: "fixture" };
+    return interpretWith(makeClient(this.env), input);
+  }
+
+  async classify(input: ClassifyInput): Promise<ClassifyResult> {
+    if (this.env.LLM_MODE === "fixture") return fixtureClassify(input);
+    return classifyWith(makeClient(this.env), input);
   }
 
   override async fetch(): Promise<Response> {

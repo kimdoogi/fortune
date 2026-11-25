@@ -134,7 +134,10 @@ sequenceDiagram
 | 호출 시간 초과 | 해석 20초(무료 점) / 25초(사주 정밀), 분류 10초 ([04 §2](04-llm-spec.md#2-호출-설정)) |
 | 로그 | 개인정보 제외. 요청 ID, 점집, 상품, 토큰 수, 지연 시간, `stop_reason`만 |
 
-- ✅ **호출 방식:** Worker의 AI 바인딩으로 AI Gateway를 거쳐 Anthropic을 부른다. **M1 첫 주에 확인할 것:** 이 경로로 구조화 출력(`output_config.format`)과 프롬프트 캐싱(`cache_control`)이 그대로 전달되는지. 안 되면 Anthropic SDK의 `baseURL`을 AI Gateway의 Anthropic 엔드포인트로 바꾸는 방식으로 간다 (키는 여전히 BYOK)
+- ✅ **호출 방식 (D-066, 2026-11-25 확인):** reading Worker는 공식 Anthropic SDK를 쓰고, SDK의 `fetch`를 AI 바인딩의 `env.AI.gateway(id).run({ provider: "anthropic", endpoint: "v1/messages", headers, query })`로 바꿔 끼운다. 요청 본문을 Anthropic 원래 형식 그대로 넘기므로 구조화 출력·`cache_control`이 바뀌지 않는다. 바인딩 경유라 게이트웨이 토큰이 필요 없다
+  - 확인 결과: 바인딩 요청이 `default` 게이트웨이에 기록되고(게이트웨이는 첫 요청에 자동 생성), 키 없이 보내면 Unified Billing으로 넘어가 402(크레딧 부족)가 난다 → **"Require provider credentials"를 켜서** 크레딧 결제로 새지 않게 한다
+  - 키: 게이트웨이 BYOK가 기본. BYOK를 아직 안 했으면 reading Worker secret `ANTHROPIC_API_KEY`를 `x-api-key`로 보낸다 (D-022 허용 범위)
+  - 게이트웨이 ID는 `AI_GATEWAY_ID` 변수. 환경별 게이트웨이(staging/prod)를 만들면 바꾼다
 - ✅ **AI Gateway 비용 한도:** 게이트웨이 전체 하루 $10 (넘으면 그날 LLM 호출 차단 → 대체 문장). 50% 도달 시 알림
 - ✅ Anthropic 콘솔에도 월 사용 한도 $300을 걸어 이중 안전장치로 둔다
 - ✅ Cloudflare 결제 설정에서 Workers·Durable Objects 사용 금액 알림을 건다 (월 $20, $50)

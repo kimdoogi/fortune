@@ -1,6 +1,6 @@
 /**
- * 렌더러, 카메라, 탭 이동, 화면 크기, 디버그 정보 (F03, 07).
- * UI(Preact)와는 이벤트로만 주고받는다 (13 §1).
+ * 거리 모드: 거리 장면, 카메라, 탭 이동, 문 앞 판정 (F03, 06 §3).
+ * 렌더러와 화면 크기·디버그 정보는 Stage(stage.ts)가 가진다. 점집 안에 있는 동안은 멈춰 있다 (F04).
  */
 import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
@@ -19,11 +19,10 @@ const CAM_MIN_Z = -3.6;
 /** 가만히 서 있으면 이만큼 뒤에 카메라 쪽으로 돌아본다 (08 §1) */
 const IDLE_TURN_AFTER = 1.5;
 
-export interface WorldEvents {
+export interface StreetEvents {
   onNearDoor(near: boolean): void;
-  /** 처음 걷기 시작했을 때 한 번 (안내 문구를 숨긴다) */
-  onFirstMove?(): void;
-  onStats?(s: { fps: number; calls: number; triangles: number }): void;
+  /** 걷기 시작할 때마다 (Stage가 처음 한 번만 UI에 알린다) */
+  onMove(): void;
 }
 
 /** 두 각도 사이를 가장 짧은 쪽으로 보간 */
@@ -33,41 +32,28 @@ function turnToward(current: number, target: number, k: number) {
   return current + d * k;
 }
 
-export class World {
-  private readonly renderer: THREE.WebGLRenderer;
-  private readonly scene = new THREE.Scene();
-  private readonly camera = new THREE.PerspectiveCamera(42, 1, 0.1, 160);
+export class StreetView {
+  readonly scene = new THREE.Scene();
+  readonly camera = new THREE.PerspectiveCamera(42, 1, 0.1, 160);
   private readonly raycaster = new THREE.Raycaster();
-  private readonly clock = new THREE.Clock();
   private readonly street: Street;
   private readonly me: Chibi;
   private path: Point[] = [];
   private goingToDoor = false;
   private nearDoor = false;
-  private moved = false;
+  /** 점집에서 막 나와 문 앞에 섰다: 움직이기 전까지 거리 쪽을 본다 */
+  private justExited = false;
   private idle = 0;
   private facing = 0;
-  private raf = 0;
-  private frames = 0;
-  private statTime = 0;
   private readonly marker: THREE.Mesh;
   private readonly markerMat: THREE.MeshBasicMaterial;
   private markerAge = 0;
 
   constructor(
-    private readonly canvas: HTMLCanvasElement,
     shop: ShopId,
     look: { gender: Gender; ageBand: AgeBand },
-    private readonly events: WorldEvents,
+    private readonly events: StreetEvents,
   ) {
-    this.renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      powerPreference: "high-performance",
-    });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // 07 §4
-    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-
     this.street = buildStreet(shop);
     this.scene.add(this.street.group);
     this.scene.background = this.street.fogColor;
@@ -97,15 +83,36 @@ export class World {
     this.marker.visible = false;
     this.scene.add(this.marker);
 
-    // 첫 프레임부터 캐릭터 뒤 위쪽에 둔다 (이후 부드럽게 따라감)
-    this.camera.position.copy(this.cameraPos(this.street.spawn));
-    this.camera.lookAt(this.cameraTarget(this.street.spawn));
+    this.snapCamera();
+  }
 
-    this.resize();
-    window.addEventListener("resize", this.resize);
-    canvas.addEventListener("pointerdown", this.onPointerDown);
-    canvas.addEventListener("pointerup", this.onPointerUp);
-    this.loop();
+  /** 카메라를 캐릭터 뒤 위쪽에 바로 둔다 (이후 부드럽게 따라감) */
+  private snapCamera() {
+    const p = { x: this.me.root.position.x, z: this.me.root.position.z };
+    this.camera.position.copy(this.cameraPos(p));
+    this.camera.lookAt(this.cameraTarget(p));
+  }
+
+  /** 점집에서 나오면 문 앞에 서서 거리 쪽을 본다 (06 §4, F04) */
+  standAtDoor() {
+    const d = this.street.doorFront;
+    this.path = [];
+    this.goingToDoor = false;
+    this.marker.visible = false;
+    this.me.root.position.set(d.x, 0, d.z);
+    this.facing = 0;
+    this.me.root.rotation.y = 0;
+    this.justExited = true;
+    this.idle = 0;
+    this.snapCamera();
+  }
+
+  /** 점집에 들어가면 문 앞 상태를 내려 둔다 (나오면 다시 알린다) */
+  leaveDoor() {
+    if (this.nearDoor) {
+      this.nearDoor = false;
+      this.events.onNearDoor(false);
+    }
   }
 
   private followZ(p: Point) {
@@ -120,23 +127,8 @@ export class World {
     return new THREE.Vector3(p.x, LOOK_HEIGHT, this.followZ(p) - LOOK_AHEAD);
   }
 
-  private down: { x: number; y: number; t: number } | null = null;
-
-  private readonly onPointerDown = (e: PointerEvent) => {
-    this.down = { x: e.clientX, y: e.clientY, t: performance.now() };
-  };
-
-  /** 짧게 탭했을 때만 이동 (끌기는 무시) */
-  private readonly onPointerUp = (e: PointerEvent) => {
-    const d = this.down;
-    this.down = null;
-    if (!d || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 12 || performance.now() - d.t > 600)
-      return;
-    const rect = this.canvas.getBoundingClientRect();
-    const ndc = new THREE.Vector2(
-      ((e.clientX - rect.left) / rect.width) * 2 - 1,
-      -((e.clientY - rect.top) / rect.height) * 2 + 1,
-    );
+  /** 화면 탭 (정규화 좌표). 문을 누르면 문 앞까지, 땅을 누르면 그 자리로 */
+  tap(ndc: THREE.Vector2) {
     this.raycaster.setFromCamera(ndc, this.camera);
     if (this.raycaster.intersectObjects(this.street.doorTargets, false).length > 0) {
       this.walkTo(this.street.doorFront, true);
@@ -144,7 +136,7 @@ export class World {
     }
     const hit = this.raycaster.intersectObject(this.street.ground, false)[0];
     if (hit) this.walkTo({ x: hit.point.x, z: hit.point.z }, false);
-  };
+  }
 
   walkTo(target: Point, toDoor: boolean) {
     const from = { x: this.me.root.position.x, z: this.me.root.position.z };
@@ -155,25 +147,20 @@ export class World {
       this.marker.position.set(last.x, 0.04, last.z);
       this.marker.visible = true;
       this.markerAge = 0;
-      if (!this.moved) {
-        this.moved = true;
-        this.events.onFirstMove?.();
-      }
+      this.justExited = false;
+      this.events.onMove();
     }
   }
 
-  private readonly resize = () => {
-    const w = this.canvas.clientWidth || window.innerWidth;
-    const h = this.canvas.clientHeight || window.innerHeight;
-    this.renderer.setSize(w, h, false);
+  resize(w: number, h: number, pixelRatio: number) {
     this.camera.aspect = w / h;
     // 세로 화면에서도 거리 폭이 보이게 시야를 넓힌다
     this.camera.fov = w < h ? 55 : 42;
     this.camera.updateProjectionMatrix();
-    this.street.setViewportHeight(h * this.renderer.getPixelRatio());
-  };
+    this.street.setViewportHeight(h * pixelRatio);
+  }
 
-  private step(dt: number, time: number) {
+  update(dt: number, time: number) {
     const pos = this.me.root.position;
     let moving = false;
     let heading: number | null = null;
@@ -209,6 +196,8 @@ export class World {
     // 걷는 방향으로 부드럽게 돌고, 오래 서 있으면 카메라 쪽(문 앞이면 문 쪽)을 본다
     if (heading !== null) {
       this.facing = turnToward(this.facing, heading, 1 - Math.exp(-dt * 14));
+    } else if (this.justExited) {
+      // 막 나왔을 때는 거리 쪽을 본다
     } else if (near) {
       this.facing = turnToward(this.facing, Math.PI, 1 - Math.exp(-dt * 6));
     } else if (this.idle > IDLE_TURN_AFTER) {
@@ -235,33 +224,10 @@ export class World {
     this.camera.lookAt(this.cameraTarget(p));
   }
 
-  private readonly loop = () => {
-    this.raf = requestAnimationFrame(this.loop);
-    const dt = Math.min(this.clock.getDelta(), 0.1);
-    this.step(dt, this.clock.elapsedTime);
-    this.renderer.render(this.scene, this.camera);
-    this.frames++;
-    this.statTime += dt;
-    if (this.statTime >= 0.5 && this.events.onStats) {
-      const info = this.renderer.info.render;
-      this.events.onStats({
-        fps: Math.round(this.frames / this.statTime),
-        calls: info.calls,
-        triangles: info.triangles,
-      });
-      this.frames = 0;
-      this.statTime = 0;
-    }
-  };
-
   dispose() {
-    cancelAnimationFrame(this.raf);
-    window.removeEventListener("resize", this.resize);
-    this.canvas.removeEventListener("pointerdown", this.onPointerDown);
-    this.canvas.removeEventListener("pointerup", this.onPointerUp);
     this.street.dispose();
+    this.me.dispose();
     this.marker.geometry.dispose();
     this.markerMat.dispose();
-    this.renderer.dispose();
   }
 }

@@ -1,0 +1,196 @@
+/* F10 점 기록 목록 */
+.h-group {
+  margin-bottom: 18px;
+  animation: rise 0.35s ease both;
+}
+
+.h-date {
+  margin: 0 4px 8px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: rgba(246, 220, 151, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.h-date::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(242, 211, 138, 0.4), transparent);
+}
+
+.h-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.h-row {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* 밀면 드러나는 삭제 */
+.h-del {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 96px;
+  border: none;
+  padding-left: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: linear-gradient(180deg, #c8503f, #9c3427);
+  color: #fff4e6;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.h-del svg {
+  width: 22px;
+  height: 22px;
+}
+
+.h-card {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fbf3e2, var(--hanji) 70%, var(--hanji-deep));
+  box-shadow: inset 0 0 0 1px rgba(110, 68, 41, 0.18), 0 6px 16px rgba(0, 0, 0, 0.3);
+  touch-action: pan-y;
+  will-change: transform;
+}
+
+.h-card.snap {
+  transition: transform 0.22s ease;
+}
+
+.h-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px 12px 12px;
+  border: none;
+  background: none;
+  color: var(--ink);
+  text-align: left;
+}
+
+.h-open:active {
+  transform: none;
+  filter: brightness(0.97);
+}
+
+.h-open > svg:last-child {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: #b0906c;
+}
+
+.h-open .shop-mark {
+  flex: none;
+}
+
+.h-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.h-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.h-meta b {
+  font-family: var(--font-title);
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.h-shop {
+  font-size: 12px;
+  color: #8a6a50;
+}
+
+.h-time {
+  margin-left: auto;
+  font-size: 12px;
+  color: #a88a6c;
+}
+
+.h-summary {
+  font-size: 14px;
+  line-height: 1.45;
+  color: #5a4230;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: keep-all;
+}
+
+.h-trash {
+  flex: none;
+  width: 48px;
+  border: none;
+  border-left: 1px dashed rgba(110, 68, 41, 0.2);
+  background: none;
+  color: #b07a5c;
+  display: grid;
+  place-items: center;
+}
+
+.h-trash svg {
+  width: 19px;
+  height: 19px;
+}
+
+.h-more {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 4px;
+}
+
+.h-more-text,
+.h-end,
+.h-error {
+  font-size: 13px;
+  color: rgba(243, 231, 207, 0.6);
+  text-align: center;
+}
+
+.h-end {
+  margin: 18px 0 0;
+}
+
+.empty-art {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.empty-art .shop-mark:nth-child(odd) {
+  transform: translateY(4px);
+}

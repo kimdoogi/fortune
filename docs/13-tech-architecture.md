@@ -36,13 +36,13 @@ fortune/
 │  │  └─ src/scene/       # 거리·2등신 캐릭터·길찾기 (D-064: 지금은 여기, 나중에 models로)
 │  ├─ api/                # app Worker (API, 인증, 하루 호출 상한, 풀이 조율)
 │  ├─ realtime/           # Durable Objects (마을 멀티플레이)
-│  └─ reading/            # reading Worker (LLM 호출 전용, 공개 주소 없음)
+│  └─ reading/            # reading Worker (LLM 호출 전용, 공개 주소 없음). core.ts = 재시도·검사, eval/ = LLM 기준 샘플 평가
 ├─ packages/
 │  ├─ shared-types/       # API 요청/응답, LLM 입출력, 실시간 메시지 타입 + WebSocket 토큰 서명
 │  ├─ fortune-engine/     # 사주 계산, 타로 뽑기, 오방기, 꿈 사전 (순수 함수, 테스트 필수)
 │  │  └─ data/meanings/   # 해석 데이터 (사주, 타로, 오방기, 꿈 사전)
 │  ├─ models/             # 3D 모델 런타임 생성 코드 (D-029). M1은 아직 없음 (D-064)
-│  └─ prompts/            # 점집별 프롬프트(버전별 파일), 인사말, 금지 표현 목록(common/banned.json), 호격 조사(아/야) 처리
+│  └─ prompts/            # 점집별 프롬프트 md(버전별), 인사말, 금지 표현 목록, 호격 조사. `@fortune/prompts/llm` = 시스템 프롬프트·스키마·출력 검사 (md → src/generated.ts, D-066)
 ├─ tools/
 │  ├─ assets/             # 2D SVG 생성 스크립트 (D-030)
 │  ├─ solar-terms/        # 절기 시각 표 생성·검증 (D-039)

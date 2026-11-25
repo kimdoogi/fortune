@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#141634" />
+    <title>점집 UI 실험실 (개발용)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Gowun+Dodum&display=swap"
+    />
+    <style>
+      html, body, #app { margin: 0; height: 100%; background: #141634; }
+      /* 다른 화면 작업 중 생긴 HMR 오류 덮개는 실험실에서 가린다 (콘솔에는 남음) */
+      vite-error-overlay { display: none; }
+      /* 3D 점집 내부 대신: 따뜻한 등불 빛 + 바닥 + 점술가 자리 표시 */
+      .lab-room {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        background:
+          radial-gradient(60% 40% at 50% 34%, rgba(255, 184, 92, 0.32), transparent 70%),
+          linear-gradient(180deg, #241a36 0%, #3a2632 52%, #5a3a26 53%, #2a1a12 100%);
+      }
+      .lab-npc {
+        position: absolute; left: 50%; top: 22%; transform: translateX(-50%);
+        display: flex; flex-direction: column; align-items: center; gap: 8px;
+        font: 12px/1.4 ui-monospace, monospace; color: rgba(243, 231, 207, 0.7);
+      }
+      .lab-npc-body {
+        width: 92px; height: 120px; border-radius: 46px 46px 20px 20px;
+        background: linear-gradient(180deg, #e9d9bb, #b89b74);
+        box-shadow: 0 0 40px rgba(255, 184, 92, 0.35);
+        transition: transform 0.3s ease;
+      }
+      .lab-npc[data-action="greet"] .lab-npc-body { transform: rotate(-6deg); }
+      .lab-npc[data-action="present"] .lab-npc-body { transform: translateY(8px) scale(1.04); }
+      .lab-npc[data-action="celebrate"] .lab-npc-body { transform: translateY(-14px); }
+      .lab-left {
+        position: absolute; right: 12px; top: 70px; padding: 4px 8px; border-radius: 6px;
+        background: rgba(0, 0, 0, 0.5); font: 11px ui-monospace, monospace; color: #d9f7c8;
+      }
+      .lab-back { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); height: 48px; padding: 0 20px; border-radius: 999px; }
+      .lab-cards {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px;
+        padding: 16px; height: 100%; overflow: auto; box-sizing: border-box; touch-action: pan-y;
+      }
+      .lab-cards svg { width: 100%; height: auto; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/ui/shop/lab.tsx"></script>
+  </body>
+</html>

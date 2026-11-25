@@ -1,0 +1,544 @@
+/* F01 지도 (S1). 그림은 MapArt.tsx, 이 파일은 화면 위 HUD와 정보 카드 */
+.map {
+  background: linear-gradient(180deg, #0d0f2a 0%, #141634 30%, #1d2a26 52%, #1a2a20 100%);
+}
+
+.map-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  touch-action: manipulation;
+}
+
+/* 점집 누르기 */
+.map-art .shop {
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.map-art .shop-art {
+  transition: filter 0.25s ease, opacity 0.25s ease;
+}
+
+.map-art .shop:active .shop-art {
+  filter: brightness(1.12);
+}
+
+.map-art .shop.dim .shop-art {
+  filter: brightness(0.62) saturate(0.8);
+}
+
+.map-art .shop:focus-visible .map-plaque rect:first-child {
+  stroke: #fff1c8;
+  stroke-width: 2.5;
+}
+
+.map-art .ring {
+  fill: rgba(255, 196, 107, 0.16);
+  stroke: #ffd889;
+  stroke-width: 2;
+  animation: ring 1.6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.map-label {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  fill: #f6dc97;
+}
+
+/* 움직이는 것들 (줄이기 설정이면 전역 규칙으로 멈춘다) */
+.map-art .twinkle {
+  animation: twinkle 3.4s ease-in-out infinite;
+}
+
+.map-art .lglow {
+  animation: lglow 2.6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.map-art .sway {
+  animation: sway 3.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+}
+
+.map-art .flag {
+  animation: flag 1.9s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+}
+
+.map-art .pulse {
+  animation: lglow 2.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.map-art .pulse-slow {
+  animation: halo 6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.map-art .window {
+  animation: flicker 4.5s ease-in-out infinite;
+}
+
+.map-art .cloud {
+  animation: drift 40s linear infinite alternate;
+}
+
+.map-art .mist {
+  animation: drift 26s ease-in-out infinite alternate;
+}
+
+.map-art .firefly {
+  animation: firefly 7s ease-in-out infinite;
+  transform-box: fill-box;
+  opacity: 0;
+}
+
+.map-art .shooting {
+  opacity: 0;
+  animation: shooting 11s ease-in 3s infinite;
+}
+
+@keyframes ring {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes lglow {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes halo {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes flag {
+  0%,
+  100% {
+    transform: skewY(0deg) scaleX(1);
+  }
+  50% {
+    transform: skewY(-7deg) scaleX(0.9);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0.92;
+  }
+  50% {
+    opacity: 0.84;
+  }
+  55% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes drift {
+  to {
+    transform: translateX(26px);
+  }
+}
+
+@keyframes firefly {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  25% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.3;
+    transform: translate(9px, -14px);
+  }
+  75% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-6px, -24px);
+  }
+}
+
+@keyframes shooting {
+  0%,
+  88% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  90% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 0;
+    transform: translate(-60px, 32px);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* 위: 현판 + 남은 횟수 */
+.map-top {
+  position: absolute;
+  top: calc(var(--safe-top) + 14px);
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.map-top .plaque {
+  position: relative;
+  left: auto;
+  transform: none;
+  font-size: 19px;
+  padding: 8px 22px 9px;
+  letter-spacing: 0.18em;
+}
+
+.calls {
+  font-size: 12px;
+  color: rgba(243, 231, 207, 0.72);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.calls b {
+  color: var(--lantern);
+}
+
+.map-hint {
+  margin: 2px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(20, 16, 44, 0.55);
+  border: 1px solid rgba(243, 231, 207, 0.16);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-size: 13px;
+  animation: rise 0.5s ease 0.4s both;
+}
+
+.map-hint .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--lantern);
+  animation: ping 1.6s ease-out infinite;
+}
+
+/* 아래: 늘 보이는 세 버튼 */
+.dock {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(var(--safe-bottom) + 16px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dock-btn {
+  flex: 1;
+  max-width: 120px;
+  height: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 1.5px solid rgba(110, 68, 41, 0.35);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fbf3e2, var(--hanji) 60%, var(--hanji-deep));
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 6px 16px rgba(8, 6, 20, 0.5);
+}
+
+.dock-btn svg {
+  width: 24px;
+  height: 24px;
+  color: var(--wood);
+}
+
+.dock-btn.main {
+  flex: 1.25;
+  max-width: 150px;
+  height: 70px;
+  border: 2px solid #fff1c8;
+  background: linear-gradient(180deg, #ffd889, var(--lantern-deep));
+  color: #3a1f0c;
+  font-family: var(--font-title);
+  font-size: 15px;
+  box-shadow: 0 0 0 4px rgba(255, 184, 92, 0.18), 0 8px 22px rgba(255, 140, 50, 0.4);
+}
+
+.dock-btn.main svg {
+  width: 26px;
+  height: 26px;
+  color: #6a3510;
+}
+
+/* 정보 카드 (아래에서 올라온다) */
+.sheet-scrim {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: rgba(8, 6, 20, 0.42);
+  animation: fade 0.25s ease both;
+  cursor: default;
+}
+
+.sheet-scrim:active {
+  transform: none;
+  filter: none;
+}
+
+.sheet-scrim.out {
+  animation: fade-out 0.22s ease both;
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  max-width: 480px;
+  box-sizing: border-box;
+  padding: 14px 20px calc(var(--safe-bottom) + 18px);
+  border-radius: 24px 24px 0 0;
+  background: linear-gradient(180deg, #fbf3e2, var(--hanji) 50%, var(--hanji-deep));
+  color: var(--ink);
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.5), inset 0 1.5px 0 rgba(255, 255, 255, 0.8);
+  border-top: 3px solid var(--roof, var(--wood));
+  animation: sheet-in 0.36s cubic-bezier(0.2, 1.1, 0.35, 1) both;
+}
+
+.sheet.out {
+  animation: sheet-out 0.22s ease-in both;
+}
+
+.sheet-grip {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: rgba(110, 68, 41, 0.25);
+}
+
+.sheet-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(110, 68, 41, 0.08);
+  color: #7a5a40;
+  display: grid;
+  place-items: center;
+}
+
+.sheet-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sheet-head .portrait {
+  flex: none;
+  filter: drop-shadow(0 4px 8px rgba(42, 23, 13, 0.3));
+}
+
+.sheet-shop {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, var(--wood), var(--wood-deep));
+  color: #f6dc97;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.sheet-name {
+  margin: 4px 0 0;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--ink);
+}
+
+.sheet-intro {
+  margin: 14px 0 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(110, 68, 41, 0.14);
+  font-family: var(--font-title);
+  font-size: 16px;
+  line-height: 1.55;
+  color: #4a3424;
+  word-break: keep-all;
+}
+
+.sheet-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9a7a5c;
+  letter-spacing: 0.08em;
+}
+
+.sheet-products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.sheet-products li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: #fffaf0;
+  border: 1.5px solid rgba(110, 68, 41, 0.22);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.sheet-products .dia {
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  background: var(--lantern-deep);
+}
+
+.sheet-notice {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(160, 40, 30, 0.1);
+  border: 1px solid rgba(160, 40, 30, 0.25);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #8a2a1e;
+  word-break: keep-all;
+}
+
+.sheet-go {
+  width: 100%;
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+.sheet-go:disabled {
+  animation: none;
+  filter: grayscale(0.6) brightness(0.9);
+  opacity: 0.7;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-height: 660px) {
+  .sheet-intro {
+    margin: 10px 0;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+  .sheet-products {
+    margin-bottom: 12px;
+  }
+  .dock-btn {
+    height: 56px;
+  }
+  .dock-btn.main {
+    height: 62px;
+  }
+}

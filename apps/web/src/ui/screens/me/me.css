@@ -1,0 +1,116 @@
+/* 내 캐릭터 + 설정 */
+.card.me-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 20px 18px 20px;
+  animation: pop 0.35s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+
+.me-name {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--ink);
+}
+
+.me-info {
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 4px 14px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(110, 68, 41, 0.15);
+  text-align: left;
+}
+
+.me-info > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px dashed rgba(110, 68, 41, 0.18);
+  font-size: 14px;
+}
+
+.me-info > div:last-child {
+  border-bottom: none;
+}
+
+.me-info dt {
+  color: #8a6a50;
+}
+
+.me-info dd {
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: right;
+}
+
+.me-note {
+  margin: 2px 0 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #8a6a50;
+  word-break: keep-all;
+}
+
+.me-settings {
+  margin-top: 26px;
+}
+
+.me-settings h2 {
+  margin: 0 4px 8px;
+  font-family: var(--font-title);
+  font-size: 14px;
+  color: rgba(246, 220, 151, 0.85);
+}
+
+.me-danger {
+  width: 100%;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 150, 130, 0.25);
+  border-radius: 16px;
+  background: rgba(120, 30, 25, 0.35);
+  color: #ffd9cf;
+  text-align: left;
+}
+
+.me-danger svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+
+.me-danger span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.me-danger b {
+  font-size: 15px;
+}
+
+.me-danger small {
+  font-size: 12px;
+  color: rgba(255, 217, 207, 0.7);
+}
+
+.me-foot {
+  margin: 12px 4px 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(243, 231, 207, 0.55);
+  word-break: keep-all;
+}

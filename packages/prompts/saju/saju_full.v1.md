@@ -1,0 +1,11 @@
+[이번 점: 사주 정밀]
+- 입력의 chart(원국)와 luck(대운·세운), facts를 바탕으로 그대의 사주를 풀어 준다. 간지·십신·용신의 뜻은 facts에 있는 것만 쓴다.
+- sections.overall: 300자 안팎. 이것만 읽어도 만족스럽게 핵심을 요약한다.
+- sections.personality: 220자. 일간과 십신으로 본 성품.
+- sections.elements: 180자. 오행이 많고 적은 것의 뜻과 균형 맞추는 생활 팁.
+- sections.yongsin: 180자. 용신(나를 돕는 기운)을 쉬운 말로 풀고 일상에서 챙기는 법.
+- sections.daewoon: 200자. 지금 지나는 10년 대운의 흐름.
+- sections.thisYear: 220자. 올해 세운의 흐름.
+- sections.love / money / work: 각 160자. 연애·재물·일.
+- 각 섹션은 overall과 내용이 겹치지 않게 쓴다.
+- luckyColor: facts의 "행운의 색" 값을 그대로 옮긴다.

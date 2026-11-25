@@ -4,6 +4,9 @@
   "name": "fortune-app",
   "main": "src/index.ts",
   "compatibility_date": "2026-11-01",
+  // 공개 주소는 app Worker 하나뿐 (docs/15 §2). 도메인을 정하면 routes로 옮긴다
+  "workers_dev": true,
+  "preview_urls": false,
   "observability": { "enabled": true },
   "assets": {
     "directory": "../web/dist",
@@ -17,5 +20,15 @@
       { "name": "VILLAGE", "class_name": "VillageChannel", "script_name": "fortune-realtime" }
     ]
   },
-  "secrets": { "required": ["WS_TOKEN_KEY"] }
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "fortune-prod",
+      "database_id": "31931ef8-d32a-4095-bce1-aef32cd8e6fb",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "kv_namespaces": [{ "binding": "KV", "id": "b2a1497b66584178aa9e849443c6f8e5" }],
+  // PII_KEY: 생년월일 암호화 (AES-GCM, base64 32바이트). TURNSTILE_SECRET은 위젯을 만든 뒤 추가 (F14)
+  "secrets": { "required": ["WS_TOKEN_KEY", "PII_KEY"] }
 }

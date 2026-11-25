@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "wrangler dev -c wrangler.jsonc -c ../reading/wrangler.jsonc -c ../realtime/wrangler.jsonc",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "echo no tests yet"
+    "test": "vitest run"
   },
   "dependencies": {
     "@fortune/fortune-engine": "workspace:*",
-    "@fortune/shared-types": "workspace:*"
+    "@fortune/prompts": "workspace:*",
+    "@fortune/shared-types": "workspace:*",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20261103.1",

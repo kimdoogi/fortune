@@ -4,10 +4,12 @@
     "ignore": [
       "**/dist",
       "**/node_modules",
+      "**/.wrangler",
       "**/.venv",
       "tools/**/*.json",
       "tests/fixtures/**",
-      "packages/*/data/**"
+      "packages/*/data/**",
+      "packages/prompts/src/generated.ts"
     ]
   },
   "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },

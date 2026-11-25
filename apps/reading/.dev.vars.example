@@ -1,0 +1,3 @@
+# 로컬 개발용. 복사해서 .dev.vars로 쓴다 (.dev.vars는 git에 올리지 않음)
+# 게이트웨이 BYOK를 쓰면 비워 둔다. 배포 환경은 `npx wrangler secret put ANTHROPIC_API_KEY`
+ANTHROPIC_API_KEY=

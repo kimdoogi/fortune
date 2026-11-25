@@ -1,0 +1,189 @@
+/**
+ * LLM 호출에 쓰는 프롬프트·스키마·검사 (docs/04, 04a). reading Worker와 평가 스크립트가 같이 쓴다.
+ * 시스템 프롬프트 = 공통 규칙 + 캐릭터 + 상품별 지시 (점집·상품마다 고정이라 캐시된다, 04 §2).
+ */
+import type { InterpretOutput, ProductId, ShopId } from "@fortune/shared-types";
+import { PROMPTS } from "./generated";
+import { findBanned } from "./index";
+
+export const MODEL = "claude-haiku-5-5";
+
+/** 상품별 섹션 키와 목표 글자 수 (04 §4, 04a 상품별 지시) */
+export const SECTION_TARGETS: Record<ProductId, Record<string, number>> = {
+  daily: { overall: 250, tip: 80 },
+  saju_full: {
+    overall: 300,
+    personality: 220,
+    elements: 180,
+    yongsin: 180,
+    daewoon: 200,
+    thisYear: 220,
+    love: 160,
+    money: 160,
+    work: 160,
+  },
+  tarot_one: { card: 200, message: 130 },
+  tarot_three: { past: 220, present: 250, future: 250, advice: 180 },
+  obanggi: { flag: 250, message: 380, advice: 220 },
+  dream: { symbols: 300, meaning: 350, advice: 200 },
+};
+
+export const PRODUCT_SHOP: Record<ProductId, ShopId> = {
+  daily: "saju",
+  saju_full: "saju",
+  tarot_one: "tarot",
+  tarot_three: "tarot",
+  obanggi: "dolyeong",
+  dream: "dream",
+};
+
+/** 호출 설정 (04 §2). effort는 평가(§12) 뒤 확정 */
+export const CALL = {
+  interpret: { effort: "low", maxTokens: 4000, timeoutMs: 20_000 },
+  sajuFull: { effort: "low", maxTokens: 8000, timeoutMs: 25_000 },
+  classify: { effort: "low", maxTokens: 1000, timeoutMs: 10_000 },
+} as const;
+
+export function callSettings(product: ProductId) {
+  return product === "saju_full" ? CALL.sajuFull : CALL.interpret;
+}
+
+/** 점집별 대체 문장 (04a 대체 템플릿) */
+export const FALLBACKS: Record<ShopId, string> = {
+  saju: "오늘은 별자리가 구름에 가려 사주가 잘 읽히지 않는구려. 잠시 뒤에 다시 오시오.",
+  tarot: "어머, 카드가 오늘은 수줍어하네요. 조금 있다가 다시 펼쳐 볼까요?",
+  dolyeong: "으앙, 방울 소리가 안 들려! 이따 다시 와!",
+  dream: "아이고, 할매가 깜빡 졸았구먼. 이따 다시 얘기해 줘.",
+};
+
+/** 위기 안내 (04a, LLM을 거치지 않는다) */
+export const CRISIS_TEXT =
+  "지금 많이 힘드신 것 같아요. 혼자 견디지 않으셔도 괜찮아요.\n" +
+  "자살예방상담전화 109 (24시간, 무료)에 전화하면 이야기를 들어 줄 사람이 있어요.\n" +
+  "위급한 상황이라면 112 또는 119에 바로 연락해 주세요.";
+
+const OUTPUT_RULES = `[출력 형식]
+- greeting: 캐릭터의 첫마디 한 줄 (30자 이하)
+- summary: 결과 한 줄 요약 (40자 이하)
+- sections: 아래 지시의 섹션을 모두 채운다. 제목이나 머리말 없이 본문만 쓴다.
+- advice: 마지막 한마디 (80자 이하)`;
+
+/** 시스템 프롬프트 (사용자마다 바뀌는 값은 넣지 않는다 — 캐시, 04 §2) */
+export function systemPrompt(product: ProductId): string {
+  const shop = PRODUCT_SHOP[product];
+  return [
+    PROMPTS.common.text,
+    PROMPTS.persona[shop].text,
+    OUTPUT_RULES,
+    PROMPTS.product[product].text,
+  ].join("\n\n");
+}
+
+/** 결과에 저장하는 프롬프트 버전 (04 §11) */
+export function promptVersion(product: ProductId): string {
+  const shop = PRODUCT_SHOP[product];
+  return `common@${PROMPTS.common.v}+${shop}@${PROMPTS.persona[shop].v}+${product}@${PROMPTS.product[product].v}`;
+}
+
+export const CLASSIFY_VERSION = `classify@${PROMPTS.classify.v}`;
+export const classifySystemPrompt = (): string => PROMPTS.classify.text;
+export const DREAM_SYMBOL_IDS: readonly string[] = PROMPTS.symbolIds;
+
+const withLuckyColor = (p: ProductId) => p === "daily" || p === "saju_full";
+
+/** 구조화 출력 스키마 (04 §5). 섹션은 상품마다 고정 키를 가진 객체 */
+export function outputSchema(product: ProductId) {
+  const keys = Object.keys(SECTION_TARGETS[product]);
+  const sections = Object.fromEntries(
+    Object.entries(SECTION_TARGETS[product]).map(([k, n]) => [
+      k,
+      { type: "string", description: `${n}자 안팎` },
+    ]),
+  );
+  const properties: Record<string, unknown> = {
+    greeting: { type: "string", description: "캐릭터의 첫마디 한 줄, 30자 이하" },
+    summary: { type: "string", description: "한 줄 요약, 40자 이하" },
+    sections: { type: "object", properties: sections, required: keys, additionalProperties: false },
+    advice: { type: "string", description: "마지막 한마디, 80자 이하" },
+  };
+  const required = ["greeting", "summary", "sections", "advice"];
+  if (withLuckyColor(product)) {
+    properties.luckyColor = { type: "string", description: "facts의 행운의 색을 그대로" };
+    required.push("luckyColor");
+  }
+  return { type: "object", properties, required, additionalProperties: false } as const;
+}
+
+export const CLASSIFY_CATEGORIES = ["연애", "재물", "직장", "건강", "가족", "기타"] as const;
+export const CLASSIFY_RISKS = [
+  "none",
+  "self_harm",
+  "medical",
+  "legal",
+  "investment",
+  "sexual",
+  "violence",
+  "other",
+] as const;
+
+/** 분류 스키마. 꿈 상징은 사전 ID enum으로 제한한다 (D-028) */
+export function classifySchema(symbolIds: readonly string[]) {
+  return {
+    type: "object",
+    properties: {
+      category: { type: "string", enum: [...CLASSIFY_CATEGORIES] },
+      risk: { type: "string", enum: [...CLASSIFY_RISKS] },
+      symbols: symbolIds.length
+        ? { type: "array", items: { type: "string", enum: [...symbolIds] } }
+        : { type: "array", items: { type: "string" } },
+    },
+    required: ["category", "risk", "symbols"],
+    additionalProperties: false,
+  } as const;
+}
+
+export type OutputCheck =
+  | { ok: true; output: InterpretOutput; lengthWarnings: string[] }
+  | { ok: false; reason: "invalid_output" | "banned"; detail: string };
+
+const isText = (v: unknown): v is string => typeof v === "string" && v.trim().length > 0;
+
+/** 받은 뒤 코드가 검사할 것 (04 §5): 스키마 일치, 금지 표현, 섹션 길이(50~160%, 로그만) */
+export function checkOutput(product: ProductId, raw: unknown): OutputCheck {
+  if (!raw || typeof raw !== "object")
+    return { ok: false, reason: "invalid_output", detail: "not an object" };
+  const o = raw as Record<string, unknown>;
+  for (const k of ["greeting", "summary", "advice"]) {
+    if (!isText(o[k])) return { ok: false, reason: "invalid_output", detail: `missing ${k}` };
+  }
+  const sec = o.sections as Record<string, unknown> | undefined;
+  const targets = SECTION_TARGETS[product];
+  if (!sec || typeof sec !== "object")
+    return { ok: false, reason: "invalid_output", detail: "missing sections" };
+  const sections: Record<string, string> = {};
+  const lengthWarnings: string[] = [];
+  for (const [k, n] of Object.entries(targets)) {
+    const v = sec[k];
+    if (!isText(v)) return { ok: false, reason: "invalid_output", detail: `missing section ${k}` };
+    sections[k] = v.trim();
+    const len = [...v].length;
+    if (len < n * 0.5 || len > n * 1.6) lengthWarnings.push(`${k}:${len}/${n}`);
+  }
+  const output: InterpretOutput = {
+    greeting: (o.greeting as string).trim(),
+    summary: (o.summary as string).trim(),
+    sections,
+    advice: (o.advice as string).trim(),
+  };
+  if (withLuckyColor(product)) {
+    if (!isText(o.luckyColor))
+      return { ok: false, reason: "invalid_output", detail: "missing luckyColor" };
+    output.luckyColor = o.luckyColor.trim();
+  }
+  const all = [output.greeting, output.summary, output.advice, ...Object.values(sections)].join(
+    "\n",
+  );
+  const hits = findBanned(all);
+  if (hits.length) return { ok: false, reason: "banned", detail: hits.join(",") };
+  return { ok: true, output, lengthWarnings };
+}

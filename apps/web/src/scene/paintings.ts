@@ -337,3 +337,245 @@ export function sajuTexture(): THREE.CanvasTexture {
 export function irworobongTexture(): THREE.CanvasTexture {
   return canvasTexture(1024, 512, (ctx) => drawIrworobong(ctx, 1024, 512));
 }
+
+// ───────────── 아기도령 신당: 무신도 세 폭 (D-086) ─────────────
+/** 무신도 한 폭의 사람 모양: 후광 + 얼굴 + 옷 (2등신 톤에 맞춰 단순하게) */
+function deity(
+  ctx: Ctx,
+  cx: number,
+  cy: number,
+  s: number,
+  o: { robe: string; trim: string; hair: string; beard?: boolean; crown?: boolean; knot?: boolean },
+) {
+  // 후광
+  ctx.fillStyle = "rgba(242, 194, 48, 0.55)";
+  ctx.beginPath();
+  ctx.arc(cx, cy - s * 0.95, s * 0.62, 0, Math.PI * 2);
+  ctx.fill();
+  // 옷 (사다리꼴) + 깃
+  ctx.fillStyle = o.robe;
+  ctx.beginPath();
+  ctx.moveTo(cx - s * 0.42, cy - s * 0.45);
+  ctx.lineTo(cx + s * 0.42, cy - s * 0.45);
+  ctx.lineTo(cx + s * 0.85, cy + s * 0.95);
+  ctx.lineTo(cx - s * 0.85, cy + s * 0.95);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = o.trim;
+  ctx.lineWidth = s * 0.09;
+  ctx.beginPath();
+  ctx.moveTo(cx - s * 0.2, cy - s * 0.45);
+  ctx.lineTo(cx + s * 0.12, cy + s * 0.35);
+  ctx.stroke();
+  // 소매 (두 손을 모은 모양)
+  ctx.fillStyle = o.trim;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + s * 0.25, s * 0.38, s * 0.16, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // 얼굴
+  ctx.fillStyle = "#f6d9bd";
+  ctx.beginPath();
+  ctx.arc(cx, cy - s * 0.85, s * 0.38, 0, Math.PI * 2);
+  ctx.fill();
+  // 머리
+  ctx.fillStyle = o.hair;
+  ctx.beginPath();
+  ctx.arc(cx, cy - s * 0.95, s * 0.39, Math.PI * 1.05, Math.PI * 1.95);
+  ctx.fill();
+  if (o.knot) {
+    ctx.beginPath();
+    ctx.arc(cx, cy - s * 1.35, s * 0.13, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  if (o.crown) {
+    ctx.fillStyle = "#2a1d3a";
+    ctx.fillRect(cx - s * 0.2, cy - s * 1.42, s * 0.4, s * 0.18);
+    ctx.fillStyle = "#f2c230";
+    ctx.fillRect(cx - s * 0.2, cy - s * 1.3, s * 0.4, s * 0.04);
+  }
+  // 눈 (감은 듯 가는 선) · 입
+  ctx.strokeStyle = "#3a2418";
+  ctx.lineWidth = s * 0.04;
+  for (const side of [-1, 1]) {
+    ctx.beginPath();
+    ctx.arc(cx + side * s * 0.14, cy - s * 0.84, s * 0.06, Math.PI * 0.15, Math.PI * 0.85);
+    ctx.stroke();
+  }
+  if (o.beard) {
+    ctx.fillStyle = "#f4f1ea";
+    ctx.beginPath();
+    ctx.moveTo(cx - s * 0.24, cy - s * 0.72);
+    ctx.quadraticCurveTo(cx, cy - s * 0.05, cx + s * 0.24, cy - s * 0.72);
+    ctx.fill();
+    // 흰 눈썹
+    ctx.strokeStyle = "#f4f1ea";
+    ctx.lineWidth = s * 0.07;
+    for (const side of [-1, 1]) {
+      ctx.beginPath();
+      ctx.moveTo(cx + side * s * 0.06, cy - s * 0.97);
+      ctx.lineTo(cx + side * s * 0.26, cy - s * 0.93);
+      ctx.stroke();
+    }
+  } else {
+    ctx.fillStyle = "#c0505a";
+    ctx.beginPath();
+    ctx.arc(cx, cy - s * 0.7, s * 0.05, 0, Math.PI);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255, 140, 150, 0.6)";
+    for (const side of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(cx + side * s * 0.22, cy - s * 0.74, s * 0.06, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+/** 호랑이 (산신 옆에 엎드린) */
+function tiger(ctx: Ctx, x: number, y: number, s: number) {
+  ctx.fillStyle = "#e88a2a";
+  ctx.beginPath();
+  ctx.ellipse(x, y, s, s * 0.38, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x - s * 0.95, y - s * 0.2, s * 0.36, 0, Math.PI * 2);
+  ctx.fill();
+  for (const dx of [-0.2, 0.2]) {
+    ctx.beginPath();
+    ctx.arc(x - s * 0.95 + dx * s, y - s * 0.52, s * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.strokeStyle = "#2a1a10";
+  ctx.lineWidth = s * 0.07;
+  for (let i = 0; i < 5; i++) {
+    const sx = x - s * 0.5 + i * s * 0.3;
+    ctx.beginPath();
+    ctx.moveTo(sx, y - s * 0.34);
+    ctx.quadraticCurveTo(sx + s * 0.08, y - s * 0.1, sx - s * 0.02, y + s * 0.05);
+    ctx.stroke();
+  }
+  ctx.fillStyle = "#2a1a10";
+  for (const dx of [-0.12, 0.12]) {
+    ctx.beginPath();
+    ctx.arc(x - s * 0.95 + dx * s, y - s * 0.24, s * 0.045, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // 꼬리
+  ctx.strokeStyle = "#e88a2a";
+  ctx.lineWidth = s * 0.12;
+  ctx.beginPath();
+  ctx.moveTo(x + s * 0.95, y);
+  ctx.quadraticCurveTo(x + s * 1.3, y - s * 0.2, x + s * 1.1, y - s * 0.55);
+  ctx.stroke();
+}
+
+function musindoPanel(
+  ctx: Ctx,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  title: string,
+  draw: (cx: number, cy: number) => void,
+) {
+  ctx.save();
+  ctx.translate(x, y);
+  // 비단 테두리
+  ctx.fillStyle = "#6a1a14";
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = "#b8902a";
+  ctx.fillRect(w * 0.05, h * 0.03, w * 0.9, h * 0.94);
+  // 그림 바탕 (오래된 비단)
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, "#a88a5c");
+  bg.addColorStop(1, "#6e5432");
+  ctx.fillStyle = bg;
+  ctx.fillRect(w * 0.07, h * 0.045, w * 0.86, h * 0.91);
+  // 붉은 구름 띠 (위)
+  ctx.fillStyle = "rgba(180, 50, 40, 0.35)";
+  for (let i = 0; i < 4; i++) {
+    ctx.beginPath();
+    ctx.ellipse(w * (0.2 + i * 0.2), h * 0.12, w * 0.12, h * 0.035, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  draw(w / 2, h * 0.58);
+  // 제목 (붉은 바탕 금 글씨)
+  ctx.fillStyle = "#8f2a22";
+  ctx.fillRect(w * 0.32, h * 0.06, w * 0.36, h * 0.1);
+  ctx.fillStyle = "#f6dc97";
+  ctx.font = `700 ${Math.round(h * 0.07)}px ${SERIF}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(title, w / 2, h * 0.112);
+  ctx.restore();
+}
+
+function drawMusindo(ctx: Ctx, w: number, h: number) {
+  ctx.fillStyle = "#3a1410";
+  ctx.fillRect(0, 0, w, h);
+  const pw = w * 0.3;
+  const gap = (w - pw * 3) / 4;
+  // 왼쪽: 동자신 (복숭아를 든 아이)
+  musindoPanel(ctx, gap, h * 0.04, pw, h * 0.92, "童子", (cx, cy) => {
+    deity(ctx, cx, cy, h * 0.16, {
+      robe: "#3c6fd6",
+      trim: "#f6c84a",
+      hair: "#1f1612",
+      knot: true,
+    });
+    ctx.fillStyle = "#f28fb0";
+    ctx.beginPath();
+    ctx.arc(cx, cy + h * 0.02, h * 0.035, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  // 가운데: 산신령과 호랑이, 소나무
+  musindoPanel(ctx, gap * 2 + pw, h * 0.04, pw, h * 0.92, "山神", (cx, cy) => {
+    ctx.fillStyle = "#2f5a3a";
+    ctx.beginPath();
+    ctx.moveTo(cx - pw * 0.42, cy - h * 0.18);
+    ctx.lineTo(cx - pw * 0.28, cy - h * 0.34);
+    ctx.lineTo(cx - pw * 0.16, cy - h * 0.18);
+    ctx.fill();
+    ctx.fillRect(cx - pw * 0.3, cy - h * 0.18, pw * 0.03, h * 0.3);
+    deity(ctx, cx + pw * 0.04, cy - h * 0.02, h * 0.15, {
+      robe: "#c0392b",
+      trim: "#2f58bd",
+      hair: "#e8e4da",
+      beard: true,
+    });
+    tiger(ctx, cx + pw * 0.06, cy + h * 0.24, h * 0.09);
+  });
+  // 오른쪽: 선녀(대신 할머니) — 족두리와 흰 옷
+  musindoPanel(ctx, gap * 3 + pw * 2, h * 0.04, pw, h * 0.92, "仙女", (cx, cy) => {
+    deity(ctx, cx, cy, h * 0.16, {
+      robe: "#f4f1ea",
+      trim: "#d9413a",
+      hair: "#1f1612",
+      crown: true,
+    });
+  });
+}
+
+/**
+ * 무신도 텍스처 (D-086). 먼저 코드로 그린 그림을 보여 주고, 탱화풍 이미지(AI 생성, public/textures)를
+ * 받으면 같은 캔버스에 덮어 그린다. 이미지를 못 받으면 코드 그림이 그대로 남는다.
+ */
+export function musindoTexture(url = "/textures/musindo.jpg"): THREE.CanvasTexture {
+  let photo: HTMLImageElement | null = null;
+  const draw = (ctx: Ctx) => {
+    if (photo) ctx.drawImage(photo, 0, 0, 1024, 512);
+    else drawMusindo(ctx, 1024, 512);
+  };
+  const tex = canvasTexture(1024, 512, draw);
+  const img = new Image();
+  img.decoding = "async";
+  img.onload = () => {
+    photo = img;
+    const canvas = tex.image as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    draw(ctx);
+    tex.needsUpdate = true;
+  };
+  img.src = url;
+  return tex;
+}

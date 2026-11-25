@@ -401,7 +401,7 @@ export function buildInterior(shop: ShopId, look: ChibiLook): Interior {
   scene.add(dust);
   const dustPos = dust.geometry.getAttribute("position") as THREE.BufferAttribute;
   owned.push(glowMat, glows.geometry, dustMat, dust.geometry);
-  const vig = vignette(pal.bg, 0.75);
+  const vig = vignette(pal.bg, pal.vignette ?? 0.75);
   scene.add(vig);
   owned.push(vig.geometry, vig.material as THREE.Material);
 

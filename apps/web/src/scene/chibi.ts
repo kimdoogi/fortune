@@ -33,7 +33,12 @@ const GEO = {
   torso: new THREE.CapsuleGeometry(0.17, 0.16, 4, 12),
   collar: new THREE.TorusGeometry(0.13, 0.026, 5, 12),
   goreum: new THREE.BoxGeometry(0.05, 0.17, 0.015),
-  skirt: new THREE.ConeGeometry(0.31, 0.44, 16),
+  /** 원피스 치마 (D-086): 무릎 위까지, 다리가 보인다 */
+  dress: new THREE.ConeGeometry(0.28, 0.3, 16),
+  /** 원피스 흰 동그란 깃 한 쪽 */
+  roundCollar: new THREE.SphereGeometry(0.075, 8, 4),
+  belt: new THREE.TorusGeometry(0.158, 0.018, 3, 12),
+  bowLoop: new THREE.SphereGeometry(0.045, 6, 4),
   sleeve: new THREE.CapsuleGeometry(0.058, 0.14, 3, 8),
   hand: new THREE.SphereGeometry(0.048, 6, 5),
   leg: new THREE.CapsuleGeometry(0.06, 0.08, 3, 8),
@@ -64,43 +69,53 @@ const MAT = {
 };
 
 interface Palette {
+  /** 남성: 저고리 / 여성: 원피스 소매 안쪽 (쓰지 않음) */
   top: string;
+  /** 남성: 바지 / 여성: 원피스 (D-086) */
   bottom: string;
   hair: string;
+  /** 남성: 고름 / 여성: 허리 리본 */
   accent: string;
   shoe: string;
+  /** 여성 다리 (살색 또는 스타킹) */
+  leg?: string;
 }
 
 /** 성별 × 나이대 기본 아바타 8종 (05 §2, 08 §1) */
 const PALETTE: Record<Gender, Record<AgeBand, Palette>> = {
+  // 여성은 모든 나이대가 원피스 (D-086): bottom = 원피스, accent = 허리 리본
   female: {
     "10대": {
-      top: "#fff3b0",
-      bottom: "#ef6f8e",
+      top: "#ff9db8",
+      bottom: "#ff8fb0",
       hair: "#3a2418",
       accent: "#d9413a",
-      shoe: "#f4f1ea",
+      shoe: "#d9413a",
+      leg: "#ffdcc2",
     },
     "20대": {
-      top: "#ffd6e6",
-      bottom: "#8a6fe0",
+      top: "#a58cf0",
+      bottom: "#9d86ea",
       hair: "#2b1b14",
-      accent: "#6a4fc9",
-      shoe: "#f4f1ea",
+      accent: "#5a3fb9",
+      shoe: "#3a2b22",
+      leg: "#ffdcc2",
     },
     "30대": {
-      top: "#d7efe8",
-      bottom: "#2f6f8f",
+      top: "#2f6f8f",
+      bottom: "#2f6a8a",
       hair: "#2b1b14",
-      accent: "#c25b7a",
-      shoe: "#f4f1ea",
+      accent: "#e0b85a",
+      shoe: "#2a2a33",
+      leg: "#f0c8aa",
     },
     "40대 이상": {
-      top: "#f3e2c0",
-      bottom: "#7a4a3a",
+      top: "#8a3f5a",
+      bottom: "#8a3f5a",
       hair: "#5a4a42",
-      accent: "#3f7a5a",
-      shoe: "#f4f1ea",
+      accent: "#f2d38a",
+      shoe: "#5a3a2a",
+      leg: "#f0c8aa",
     },
   },
   male: {
@@ -168,6 +183,8 @@ export class Chibi {
     const shoe = mat(pal.shoe);
     this.owned.push(top, bottom, hair, accent, shoe);
     const female = look.gender === "female";
+    const legMat = female && pal.leg ? mat(pal.leg) : bottom;
+    if (legMat !== bottom) this.owned.push(legMat);
 
     const shadow = mesh(GEO.shadow, MAT.shadow, 0, 0.01, 0);
     shadow.rotation.x = -Math.PI / 2;
@@ -177,7 +194,7 @@ export class Chibi {
     for (const side of [-1, 1]) {
       const leg = new THREE.Group();
       leg.position.set(side * 0.08, 0.2, 0);
-      leg.add(mesh(GEO.leg, bottom, 0, -0.09, 0));
+      leg.add(mesh(GEO.leg, legMat, 0, -0.09, 0));
       const foot = mesh(GEO.shoe, shoe, 0, -0.17, 0.03);
       foot.scale.set(1, 0.6, 1.45);
       leg.add(foot);
@@ -185,21 +202,39 @@ export class Chibi {
       this.body.add(leg);
     }
 
-    // 몸통 (저고리) + 동정 + 고름
-    this.body.add(mesh(GEO.torso, top, 0, 0.37, 0));
-    const collar = mesh(GEO.collar, MAT.collar, 0, 0.54, 0);
-    collar.rotation.x = Math.PI / 2 - 0.15;
-    this.body.add(collar);
-    for (const [x, rz] of [
-      [0.05, 0.35],
-      [0.09, -0.1],
-    ] as const) {
-      const g = mesh(GEO.goreum, accent, x, 0.4, 0.165);
-      g.rotation.z = rz;
-      this.body.add(g);
-    }
     if (female) {
-      this.body.add(mesh(GEO.skirt, bottom, 0, 0.22, 0));
+      // 원피스 (D-086): 한 색 몸통 + 무릎 위 치마 + 흰 동그란 깃 + 허리 리본
+      this.body.add(mesh(GEO.torso, bottom, 0, 0.37, 0));
+      this.body.add(mesh(GEO.dress, bottom, 0, 0.27, 0));
+      for (const side of [-1, 1]) {
+        const c = mesh(GEO.roundCollar, MAT.collar, side * 0.065, 0.525, 0.1);
+        c.scale.set(1, 0.32, 0.85);
+        c.rotation.set(-0.35, 0, side * -0.25);
+        this.body.add(c);
+      }
+      const belt = mesh(GEO.belt, accent, 0, 0.36, 0);
+      belt.rotation.x = Math.PI / 2;
+      this.body.add(belt);
+      for (const side of [-1, 1]) {
+        const loop = mesh(GEO.bowLoop, accent, side * 0.04, 0.36, 0.165);
+        loop.scale.set(1, 0.6, 0.45);
+        loop.rotation.z = side * 0.4;
+        this.body.add(loop);
+      }
+    } else {
+      // 몸통 (저고리) + 동정 + 고름
+      this.body.add(mesh(GEO.torso, top, 0, 0.37, 0));
+      const collar = mesh(GEO.collar, MAT.collar, 0, 0.54, 0);
+      collar.rotation.x = Math.PI / 2 - 0.15;
+      this.body.add(collar);
+      for (const [x, rz] of [
+        [0.05, 0.35],
+        [0.09, -0.1],
+      ] as const) {
+        const g = mesh(GEO.goreum, accent, x, 0.4, 0.165);
+        g.rotation.z = rz;
+        this.body.add(g);
+      }
     }
 
     // 팔 (어깨를 축으로 흔든다)
@@ -207,7 +242,7 @@ export class Chibi {
       const arm = new THREE.Group();
       arm.position.set(side * 0.2, 0.5, 0);
       arm.rotation.z = side * 0.32;
-      arm.add(mesh(GEO.sleeve, top, 0, -0.11, 0));
+      arm.add(mesh(GEO.sleeve, female ? bottom : top, 0, -0.11, 0));
       arm.add(mesh(GEO.hand, MAT.skin, 0, -0.23, 0));
       this.arms.push(arm);
       this.body.add(arm);

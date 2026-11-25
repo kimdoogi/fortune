@@ -7,7 +7,6 @@
  */
 import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {
   C,
   type Kit,
@@ -28,7 +27,7 @@ import {
 } from "./furniture";
 import { at, beam, colored, gradient, hash } from "./geo";
 import { glowMaterial, glowPoints } from "./glow";
-import { SAJU_ATLAS, irworobongTexture, sajuTexture } from "./paintings";
+import { SAJU_ATLAS, musindoTexture, sajuTexture } from "./paintings";
 
 export interface Palette {
   wall: string;
@@ -53,6 +52,8 @@ export interface Palette {
   moonLight: string;
   dust: number;
   dustColor: string;
+  /** 가장자리 어둡게 (기본 0.75) */
+  vignette?: number;
 }
 
 export interface Decor {
@@ -650,38 +651,72 @@ const tarot: Decor = {
 };
 
 // ───────────────────────── 아기도령 ─────────────────────────
+/** 향 연기: 위로 피어오르며 흔들리다 흩어지는 부드러운 빛 점 (D-086). 점 한 덩어리라 드로우콜 1 */
+function incenseSmoke(kit: Kit, x: number, y: number, z: number) {
+  const N = 14;
+  const mat = glowMaterial(0.28);
+  const smoke = glowPoints(
+    Array.from({ length: N }, () => ({ x, y, z, size: 0.12, color: "#bfb4a8", flicker: 0.05 })),
+    mat,
+  );
+  const sp = smoke.geometry.getAttribute("position") as THREE.BufferAttribute;
+  const ss = smoke.geometry.getAttribute("size") as THREE.BufferAttribute;
+  kit.objects.push(smoke);
+  kit.disposables.push(mat, smoke.geometry);
+  kit.glowMaterials.push(mat);
+  kit.updaters.push((_dt, time) => {
+    const u = mat.uniforms.uTime;
+    if (u) u.value = time;
+    for (let i = 0; i < N; i++) {
+      const k = (time * 0.16 + i / N) % 1;
+      sp.setXYZ(
+        i,
+        x + Math.sin(time * 1.1 + k * 7 + i) * 0.05 * k,
+        y + k * 0.8,
+        z + Math.cos(k * 5 + i * 2) * 0.02 * k,
+      );
+      // 올라갈수록 커지고 흐려진다
+      ss.setX(i, (0.06 + k * 0.3) * (1 - k * k));
+    }
+    sp.needsUpdate = true;
+    ss.needsUpdate = true;
+  });
+}
+
 const OBANG = ["#d9413a", "#f2c230", "#3c6fd6", "#f4f1ea", "#3f9a55"];
 const SAEKDONG = ["#e0453a", "#f6c84a", "#3f9a55", "#3c6fd6", "#f28fb0", "#f7f1e3"];
 
+// 촛불만 일렁이는 어두운 신당 (D-086)
 const dolyeong: Decor = {
   palette: {
-    wall: "#f3e7cf",
-    wallLow: "#dcc59e",
-    wood: "#7a4b2c",
-    woodDark: "#4a2c1a",
-    floor: "#b98650",
-    floor2: "#9a673a",
+    wall: "#b89a70",
+    wallLow: "#7a5a3c",
+    wood: "#5a3420",
+    woodDark: "#2e1a10",
+    floor: "#7a5030",
+    floor2: "#5e3a22",
     floorKind: "plank",
-    ceiling: "#3a2018",
-    sky: "#8f837c",
-    ground: "#3b2a22",
-    bg: "#1c1012",
-    hemiSky: "#ffe2c8",
-    hemiGround: "#5a3428",
-    key: "#ffc488",
-    rim: "#9aa6ff",
-    moonPaper: "#7a84c4",
-    moonLight: "#8f9cff",
-    dust: 22,
-    dustColor: "#ffe0a0",
+    ceiling: "#1a0c08",
+    sky: "#2a201e",
+    ground: "#120a08",
+    bg: "#0a0405",
+    hemiSky: "#ffb27a",
+    hemiGround: "#3a1c14",
+    key: "#ff9c55",
+    rim: "#7a6aff",
+    moonPaper: "#4a4f80",
+    moonLight: "#5a64c0",
+    dust: 36,
+    dustColor: "#ffc890",
+    vignette: 0.95,
   },
   build(kit) {
-    // 색동 줄무늬 돗자리
+    // 검붉은 돗자리 + 오방색 테두리
     rug(kit, 0, -0.05, 2.4, 2.3, (u, v) => {
       const e = Math.min(u, v, 1 - u, 1 - v);
-      if (e < 0.03) return new THREE.Color("#7a2f25");
-      if (e < 0.1) return new THREE.Color(SAEKDONG[Math.floor(u * 30) % SAEKDONG.length] as string);
-      return new THREE.Color(Math.floor(v * 14) % 2 ? "#e9d3a0" : "#e2c98f");
+      if (e < 0.03) return new THREE.Color("#2e0f0c");
+      if (e < 0.08) return new THREE.Color(OBANG[Math.floor(u * 25) % OBANG.length] as string);
+      return new THREE.Color(Math.floor(v * 14) % 2 ? "#6a1e18" : "#5e1a14");
     });
     lowTable(kit, { ...TABLE, top: "#8f2a22" });
     // 색동 방석 (테두리 줄무늬는 방석 위 얇은 띠로)
@@ -704,8 +739,17 @@ const dolyeong: Decor = {
     kit.parts.push(box(2.16, 0.04, 0.46, 0, 0.62, az, "#5a1a14"));
     kit.parts.push(box(2.0, 0.02, 0.01, 0, 0.5, az + 0.211, "#f2c230"));
     kit.parts.push(box(2.0, 0.02, 0.01, 0, 0.1, az + 0.211, "#f2c230"));
+    // 촛불 다섯 자루 (제단 뒤쪽 줄)
+    for (const [cx, ch] of [
+      [-0.88, 0.14],
+      [-0.66, 0.1],
+      [0.66, 0.1],
+      [0.88, 0.14],
+    ] as const) {
+      candle(kit, cx, 0.66, az - 0.08, ch, { holder: true, wax: "#e0503f", light: 0.75 });
+    }
+    candle(kit, 0, 0.66, az - 0.12, 0.2, { holder: true, wax: "#f4ead6", light: 0.9 });
     for (const s of [-1, 1]) {
-      candle(kit, s * 0.82, 0.66, az, 0.16, { holder: true, wax: "#e0503f", light: 0.8 });
       // 고배 접시 위 사과 탑
       kit.parts.push(cyl(0.12, 0.05, 0.03, s * 0.45, 0.78, az, C.brass, 12));
       kit.parts.push(cyl(0.03, 0.05, 0.12, s * 0.45, 0.66, az, C.brass, 8));
@@ -723,22 +767,50 @@ const dolyeong: Decor = {
           ),
         );
     }
-    kit.parts.push(cyl(0.07, 0.05, 0.06, 0, 0.66, az, "#f4f1ea", 12));
+    // 정화수 (왼쪽 앞) + 향로 (가운데 앞, 향 세 개)
+    kit.parts.push(cyl(0.06, 0.045, 0.05, -0.22, 0.66, az + 0.1, "#f4f1ea", 12));
     kit.parts.push(
       colored(
-        at(new THREE.CircleGeometry(0.065, 12).rotateX(-Math.PI / 2), 0, 0.722, az),
+        at(new THREE.CircleGeometry(0.055, 12).rotateX(-Math.PI / 2), -0.22, 0.712, az + 0.1),
         "#9cc4e0",
       ),
     );
+    const iz = az + 0.1;
+    kit.parts.push(cyl(0.07, 0.055, 0.07, 0, 0.66, iz, C.brass, 12));
+    for (const s of [-1, 1])
+      kit.parts.push(cyl(0.012, 0.012, 0.03, s * 0.05, 0.63, iz, C.brass, 5));
+    for (const dx of [-0.02, 0, 0.02]) {
+      kit.parts.push(cyl(0.004, 0.004, 0.16, dx, 0.73, iz, "#7a3a20", 4));
+      kit.lit.push(colored(at(new THREE.SphereGeometry(0.007, 4, 3), dx, 0.89, iz), "#ff7a30"));
+    }
+    incenseSmoke(kit, 0, 0.9, iz);
     kit.shadows.push({ x: 0, z: az, rx: 1.15, rz: 0.3, k: 0.45 });
 
-    // 일월오봉도 (뒷벽 위)
-    if (hasDom) kit.paintedMap = irworobongTexture();
+    // 무신도 세 폭 (뒷벽 위): 동자신 · 산신령과 호랑이 · 선녀 (D-086)
+    if (hasDom) kit.paintedMap = musindoTexture();
     {
-      const p = new THREE.PlaneGeometry(1.7, 0.85, 8, 4);
-      p.translate(0, 0.95 + 0.425, BACK + 0.08);
-      kit.painted.push(tintKeepUv(p, "#ffffff"));
-      kit.parts.push(box(1.8, 0.95, 0.04, 0, 0.9, BACK + 0.05, "#5a1a14"));
+      const p = new THREE.PlaneGeometry(1.9, 0.95, 8, 4);
+      p.translate(0, 0.92 + 0.475, BACK + 0.08);
+      // 촛불에 비친 듯 조금 어둡고 따뜻하게
+      kit.painted.push(tintKeepUv(p, "#e0c8a8"));
+      kit.parts.push(box(2.0, 1.05, 0.04, 0, 0.87, BACK + 0.05, "#2e0f0c"));
+    }
+
+    // 천장에서 늘어진 오방색 천 (양쪽 앞 모서리, 살짝 물결)
+    for (const side of [-1, 1]) {
+      OBANG.forEach((c, i) => {
+        const x = side * (1.45 + i * 0.13);
+        const len = 1.05 - Math.abs(i - 2) * 0.08;
+        const cloth = new THREE.BoxGeometry(0.11, len, 0.008, 1, 6, 1);
+        const pos = cloth.getAttribute("position");
+        for (let k = 0; k < pos.count; k++) {
+          const y = pos.getY(k);
+          pos.setZ(k, pos.getZ(k) + Math.sin((y + i) * 5) * 0.025);
+        }
+        cloth.computeVertexNormals();
+        kit.parts.push(colored(at(cloth, x, 2.5 - len / 2, BACK + 0.55 + i * 0.05), c));
+      });
+      kit.parts.push(cyl(0.015, 0.015, 0.75, side * 1.71, 2.48, BACK + 0.65, C.wood, 5));
     }
 
     // 방울 줄 (인방을 따라)
@@ -789,11 +861,16 @@ const dolyeong: Decor = {
       });
     }
 
-    // 청사초롱
-    hangingLantern(kit, -1.05, 1.95, -1.3, 2.55, "cheongsa");
-    hangingLantern(kit, 1.05, 1.95, -1.3, 2.55, "cheongsa");
-    floorLamp(kit, -1.65, -0.55);
-    floorLamp(kit, 1.65, -0.55);
+    // 바닥 촛대 (키 큰 놋쇠 촛대 + 굵은 초)
+    for (const s of [-1, 1]) {
+      const x = s * 1.6;
+      const z = -0.6;
+      kit.parts.push(cyl(0.11, 0.14, 0.04, x, 0, z, C.brass, 12));
+      kit.parts.push(cyl(0.02, 0.028, 0.62, x, 0.04, z, C.brass, 6));
+      kit.parts.push(cyl(0.08, 0.05, 0.03, x, 0.66, z, C.brass, 10));
+      candle(kit, x, 0.69, z, 0.18, { wax: "#e0503f", light: 1.0 });
+      kit.shadows.push({ x, z, rx: 0.16, rz: 0.16, k: 0.4 });
+    }
 
     // 장구 (오른쪽 바닥)
     {
@@ -844,33 +921,16 @@ const dolyeong: Decor = {
       colored(at(new THREE.SphereGeometry(0.045, 10, 8), 0.42, TABLE.h + 0.045, -0.15), "#f2c230"),
     );
 
-    // 바람개비 (돌아간다)
-    const pin = new THREE.Group();
-    const blades: THREE.BufferGeometry[] = [];
-    OBANG.slice(0, 4).forEach((c, i) => {
-      const tri = new THREE.BufferGeometry();
-      tri.setAttribute(
-        "position",
-        new THREE.Float32BufferAttribute(
-          [0, 0, 0, 0.13, 0.02, 0, 0.02, 0.13, 0, 0, 0, 0, 0.02, 0.13, 0, 0.13, 0.02, 0],
-          3,
-        ),
-      );
-      tri.computeVertexNormals();
-      tri.rotateZ((i * Math.PI) / 2);
-      blades.push(colored(tri, c));
-    });
-    const bladeGeo = mergeAll(blades);
-    const pinMat = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
-    const wheel = new THREE.Mesh(bladeGeo, pinMat);
-    pin.add(wheel);
-    pin.position.set(-0.62, 0.66 + 0.32, BACK + 0.34);
-    kit.parts.push(cyl(0.008, 0.008, 0.32, -0.62, 0.66, BACK + 0.34, C.wood, 4));
-    kit.objects.push(pin);
-    kit.disposables.push(bladeGeo, pinMat);
-    kit.updaters.push((_dt, time) => {
-      wheel.rotation.z = -time * 2.2;
-    });
+    // 쌀 그릇 (쌀점): 놋 주발 + 소복한 쌀 + 위에 엽전 하나
+    {
+      const bx = 0.12;
+      const bz = -0.2;
+      kit.parts.push(cyl(0.1, 0.07, 0.07, bx, TABLE.h, bz, C.brass, 14));
+      const rice = new THREE.SphereGeometry(0.095, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2);
+      rice.scale(1, 0.45, 1);
+      kit.parts.push(colored(at(rice, bx, TABLE.h + 0.068, bz), "#f6f1e4"));
+      kit.parts.push(cyl(0.022, 0.022, 0.005, bx + 0.02, TABLE.h + 0.108, bz, "#c9a24a", 10));
+    }
   },
 };
 
@@ -1178,13 +1238,5 @@ const dream: Decor = {
     });
   },
 };
-
-/** 합치고 원본은 버린다 */
-function mergeAll(geos: THREE.BufferGeometry[]): THREE.BufferGeometry {
-  const m = mergeGeometries(geos);
-  for (const g of geos) g.dispose();
-  if (!m) throw new Error("merge failed");
-  return m;
-}
 
 export const DECOR: Record<ShopId, Decor> = { saju, tarot, dolyeong, dream };

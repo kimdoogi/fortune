@@ -412,14 +412,15 @@ const dolyeong: LookBuilder = (rig, b) => {
   const skin = "#ffe4cf";
   const hair = "#1f1612";
   const jacket = "#fbe7a1";
-  const vest = "#2f58bd";
+  // 붉은 쾌자 무복 (D-086, 예전엔 파란 전복)
+  const vest = "#b8282a";
   const gold = "#f2c230";
   const red = "#d9413a";
   const SAEKDONG = ["#e0453a", "#f6c84a", "#3f9a55", "#3c6fd6", "#f28fb0", "#f7f1e3"];
   b.head.position.y = 0.36;
   b.armL.position.set(0.17, 0.29, 0);
   b.armR.position.set(-0.17, 0.29, 0);
-  addSeat(rig, b, vest, { w: 0.36, h: 0.15, d: 0.31 });
+  addSeat(rig, b, "#2f58bd", { w: 0.36, h: 0.15, d: 0.31 });
   addTorso(rig, b, jacket, { r: 0.165, len: 0.1, y: 0.16 });
   // 전복(앞이 트인 쾌자): 앞쪽을 비운 회전체 + 금색 선
   const vestPts: THREE.Vector2[] = [];
@@ -501,21 +502,40 @@ const dolyeong: LookBuilder = (rig, b) => {
     rib.rotateZ((i - 2) * 0.12);
     rig.add(bell, at(rib, (i - 2) * 0.012, -0.1, 0.01), c);
   });
-  // 오방기 묶음 (왼손): 다섯 깃대에 말아 둔 깃발
-  const flags = new THREE.Group();
-  b.handL.add(flags);
-  OBANG.forEach((c, i) => {
-    // 깃대마다 부채꼴로 기울인다 (뼈 하나에 모아 드로우콜 1개)
-    const a = (i - 2) * 0.13;
-    const tilt = (g: THREE.BufferGeometry) => g.rotateZ(a);
+  // 무당 부채 (왼손, D-086): 펼친 반원에 빨강·노랑·파랑 칸 + 금 테두리 + 대나무 살
+  const fan = new THREE.Group();
+  b.handL.add(fan);
+  rig.add(fan, at(new THREE.CylinderGeometry(0.012, 0.014, 0.12, 6), 0, 0.04, 0), "#8a5a32");
+  const FAN = ["#d9413a", "#f2c230", "#3c6fd6"];
+  FAN.forEach((c, i) => {
+    const sector = new THREE.CylinderGeometry(
+      0.19,
+      0.19,
+      0.008,
+      6,
+      1,
+      false,
+      -Math.PI / 2 + (i * Math.PI) / 3,
+      Math.PI / 3,
+    );
+    sector.rotateX(Math.PI / 2);
+    rig.add(fan, at(sector, 0, 0.1, 0), c);
+  });
+  const rim = new THREE.TorusGeometry(0.19, 0.008, 3, 14, Math.PI);
+  rig.add(fan, at(rim, 0, 0.1, 0), gold);
+  for (let i = 0; i <= 6; i++) {
+    const a = (i / 6) * Math.PI;
     rig.add(
-      flags,
-      tilt(at(new THREE.CylinderGeometry(0.008, 0.008, 0.46, 5), 0, 0.15, 0)),
+      fan,
+      beam(
+        new THREE.Vector3(0, 0.1, 0.006),
+        new THREE.Vector3(Math.cos(a) * 0.18, 0.1 + Math.sin(a) * 0.18, 0.006),
+        0.004,
+        0.004,
+      ),
       "#7a4a2a",
     );
-    rig.add(flags, tilt(at(new THREE.CylinderGeometry(0.027, 0.027, 0.15, 8), 0.024, 0.28, 0)), c);
-    rig.add(flags, tilt(at(sphere(0.016, 6, 4), 0, 0.39, 0)), gold);
-  });
+  }
 
   return {
     scale: 0.92,
@@ -541,7 +561,7 @@ const dolyeong: LookBuilder = (rig, b) => {
         p.sway = Math.sin(t * 1.9) * 0.05;
         p.handRz += Math.sin(t * 20) * 0.08;
       } else if (a === "present") {
-        // 말아 둔 오방기를 두 손으로 내민다
+        // 부채를 펼쳐 내민다
         p.armLx = -1.55;
         p.armLz = 0.02;
         p.armRx = -1.25;
@@ -555,7 +575,7 @@ const dolyeong: LookBuilder = (rig, b) => {
     },
     apply(p) {
       upright(bell, p.armRx, p.handRx, 0.2);
-      upright(flags, p.armLx, p.handLx, 0.15);
+      upright(fan, p.armLx, p.handLx, 0.15);
     },
   };
 };

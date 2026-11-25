@@ -37,10 +37,12 @@ describe("시스템 프롬프트 (04 §2)", () => {
     }
     expect(systemPrompt("tarot_one")).toContain("달님 언니");
     expect(systemPrompt("dream")).toContain("몽실 할매");
+    // 나이대·성별 맞춤은 모든 상품에 들어간다 (D-069)
+    for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("[나이대와 성별에 맞추기]");
   });
 
   it("프롬프트 버전이 저장용 문자열로 나온다", () => {
-    expect(promptVersion("obanggi")).toBe("common@1+dolyeong@1+obanggi@1");
+    expect(promptVersion("obanggi")).toBe("common@3+dolyeong@2+obanggi@1");
   });
 
   it("대체 문장·위기 안내에 금지 표현이 없다", () => {

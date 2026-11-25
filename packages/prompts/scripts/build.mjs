@@ -18,11 +18,11 @@ export function render() {
     .map((s) => `${s.id}: ${s.name} (${s.synonyms.filter((w) => w !== s.name).join(", ")})`)
     .join("\n");
   const data = {
-    common: { v: 1, text: read("common/v1.md") },
+    common: { v: 3, text: read("common/v3.md") },
     persona: {
       saju: { v: 1, text: read("saju/persona.v1.md") },
       tarot: { v: 1, text: read("tarot/persona.v1.md") },
-      dolyeong: { v: 1, text: read("dolyeong/persona.v1.md") },
+      dolyeong: { v: 2, text: read("dolyeong/persona.v2.md") },
       dream: { v: 1, text: read("dream/persona.v1.md") },
     },
     product: {

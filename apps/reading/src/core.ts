@@ -11,17 +11,21 @@ import {
   FALLBACKS,
   FOLLOWUP_SCHEMA,
   MODEL,
+  type OutputPart,
   SECTION_TARGETS,
   callSettings,
   checkFollowup,
   checkOutput,
+  checkPart,
   classifySchema,
   classifySystemPrompt,
   followupMax,
   followupSystemPrompt,
   followupTarget,
   followupVersion,
+  outputParts,
   outputSchema,
+  partNote,
   promptVersion,
   systemPrompt,
 } from "@fortune/prompts/llm";
@@ -75,30 +79,74 @@ export function fixtureClassify(input: ClassifyInput): ClassifyResult {
   };
 }
 
+type FailReason = Extract<InterpretResult, { ok: false }>["reason"];
+
+/**
+ * 해석 (04 §2, §9). 섹션이 많은 상품(사주 정밀)은 부분으로 나눠 동시에 부르고 합친다 (D-084):
+ * 한 번에 쓰면 출력이 5천 토큰을 넘어 25초 시간 초과에 자주 걸린다.
+ */
 export async function interpretWith(
   client: Anthropic,
   input: InterpretInput,
   opts: CoreOptions = {},
 ): Promise<InterpretResult> {
   const pv = promptVersion(input.product);
-  const log = opts.log ?? defaultLog;
-  const sleep = opts.sleep ?? defaultSleep;
-  const settings = callSettings(input.product);
-  let maxTokens: number = settings.maxTokens;
-  const retried = { api: false, truncated: false, parse: false };
-  const fail = (reason: Extract<InterpretResult, { ok: false }>["reason"]): InterpretResult => ({
+  const fail = (reason: FailReason): InterpretResult => ({
     ok: false,
     reason,
     fallback: FALLBACKS[input.shop],
     promptVersion: pv,
   });
+  const parts = outputParts(input.product);
+  const results = await Promise.all(
+    parts.map((part, i) => interpretPart(client, input, part, parts.length > 1 ? i : null, opts)),
+  );
+  const failed = results.find((r) => !r.ok);
+  if (failed && !failed.ok) return fail(failed.reason);
+
+  // 합치기: 첫 부분의 greeting·summary·advice(·luckyColor) + 모든 부분의 sections
+  const merged: Record<string, unknown> = { sections: {} };
+  for (const r of results) {
+    if (!r.ok) continue;
+    const { sections, ...rest } = r.value;
+    Object.assign(merged, rest);
+    Object.assign(merged.sections as object, sections);
+  }
+  const check = checkOutput(input.product, merged);
+  if (!check.ok) return fail(check.reason);
+  if (parts.length > 1 && check.lengthWarnings.length) {
+    (opts.log ?? defaultLog)({
+      kind: "interpret",
+      shop: input.shop,
+      product: input.product,
+      result: "merged",
+      detail: check.lengthWarnings,
+    });
+  }
+  return { ok: true, output: check.output, promptVersion: pv };
+}
+
+async function interpretPart(
+  client: Anthropic,
+  input: InterpretInput,
+  part: OutputPart,
+  partIndex: number | null,
+  opts: CoreOptions,
+): Promise<{ ok: true; value: Record<string, unknown> } | { ok: false; reason: FailReason }> {
+  const log = opts.log ?? defaultLog;
+  const sleep = opts.sleep ?? defaultSleep;
+  const settings = callSettings(input.product);
+  let maxTokens: number = settings.maxTokens;
+  const retried = { api: false, truncated: false, parse: false };
+  const content: Anthropic.ContentBlockParam[] = [{ type: "text", text: JSON.stringify(input) }];
+  if (partIndex !== null) content.push({ type: "text", text: partNote(part) });
 
   for (let attempt = 1; attempt <= 4; attempt++) {
     const t0 = Date.now();
     const r: CallOutcome = await callModel(client, MODEL, {
       system: systemPrompt(input.product),
-      messages: [{ role: "user", content: JSON.stringify(input) }],
-      schema: outputSchema(input.product),
+      messages: [{ role: "user", content: partIndex === null ? JSON.stringify(input) : content }],
+      schema: outputSchema(input.product, partIndex === null ? undefined : part),
       maxTokens,
       effort: opts.effort ?? settings.effort,
       timeoutMs: settings.timeoutMs,
@@ -107,6 +155,7 @@ export async function interpretWith(
       kind: "interpret",
       shop: input.shop,
       product: input.product,
+      ...(partIndex === null ? {} : { part: partIndex }),
       attempt,
       ms: Date.now() - t0,
     };
@@ -118,23 +167,23 @@ export async function interpretWith(
       } catch {
         parsed = null;
       }
-      const check = checkOutput(input.product, parsed);
+      const check = checkPart(input.product, part, parsed);
       log({
         ...base,
         result: check.ok ? "ok" : check.reason,
-        detail: check.ok ? check.lengthWarnings : check.detail,
+        detail: check.ok ? undefined : check.detail,
         in: r.usage.input_tokens,
         out: r.usage.output_tokens,
         cacheRead: r.usage.cache_read_input_tokens,
         cacheWrite: r.usage.cache_creation_input_tokens,
       });
-      if (check.ok) return { ok: true, output: check.output, promptVersion: pv };
-      if (check.reason === "banned") return fail("banned");
+      if (check.ok) return { ok: true, value: check.value };
+      // 형식 오류·금지 표현은 1회 다시 쓴다 (04 §9, D-084)
       if (!retried.parse) {
         retried.parse = true;
         continue;
       }
-      return fail("invalid_output");
+      return { ok: false, reason: check.reason };
     }
 
     log({
@@ -143,10 +192,10 @@ export async function interpretWith(
       ...("status" in r ? { status: r.status } : {}),
       ...("category" in r ? { category: r.category } : {}),
     });
-    if (r.kind === "refusal") return fail("refusal");
-    if (r.kind === "timeout") return fail("timeout");
+    if (r.kind === "refusal") return { ok: false, reason: "refusal" };
+    if (r.kind === "timeout") return { ok: false, reason: "timeout" };
     if (r.kind === "max_tokens") {
-      if (retried.truncated) return fail("truncated");
+      if (retried.truncated) return { ok: false, reason: "truncated" };
       retried.truncated = true;
       maxTokens = Math.round(maxTokens * 1.5);
       continue;
@@ -156,9 +205,9 @@ export async function interpretWith(
       await sleep(1000);
       continue;
     }
-    return fail("api_error");
+    return { ok: false, reason: "api_error" };
   }
-  return fail("api_error");
+  return { ok: false, reason: "api_error" };
 }
 
 export async function classifyWith(

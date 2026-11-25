@@ -43,7 +43,8 @@ export const PRODUCT_SHOP: Record<ProductId, ShopId> = {
 /** 호출 설정 (04 §2). effort는 평가(§12) 뒤 확정 */
 export const CALL = {
   interpret: { effort: "low", maxTokens: 4000, timeoutMs: 20_000 },
-  sajuFull: { effort: "low", maxTokens: 8000, timeoutMs: 25_000 },
+  /** 두 부분을 동시에 부르고(D-084) 부분마다 28초. 브라우저가 끊겨도 waitUntil 30초 안 (15 §3) */
+  sajuFull: { effort: "low", maxTokens: 8000, timeoutMs: 28_000 },
   classify: { effort: "low", maxTokens: 1000, timeoutMs: 10_000 },
   /** 이어 묻기 (04 §13). effort는 모든 이어 묻기에서 같아야 메시지 캐시가 유지된다 */
   followup: { effort: "low", maxTokens: 2000, timeoutMs: 15_000 },
@@ -97,18 +98,61 @@ export const DREAM_SYMBOL_IDS: readonly string[] = PROMPTS.symbolIds;
 const withLuckyColor = (p: ProductId) => p === "daily" || p === "saju_full";
 
 /** 구조화 출력 스키마 (04 §5). 섹션은 상품마다 고정 키를 가진 객체 */
-export function outputSchema(product: ProductId) {
-  const keys = Object.keys(SECTION_TARGETS[product]);
+/**
+ * 한 번에 쓰면 25초 시간 초과에 걸리는 상품은 섹션을 나눠 동시에 부른다 (04 §2, D-084).
+ * 첫 부분이 greeting·summary·advice(·luckyColor)도 쓰고, 나머지 부분은 sections만 쓴다.
+ */
+export const SPLIT_SECTIONS: Partial<Record<ProductId, string[][]>> = {
+  saju_full: [
+    ["overall", "thisYear", "months"],
+    ["money", "work", "love", "daewoon", "personality", "elements", "yongsin"],
+  ],
+};
+
+export interface OutputPart {
+  keys: string[];
+  /** greeting·summary·advice(·luckyColor)를 쓰는 부분 */
+  head: boolean;
+}
+
+/** 상품의 호출 부분들. 나누지 않는 상품은 하나 */
+export function outputParts(product: ProductId): OutputPart[] {
+  const split = SPLIT_SECTIONS[product];
+  if (!split) return [{ keys: Object.keys(SECTION_TARGETS[product]), head: true }];
+  return split.map((keys, i) => ({ keys, head: i === 0 }));
+}
+
+/** 나눠 부를 때 사용자 메시지 뒤에 붙이는 안내. 시스템 프롬프트는 그대로라 캐시가 유지된다 */
+export function partNote(part: OutputPart): string {
+  return part.head
+    ? `[이번 응답] sections에는 ${part.keys.join(", ")}만 쓴다. 나머지 섹션은 따로 쓰니 여기서 다루지 않는다.`
+    : `[이번 응답] sections의 ${part.keys.join(", ")}만 쓴다. 총평·올해·월별 운세는 따로 쓰니 같은 말을 되풀이하지 않는다.`;
+}
+
+export function outputSchema(product: ProductId, part?: OutputPart) {
+  const keys = part?.keys ?? Object.keys(SECTION_TARGETS[product]);
+  const targets = SECTION_TARGETS[product];
   const sections = Object.fromEntries(
-    Object.entries(SECTION_TARGETS[product]).map(([k, n]) => [
-      k,
-      { type: "string", description: `${n}자 안팎` },
-    ]),
+    keys.map((k) => [k, { type: "string", description: `${targets[k]}자 안팎` }]),
   );
+  const sectionsSchema = {
+    type: "object",
+    properties: sections,
+    required: keys,
+    additionalProperties: false,
+  };
+  if (part && !part.head) {
+    return {
+      type: "object",
+      properties: { sections: sectionsSchema },
+      required: ["sections"],
+      additionalProperties: false,
+    } as const;
+  }
   const properties: Record<string, unknown> = {
     greeting: { type: "string", description: "캐릭터의 첫마디 한 줄, 30자 이하" },
     summary: { type: "string", description: "한 줄 요약, 40자 이하" },
-    sections: { type: "object", properties: sections, required: keys, additionalProperties: false },
+    sections: sectionsSchema,
     advice: { type: "string", description: "마지막 한마디, 80자 이하" },
   };
   const required = ["greeting", "summary", "sections", "advice"];
@@ -117,6 +161,39 @@ export function outputSchema(product: ProductId) {
     required.push("luckyColor");
   }
   return { type: "object", properties, required, additionalProperties: false } as const;
+}
+
+/** 나눠 부른 한 부분의 검사: 형식과 금지 표현 (04 §9) */
+export function checkPart(
+  product: ProductId,
+  part: OutputPart,
+  raw: unknown,
+):
+  | { ok: true; value: Record<string, unknown> }
+  | { ok: false; reason: "invalid_output" | "banned"; detail: string } {
+  if (!raw || typeof raw !== "object")
+    return { ok: false, reason: "invalid_output", detail: "not an object" };
+  const o = raw as Record<string, unknown>;
+  const texts: string[] = [];
+  if (part.head) {
+    for (const k of ["greeting", "summary", "advice"]) {
+      if (!isText(o[k])) return { ok: false, reason: "invalid_output", detail: `missing ${k}` };
+      texts.push(o[k] as string);
+    }
+    if (withLuckyColor(product) && !isText(o.luckyColor))
+      return { ok: false, reason: "invalid_output", detail: "missing luckyColor" };
+  }
+  const sec = o.sections as Record<string, unknown> | undefined;
+  if (!sec || typeof sec !== "object")
+    return { ok: false, reason: "invalid_output", detail: "missing sections" };
+  for (const k of part.keys) {
+    if (!isText(sec[k]))
+      return { ok: false, reason: "invalid_output", detail: `missing section ${k}` };
+    texts.push(sec[k] as string);
+  }
+  const hits = findBanned(texts.join("\n"));
+  if (hits.length) return { ok: false, reason: "banned", detail: hits.join(",") };
+  return { ok: true, value: o };
 }
 
 export const CLASSIFY_CATEGORIES = ["연애", "재물", "직장", "건강", "가족", "기타"] as const;

@@ -100,14 +100,69 @@ describe("해석 실패 처리 (docs/04 §9)", () => {
     expect(calls[1]?.max_tokens).toBe(Math.round((calls[0]?.max_tokens as number) * 1.5));
   });
 
-  it("금지 표현이 나오면 재시도 없이 대체 문장", async () => {
+  it("금지 표현이 나오면 1회 다시 쓰고, 또 나오면 대체 문장 (D-084)", async () => {
     const banned = JSON.stringify({ ...JSON.parse(goodOutput), advice: "부적을 꼭 사세요" });
-    const { client, calls } = fakeClient([msg(banned)]);
-    expect(await interpretWith(client, input, quiet)).toMatchObject({
+    const twice = fakeClient([msg(banned), msg(banned)]);
+    expect(await interpretWith(twice.client, input, quiet)).toMatchObject({
       ok: false,
       reason: "banned",
     });
-    expect(calls).toHaveLength(1);
+    expect(twice.calls).toHaveLength(2);
+    const once = fakeClient([msg(banned), msg(goodOutput)]);
+    expect(await interpretWith(once.client, input, quiet)).toMatchObject({ ok: true });
+  });
+});
+
+describe("사주 정밀은 나눠서 동시에 부른다 (04 §2, D-084)", () => {
+  const sajuInput: InterpretInput = { ...input, shop: "saju", product: "saju_full" };
+  const head = JSON.stringify({
+    greeting: "어서 오시오.",
+    summary: "곧은 나무 같은 그대",
+    sections: { overall: "가".repeat(300), thisYear: "나".repeat(260), months: "다".repeat(450) },
+    advice: "적금부터 정하시오.",
+    luckyColor: "파란색",
+  });
+  const tail = JSON.stringify({
+    sections: {
+      money: "라".repeat(170),
+      work: "마".repeat(170),
+      love: "바".repeat(170),
+      daewoon: "사".repeat(180),
+      personality: "아".repeat(180),
+      elements: "자".repeat(150),
+      yongsin: "차".repeat(150),
+    },
+  });
+
+  it("두 부분을 따로 부르고 합친다. 시스템 프롬프트는 같아 캐시가 탄다", async () => {
+    const { client, calls } = fakeClient([msg(head), msg(tail)]);
+    const r = await interpretWith(client, sajuInput, quiet);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(Object.keys(r.output.sections)).toHaveLength(10);
+      expect(r.output.luckyColor).toBe("파란색");
+      expect(r.output.greeting).toBe("어서 오시오.");
+    }
+    expect(calls).toHaveLength(2);
+    expect(calls[0]?.system).toEqual(calls[1]?.system);
+    const schemaKeys = (c: Record<string, unknown> | undefined) =>
+      Object.keys(
+        (
+          c?.output_config as {
+            format: { schema: { properties: { sections: { properties: object } } } };
+          }
+        ).format.schema.properties.sections.properties,
+      );
+    expect(schemaKeys(calls[0])).toEqual(["overall", "thisYear", "months"]);
+    expect(schemaKeys(calls[1])).toContain("yongsin");
+  });
+
+  it("한 부분이라도 실패하면 대체 문장", async () => {
+    const { client } = fakeClient([msg(head), msg("{"), msg("{")]);
+    expect(await interpretWith(client, sajuInput, quiet)).toMatchObject({
+      ok: false,
+      fallback: expect.stringContaining("사주"),
+    });
   });
 });
 

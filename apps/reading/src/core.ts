@@ -18,6 +18,7 @@ import {
   classifySchema,
   classifySystemPrompt,
   followupSystemPrompt,
+  followupTarget,
   followupVersion,
   outputSchema,
   promptVersion,
@@ -236,7 +237,7 @@ export async function followupWith(
   input: FollowupInput,
   opts: CoreOptions = {},
 ): Promise<FollowupResult> {
-  const pv = followupVersion(input.shop);
+  const pv = followupVersion(input.shop, input.product);
   const log = opts.log ?? defaultLog;
   const sleep = opts.sleep ?? defaultSleep;
   const fail = (reason: Extract<FollowupResult, { ok: false }>["reason"]): FollowupResult => ({
@@ -260,7 +261,7 @@ export async function followupWith(
   for (let attempt = 1; attempt <= 4; attempt++) {
     const t0 = Date.now();
     const r: CallOutcome = await callModel(client, MODEL, {
-      system: followupSystemPrompt(input.shop),
+      system: followupSystemPrompt(input.shop, input.product),
       messages,
       cacheConversation: true,
       schema: FOLLOWUP_SCHEMA,
@@ -283,7 +284,7 @@ export async function followupWith(
       } catch {
         parsed = null;
       }
-      const check = checkFollowup(parsed);
+      const check = checkFollowup(parsed, followupTarget(input.product));
       log({
         ...base,
         result: check.ok ? "ok" : check.reason,

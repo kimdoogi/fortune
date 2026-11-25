@@ -2,7 +2,7 @@
  * POST /api/readings (docs/15 §3, F05~F08):
  * 인증 → 검증 → seed_key → 저장본 있으면 반환 → requestId 중복 방지 → 하루 상한 → 계산 → 해석 → 저장
  */
-import { FOLLOWUP_MAX } from "@fortune/prompts/llm";
+import { followupMax } from "@fortune/prompts/llm";
 import {
   DISCLAIMER,
   type InterpretResult,
@@ -33,7 +33,7 @@ const requestId = z.string().min(8).max(64);
 const tarotCategory = z.enum(["연애", "재물", "직장", "오늘"]);
 const dolyeongCategory = z.enum(["연애", "재물", "직장", "건강", "기타"]);
 
-export const ReadingRequestSchema = z.discriminatedUnion("shop", [
+export const ReadingRequestSchema = z.union([
   z.object({ shop: z.literal("saju"), product: z.literal("saju_full"), requestId }),
   z.object({
     shop: z.literal("tarot"),
@@ -47,6 +47,8 @@ export const ReadingRequestSchema = z.discriminatedUnion("shop", [
     category: dolyeongCategory,
     requestId,
   }),
+  // 아기도령 신점 대화 (F07, D-073)
+  z.object({ shop: z.literal("dolyeong"), product: z.literal("sinjeom"), requestId }),
   z.object({
     shop: z.literal("dream"),
     product: z.literal("dream"),
@@ -150,7 +152,7 @@ export async function createReading(
       disclaimer: DISCLAIMER,
       todayCallsLeft: left,
       followups: [],
-      followupsLeft: FOLLOWUP_MAX,
+      followupsLeft: followupMax(plan.product),
     };
     return json(out);
   })();

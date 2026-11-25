@@ -1,5 +1,5 @@
 /** readings·request_log 테이블 읽기/쓰기 (docs/09 §2, F10) */
-import { FOLLOWUP_MAX } from "@fortune/prompts/llm";
+import { followupMax } from "@fortune/prompts/llm";
 import {
   DISCLAIMER,
   type FollowupView,
@@ -43,7 +43,7 @@ export function toResult(
     disclaimer: DISCLAIMER,
     todayCallsLeft,
     followups,
-    followupsLeft: Math.max(0, FOLLOWUP_MAX - followups.length),
+    followupsLeft: Math.max(0, followupMax(row.product) - followups.length),
   };
 }
 

@@ -20,6 +20,7 @@ export const SECTION_ORDER: Record<ProductId, string[]> = {
   tarot_one: ["card", "message"],
   tarot_three: ["past", "present", "future", "advice"],
   obanggi: ["flag", "message", "advice"],
+  sinjeom: ["gongsu"],
   dream: ["symbols", "meaning", "advice"],
 };
 

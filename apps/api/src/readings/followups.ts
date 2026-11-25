@@ -3,7 +3,7 @@
  * 원래 풀이 입력·출력과 앞선 문답을 저장된 문자열 그대로 reading Worker에 넘겨 프롬프트 캐시를 탄다.
  */
 import { findBanned } from "@fortune/prompts";
-import { FOLLOWUP_BLOCKED, FOLLOWUP_MAX, FOLLOWUP_MAX_CHARS } from "@fortune/prompts/llm";
+import { FOLLOWUP_BLOCKED, FOLLOWUP_MAX_CHARS, followupMax } from "@fortune/prompts/llm";
 import type { FollowupResponse } from "@fortune/shared-types";
 import { z } from "zod";
 import type { Env } from "../env";
@@ -47,21 +47,24 @@ export async function createFollowup(
   const row = await findById(env, user.id, readingId);
   if (!row) throw new HttpError("NOT_FOUND", "없거나 볼 수 없는 결과예요");
   const history = await listFollowups(env, row.id);
+  const max = followupMax(row.product);
 
   // 같은 requestId는 한 번만 (이어 묻기 id로 쓴다)
   const dup = history.find((f) => f.id === body.requestId);
   if (dup) {
     const res: FollowupResponse = {
       followup: toFollowupView(dup),
-      followupsLeft: Math.max(0, FOLLOWUP_MAX - history.length),
+      followupsLeft: Math.max(0, max - history.length),
       todayCallsLeft: await callsLeft(env, user.id),
     };
     return json(res);
   }
-  if (history.length >= FOLLOWUP_MAX) {
+  if (history.length >= max) {
     throw new HttpError(
       "INVALID_INPUT",
-      `이 풀이에는 ${FOLLOWUP_MAX}번까지 물어볼 수 있어요. 궁금한 게 더 있으면 새로 점을 봐요`,
+      row.product === "sinjeom"
+        ? "오늘은 여기까지! 방울이 쉬고 싶대. 내일 또 와!"
+        : `이 풀이에는 ${max}번까지 물어볼 수 있어요. 궁금한 게 더 있으면 새로 점을 봐요`,
     );
   }
 
@@ -71,6 +74,7 @@ export async function createFollowup(
     try {
       result = await env.READING.followup({
         shop: row.shop,
+        product: row.product,
         originalInput: row.input_json,
         originalOutput: row.output_json,
         history: history.map((h) => ({ question: h.question, answerJson: h.answer_json })),
@@ -105,7 +109,7 @@ export async function createFollowup(
       .run();
     const res: FollowupResponse = {
       followup: { id: body.requestId, question, answer: result.answer, createdAt },
-      followupsLeft: Math.max(0, FOLLOWUP_MAX - history.length - 1),
+      followupsLeft: Math.max(0, max - history.length - 1),
       todayCallsLeft: left,
     };
     return json(res);

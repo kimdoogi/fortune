@@ -181,6 +181,7 @@
 | `tarot_one` | card 200, message 130 | 카드 그림 묘사 → 뜻 → 오늘의 한마디 |
 | `tarot_three` | past 220, present 250, future 250, advice 180 | 세 장을 하나의 이야기로 잇는다. 미래는 언제쯤 어떻게 올지 시원하게 |
 | `obanggi` | flag 250, message 380, advice 220 | 깃발 색 → 뜻 → 질문(있으면)에 대한 답 |
+| `sinjeom` | gongsu 150 (2~4줄), advice 60 | 방울 흔들고 → 나이대·성별 고민을 "~지?!"로 콕 집어 맞힘 → 숨은 점괘로 짧은 한마디. 대화는 이어 묻기(아기도령 대화 지시)로 |
 | `dream` | symbols 300, meaning 350, advice 200 | 꿈 장면 되짚기 → 상징별 뜻 → 종합 |
 
 공통:

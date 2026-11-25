@@ -1119,3 +1119,115 @@
     transition: none !important;
   }
 }
+
+/* ── 아기도령 신점 대화 (F07) ─────────────────────── */
+.sh-sj-wait {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0 2px;
+}
+
+.sh-sj-bell {
+  font-size: 26px;
+  animation: sh-sj-ring 0.5s ease-in-out infinite alternate;
+  transform-origin: 50% 10%;
+}
+
+@keyframes sh-sj-ring {
+  from {
+    transform: rotate(-14deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+
+.sh-sj {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sh-sj-mine {
+  align-self: flex-end;
+  max-width: 80%;
+  margin: -4px 0 0;
+  padding: 7px 13px;
+  border-radius: 14px 14px 4px 14px;
+  background: linear-gradient(180deg, #ffd889, var(--lantern-deep));
+  color: #3a1f0c;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: keep-all;
+  animation: sh-rise 0.3s ease both;
+}
+
+.sh-sj-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sh-sj-chip {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid rgba(255, 241, 200, 0.7);
+  border-radius: 999px;
+  background: rgba(255, 247, 226, 0.92);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sh-sj-chip:disabled,
+.sh-sj-send:disabled {
+  opacity: 0.45;
+}
+
+.sh-sj-form {
+  display: flex;
+  gap: 8px;
+}
+
+.sh-sj-input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 14px;
+  border: 1.5px solid rgba(255, 241, 200, 0.5);
+  border-radius: 12px;
+  background: rgba(255, 252, 244, 0.95);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+}
+
+.sh-sj-input:focus {
+  outline: none;
+  border-color: var(--lantern-deep);
+  box-shadow: 0 0 0 3px rgba(255, 184, 92, 0.3);
+}
+
+.sh-sj-send {
+  flex: none;
+  min-width: 72px;
+  border: 1.5px solid #fff1c8;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffd889, var(--lantern-deep));
+  color: #3a1f0c;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.sh-sj-left {
+  margin: -2px 0 0;
+  text-align: right;
+  font-size: 12px;
+  color: rgba(255, 241, 214, 0.75);
+}
+
+.sh-sj-over {
+  color: #ff9a8a;
+  font-weight: 700;
+}

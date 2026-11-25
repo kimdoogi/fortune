@@ -25,6 +25,7 @@ export const SECTION_TARGETS: Record<ProductId, Record<string, number>> = {
   tarot_one: { card: 200, message: 130 },
   tarot_three: { past: 220, present: 250, future: 250, advice: 180 },
   obanggi: { flag: 250, message: 380, advice: 220 },
+  sinjeom: { gongsu: 150 },
   dream: { symbols: 300, meaning: 350, advice: 200 },
 };
 
@@ -34,6 +35,7 @@ export const PRODUCT_SHOP: Record<ProductId, ShopId> = {
   tarot_one: "tarot",
   tarot_three: "tarot",
   obanggi: "dolyeong",
+  sinjeom: "dolyeong",
   dream: "dream",
 };
 
@@ -192,19 +194,32 @@ export function checkOutput(product: ProductId, raw: unknown): OutputCheck {
 
 // ── 이어 묻기 (F15, 04 §13) ─────────────────────────────────
 
-/** 한 풀이에 물을 수 있는 횟수 (D-071) */
+/** 한 풀이에 물을 수 있는 횟수 (D-071). 아기도령 신점 대화는 5번 (F07, D-073) */
 export const FOLLOWUP_MAX = 3;
+export const SINJEOM_TALK_MAX = 5;
+export const followupMax = (product: ProductId): number =>
+  product === "sinjeom" ? SINJEOM_TALK_MAX : FOLLOWUP_MAX;
 export const FOLLOWUP_MAX_CHARS = 100;
 export const FOLLOWUP_TARGET = 200;
 
-/** 이어 묻기 시스템 프롬프트: 공통 규칙 + 캐릭터 + 이어 묻기 지시. 점집마다 고정 (캐시) */
-export function followupSystemPrompt(shop: ShopId): string {
-  return [PROMPTS.common.text, PROMPTS.persona[shop].text, PROMPTS.followup.text].join("\n\n");
+const talkOf = (product: ProductId) =>
+  product === "sinjeom"
+    ? { name: "talk", ...PROMPTS.talk }
+    : { name: "followup", ...PROMPTS.followup };
+
+/** 이어 묻기 시스템 프롬프트: 공통 규칙 + 캐릭터 + 이어 묻기(신점은 대화) 지시. 고정 (캐시) */
+export function followupSystemPrompt(shop: ShopId, product: ProductId): string {
+  return [PROMPTS.common.text, PROMPTS.persona[shop].text, talkOf(product).text].join("\n\n");
 }
 
-export function followupVersion(shop: ShopId): string {
-  return `common@${PROMPTS.common.v}+${shop}@${PROMPTS.persona[shop].v}+followup@${PROMPTS.followup.v}`;
+export function followupVersion(shop: ShopId, product: ProductId): string {
+  const t = talkOf(product);
+  return `common@${PROMPTS.common.v}+${shop}@${PROMPTS.persona[shop].v}+${t.name}@${t.v}`;
 }
+
+/** 이어 묻기 답 목표 글자 수 (신점 대화는 짧게) */
+export const followupTarget = (product: ProductId) =>
+  product === "sinjeom" ? 80 : FOLLOWUP_TARGET;
 
 /** 이어 묻기 출력 스키마. 바꾸면 캐시가 깨지므로 고정한다 */
 export const FOLLOWUP_SCHEMA = {
@@ -236,7 +251,7 @@ export type FollowupCheck =
   | { ok: false; reason: "invalid_output" | "banned"; detail: string };
 
 /** 이어 묻기 출력 검사: 스키마, 위험 분류, 금지 표현, 길이(로그만) */
-export function checkFollowup(raw: unknown): FollowupCheck {
+export function checkFollowup(raw: unknown, target: number = FOLLOWUP_TARGET): FollowupCheck {
   if (!raw || typeof raw !== "object")
     return { ok: false, reason: "invalid_output", detail: "not an object" };
   const o = raw as Record<string, unknown>;

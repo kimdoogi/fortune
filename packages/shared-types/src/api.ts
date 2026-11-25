@@ -96,6 +96,7 @@ export type ReadingRequest =
       requestId: string;
     }
   | { shop: "dolyeong"; product: "obanggi"; category: DolyeongCategory; requestId: string }
+  | { shop: "dolyeong"; product: "sinjeom"; requestId: string }
   | { shop: "dream"; product: "dream"; checkId: string; requestId: string };
 
 /** 사주판 (F05 출력) */
@@ -122,7 +123,14 @@ export interface TarotCardView {
 export type ReadingVisual =
   | { shop: "saju"; board: SajuBoard }
   | { shop: "tarot"; spread: "one" | "three"; category: TarotCategory; cards: TarotCardView[] }
-  | { shop: "dolyeong"; category: DolyeongCategory; flag: { color: FlagColor; grade: FlagGrade } }
+  | {
+      shop: "dolyeong";
+      /** 신점(sinjeom)은 카테고리가 없다 */
+      category: DolyeongCategory | null;
+      /** 오방기는 뽑은 깃발, 신점은 숨은 점괘 */
+      flag: { color: FlagColor; grade: FlagGrade };
+      mode?: "sinjeom";
+    }
   | { shop: "dream"; dream: string; symbols: { id: string; name: string }[] };
 
 /** POST /api/readings, GET /api/readings/:id 응답 */
@@ -227,6 +235,7 @@ export const PRODUCT_NAMES: Record<ProductId, string> = {
   tarot_one: "오늘의 한 장",
   tarot_three: "세 장 스프레드",
   obanggi: "오방기",
+  sinjeom: "신점",
   dream: "꿈해몽",
 };
 
@@ -234,7 +243,7 @@ export const PRODUCT_NAMES: Record<ProductId, string> = {
 export const SHOP_PRODUCTS: Record<ShopId, ProductId[]> = {
   saju: ["daily", "saju_full"],
   tarot: ["tarot_one", "tarot_three"],
-  dolyeong: ["obanggi"],
+  dolyeong: ["sinjeom"],
   dream: ["dream"],
 };
 
@@ -257,6 +266,7 @@ export const SECTION_TITLES: Record<string, string> = {
   future: "미래",
   advice: "조언",
   flag: "깃발",
+  gongsu: "아기도령의 공수",
   symbols: "꿈 속 상징",
   meaning: "꿈의 뜻",
 };

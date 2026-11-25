@@ -1,7 +1,16 @@
 /** API·LLM 입출력 타입. web·api·reading이 같이 쓴다 (docs/13 §3) */
 
 export type ShopId = "saju" | "tarot" | "dolyeong" | "dream";
-export type ProductId = "daily" | "saju_full" | "tarot_one" | "tarot_three" | "obanggi" | "dream";
+export type ProductId =
+  | "daily"
+  | "saju_full"
+  | "tarot_one"
+  | "tarot_three"
+  /** 오방기 뽑기. 점 목록에서 뺐다 (D-073), 예전 결과만 */
+  | "obanggi"
+  /** 아기도령 신점 대화 (F07, D-073) */
+  | "sinjeom"
+  | "dream";
 
 /** 오류 응답 (docs/09 §3) */
 export type ErrorCode =
@@ -88,6 +97,8 @@ export type ClassifyResult =
  */
 export interface FollowupInput {
   shop: ShopId;
+  /** 신점(sinjeom)은 아기도령 대화 지시를 쓴다 (F07) */
+  product: ProductId;
   /** 원래 풀이 입력 (readings.input_json 그대로) */
   originalInput: string;
   /** 원래 풀이 출력 (readings.output_json 그대로) */

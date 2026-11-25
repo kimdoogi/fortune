@@ -29,6 +29,7 @@ import {
   SajuFlow,
   TarotFlow,
 } from "./flows";
+import { SinjeomFlow } from "./sinjeom";
 import "./shop.css";
 
 export type NpcAction = "idle" | "greet" | "talk" | "present" | "celebrate";
@@ -192,6 +193,8 @@ export function ShopScreen(props: {
         return <TarotFlow key={key} {...fp} product={v.product} />;
       case "obanggi":
         return <DolyeongFlow key={key} {...fp} />;
+      case "sinjeom":
+        return <SinjeomFlow key={key} {...fp} />;
       case "dream":
         return <DreamFlow key={key} {...fp} />;
       default:

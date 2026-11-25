@@ -13,7 +13,7 @@ import type {
   ShopId,
 } from "@fortune/shared-types";
 import { buildDream } from "../facts/dream";
-import { buildObanggi } from "../facts/obanggi";
+import { buildObanggi, buildSinjeom } from "../facts/obanggi";
 import { buildSajuFull } from "../facts/saju";
 import { buildTarot } from "../facts/tarot";
 import { type Profile, natalOf } from "../profile";
@@ -24,6 +24,7 @@ import {
   pickFlag,
   rngFor,
   sajuSeedKey,
+  sinjeomSeedKey,
   tarotSeedKey,
 } from "../seed";
 
@@ -118,6 +119,27 @@ export async function planReading(req: ReadingRequest, ctx: PlanContext): Promis
       };
     }
     case "dolyeong": {
+      if (req.product === "sinjeom") {
+        // 신점 대화 (F07, D-073): 하루 한 번, 숨은 점괘는 서버 seed로
+        const key = sinjeomSeedKey(ctx.today);
+        return {
+          shop: "dolyeong",
+          product: "sinjeom",
+          seedKey: key,
+          build: async () => {
+            const color = pickFlag(await rngFor(ctx.userId, key));
+            const parts = buildSinjeom(color);
+            const input: InterpretInput = {
+              ...base(ctx, "dolyeong", "sinjeom", parts.facts),
+              flag: parts.flag,
+            };
+            return {
+              input,
+              visual: { shop: "dolyeong", category: null, flag: parts.flag, mode: "sinjeom" },
+            };
+          },
+        };
+      }
       const seedKey = obanggiSeedKey(ctx.today, req.category);
       return {
         shop: "dolyeong",

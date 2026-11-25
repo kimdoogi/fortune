@@ -11,6 +11,8 @@ export const sajuSeedKey = (profileVersion: number, year: number) =>
 export const tarotSeedKey = (date: string, product: string, category: TarotCategory) =>
   `tarot:${date}:${product}:${category}`;
 export const obanggiSeedKey = (date: string, category: string) => `obanggi:${date}:${category}`;
+/** 아기도령 신점: 하루 한 번 (F07) */
+export const sinjeomSeedKey = (date: string) => `sinjeom:${date}`;
 
 /** 꿈 내용 정규화: 앞뒤 공백 제거, 문장부호·기호 제거, 공백 하나로 (docs/03 꿈해몽) */
 export function normalizeDream(text: string): string {

@@ -126,7 +126,8 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
 | `saju_full` | 사주집 | 무료 | `overall`(요약), `personality`, `elements`, `yongsin`, `daewoon`, `thisYear`, `love`, `money`, `work` | 1,800자 안팎 (요약 300자) | 없음 |
 | `tarot_one` | 타로집 | 무료 | `card`, `message` | 300~400자 | 없음 |
 | `tarot_three` | 타로집 | 무료 | `past`, `present`, `future`, `advice` | 800~1,000자 | 없음 |
-| `obanggi` | 아기도령 | 무료 | `flag`, `message`, `advice` | 800~1,000자 | 없음 |
+| `obanggi` (목록에서 뺌, D-073) | 아기도령 | 무료 | `flag`, `message`, `advice` | 800~1,000자 | 없음 |
+| `sinjeom` | 아기도령 | 무료 | `gongsu` (공수, 2~4줄) + 이어서 대화 5번 (§13) | 공수 150자, 대화 한 번 80자 | 없음 |
 | `dream` | 꿈해몽 | 무료 | `symbols`, `meaning`, `advice` | 800~1,000자 | 없음 |
 
 - 자유질문은 `tarot_three`, `obanggi`에 붙일 수 있다. 붙이면 `question`이 채워지고 섹션 내용이 질문에 맞춰진다. 길이는 같다

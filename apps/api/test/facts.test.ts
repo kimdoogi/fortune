@@ -104,3 +104,13 @@ describe("기록 커서", () => {
     expect(decodeCursor(btoa("[1,2]"))).toBeNull();
   });
 });
+
+describe("신점 숨은 점괘 (F07, D-073)", () => {
+  it("깃발 뜻이 facts에 들어가고 카테고리 줄은 없다", async () => {
+    const { buildSinjeom } = await import("../src/facts/obanggi");
+    const p = buildSinjeom("노랑");
+    expect(p.facts.join(" ")).toContain("숨은 점괘");
+    expect(p.facts).toHaveLength(2);
+    expect(p.flag.color).toBe("노랑");
+  });
+});

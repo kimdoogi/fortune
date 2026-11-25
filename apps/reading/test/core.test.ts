@@ -153,6 +153,7 @@ describe("이어 묻기 (F15, docs/04 §13)", () => {
       client,
       {
         shop: "tarot",
+        product: "tarot_three",
         originalInput,
         originalOutput,
         history: [],
@@ -173,7 +174,14 @@ describe("이어 묻기 (F15, docs/04 §13)", () => {
     const first = fakeClient([msg(answer1)]);
     const r1 = await followupWith(
       first.client,
-      { shop: "tarot", originalInput, originalOutput, history: [], question: "Q1" },
+      {
+        shop: "tarot",
+        product: "tarot_three",
+        originalInput,
+        originalOutput,
+        history: [],
+        question: "Q1",
+      },
       quiet,
     );
     if (!r1.ok) throw new Error("first failed");
@@ -182,6 +190,7 @@ describe("이어 묻기 (F15, docs/04 §13)", () => {
       second.client,
       {
         shop: "tarot",
+        product: "tarot_three",
         originalInput,
         originalOutput,
         history: [{ question: "Q1", answerJson: r1.answerJson }],
@@ -201,7 +210,14 @@ describe("이어 묻기 (F15, docs/04 §13)", () => {
     expect(
       await followupWith(
         client,
-        { shop: "dream", originalInput, originalOutput, history: [], question: "q" },
+        {
+          shop: "dream",
+          product: "dream",
+          originalInput,
+          originalOutput,
+          history: [],
+          question: "q",
+        },
         quiet,
       ),
     ).toMatchObject({ ok: true, risk: "self_harm", answer: "" });
@@ -211,7 +227,14 @@ describe("이어 묻기 (F15, docs/04 §13)", () => {
     const { client } = fakeClient([rateLimit(), rateLimit()]);
     const r = await followupWith(
       client,
-      { shop: "saju", originalInput, originalOutput, history: [], question: "q" },
+      {
+        shop: "saju",
+        product: "saju_full",
+        originalInput,
+        originalOutput,
+        history: [],
+        question: "q",
+      },
       quiet,
     );
     expect(r).toMatchObject({ ok: false, reason: "api_error" });

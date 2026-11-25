@@ -149,6 +149,15 @@ const OUT: Record<ProductId, InterpretOutput> = {
     advice: "마음이 가는 쪽으로, 가볍게 시작해 봐요.",
     luckyColor: "노란색",
   },
+  sinjeom: {
+    greeting: "딸랑딸랑!",
+    summary: "요즘 친구 사이 고민",
+    sections: {
+      gongsu:
+        "딸랑딸랑! 잠깐… 보인다 보여!\n너 요즘 친구한테 서운한 거 꾹 참고 있지?!\n근데 오늘 노란 기운이 보여. 곧 풀린대!\n맞지? 맞지?",
+    },
+    advice: "오늘 먼저 웃으면서 인사해 봐!",
+  },
   obanggi: {
     greeting: "왔구나! 깃발 뽑았어!",
     summary: "노랑 깃발! 재물운이 반짝이는 날이야!",
@@ -207,7 +216,14 @@ function visualFor(req: ReadingRequest): ReadingVisual {
             ],
           };
     case "dolyeong":
-      return { shop: "dolyeong", category: req.category, flag: { color: "노랑", grade: "길" } };
+      return req.product === "sinjeom"
+        ? {
+            shop: "dolyeong",
+            category: null,
+            flag: { color: "노랑", grade: "길" },
+            mode: "sinjeom",
+          }
+        : { shop: "dolyeong", category: req.category, flag: { color: "노랑", grade: "길" } };
     case "dream":
       return {
         shop: "dream",

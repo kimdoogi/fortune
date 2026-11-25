@@ -49,6 +49,7 @@ export const CHARACTERS: Record<ShopId, Character> = {
 
 /** 점 목록 항목 아래 한 줄 설명 */
 export const PRODUCT_BLURB: Record<string, string> = {
+  sinjeom: "아기도령이 먼저 맞혀 보는 신점",
   daily: "오늘 하루의 흐름과 작은 행동 하나",
   saju_full: "타고난 여덟 글자와 올해의 흐름",
   tarot_one: "오늘 나에게 오는 카드 한 장",

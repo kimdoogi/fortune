@@ -125,11 +125,19 @@ describe("출력 검사 (04 §5, §9)", () => {
 
 describe("이어 묻기 (F15, 04 §13)", () => {
   it("시스템 프롬프트는 점집마다 고정이고 이어 묻기 지시가 들어 있다", () => {
-    expect(followupSystemPrompt("tarot")).toContain("[이번 대화: 이어 묻기]");
-    expect(followupSystemPrompt("tarot")).toContain("달님 언니");
-    expect(followupSystemPrompt("tarot")).toBe(followupSystemPrompt("tarot"));
-    expect(followupVersion("saju")).toBe("common@5+saju@1+followup@3");
+    expect(followupSystemPrompt("tarot", "tarot_three")).toContain("[이번 대화: 이어 묻기]");
+    expect(followupSystemPrompt("tarot", "tarot_three")).toContain("달님 언니");
+    expect(followupSystemPrompt("tarot", "tarot_three")).toBe(
+      followupSystemPrompt("tarot", "tarot_three"),
+    );
+    expect(followupVersion("saju", "saju_full")).toBe("common@5+saju@1+followup@3");
     expect(FOLLOWUP_SCHEMA.required).toEqual(["risk", "answer"]);
+    // 아기도령 신점은 대화 지시를 쓴다 (F07)
+    expect(followupSystemPrompt("dolyeong", "sinjeom")).toContain(
+      "[이번 대화: 아기도령 신점 대화]",
+    );
+    expect(followupVersion("dolyeong", "sinjeom")).toBe("common@5+dolyeong@2+talk@1");
+    expect(systemPrompt("sinjeom")).toContain("[이번 점: 신점");
   });
 
   it("정상 답은 통과", () => {

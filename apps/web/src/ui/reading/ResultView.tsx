@@ -281,7 +281,7 @@ export function ResultView(props: {
   const [crisis, setCrisis] = useState(false);
   if (crisis) return <CrisisScreen onClose={() => setCrisis(false)} />;
   const v = result.visual;
-  const cat = v.shop === "tarot" || v.shop === "dolyeong" ? ` · ${v.category}` : "";
+  const cat = (v.shop === "tarot" || v.shop === "dolyeong") && v.category ? ` · ${v.category}` : "";
   return (
     <ResultSheet
       title={PRODUCT_NAMES[result.product]}

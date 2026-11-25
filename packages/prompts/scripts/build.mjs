@@ -32,8 +32,11 @@ export function render() {
       tarot_three: { v: 2, text: read("tarot/tarot_three.v2.md") },
       obanggi: { v: 1, text: read("dolyeong/obanggi.v1.md") },
       dream: { v: 1, text: read("dream/dream.v1.md") },
+      sinjeom: { v: 1, text: read("dolyeong/sinjeom.v1.md") },
     },
     followup: { v: 3, text: read("followup/v3.md") },
+    // 아기도령 신점 대화 (F07, D-073)
+    talk: { v: 1, text: read("dolyeong/talk.v1.md") },
     classify: {
       v: 1,
       text: `${read("classify/v1.md")}\n\n[상징 목록] ID: 이름 (동의어)\n${symbolLines}`,

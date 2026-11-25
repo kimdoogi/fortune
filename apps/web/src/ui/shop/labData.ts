@@ -83,6 +83,15 @@ export const LAB_OUTPUT: Record<ProductId, InterpretOutput> = {
     },
     advice: "걱정을 한 줄로 적어 보고, 그 옆에 할 수 있는 일 하나를 적어 봐요.",
   },
+  sinjeom: {
+    greeting: "딸랑딸랑!",
+    summary: "요즘 친구 사이 고민",
+    sections: {
+      gongsu:
+        "딸랑딸랑! 잠깐… 보인다 보여!\n너 요즘 친구한테 서운한 거 꾹 참고 있지?!\n근데 오늘 노란 기운이 보여. 곧 풀린대!\n맞지? 맞지?",
+    },
+    advice: "오늘 먼저 웃으면서 인사해 봐!",
+  },
   obanggi: {
     greeting: "딸랑딸랑! 하늘아, 깃발 뽑았어!",
     summary: "노란 깃발! 도와주는 사람이 곁에 있대",
@@ -151,6 +160,13 @@ export function labVisual(
           { position: "현재", id: 18, name: "달", reversed: true },
           { position: "미래", id: 19, name: "태양", reversed: false },
         ],
+      };
+    case "sinjeom":
+      return {
+        shop: "dolyeong",
+        category: null,
+        flag: { color: "노랑", grade: "길" },
+        mode: "sinjeom",
       };
     case "obanggi":
       return {

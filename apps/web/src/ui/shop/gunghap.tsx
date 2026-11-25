@@ -166,7 +166,7 @@ export function GunghapFlow(props: FlowProps & { pair: PairCtx }): JSX.Element {
     if (busy) return;
     setBusy(true);
     mine.current = true;
-    pair.send({ t: "pick", relation });
+    // 상대에게는 서버가 "골랐다"를 알린다 (중복 알림을 피하려고 여기서는 보내지 않는다)
     props.npc("present");
     props.say(`${relation} 사이로구려. 두 분의 사주를 맞춰 보겠소…`, true);
     try {

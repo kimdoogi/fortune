@@ -10,6 +10,9 @@ import type {
   ErrorCode,
   FollowupRequest,
   FollowupResponse,
+  GunghapInviteCreated,
+  GunghapInviteView,
+  GunghapReadingRequest,
   MenuResponse,
   ProfileInput,
   ProfileView,
@@ -80,4 +83,21 @@ export const api = {
   /** F15: 풀이에 이어 묻기 (한 풀이에 3번) */
   followup: (id: string, req: FollowupRequest) =>
     call<FollowupResponse>("POST", `/api/readings/${encodeURIComponent(id)}/followups`, req),
+  // ── 궁합 (F16) ──
+  createInvite: () => call<GunghapInviteCreated>("POST", "/api/gunghap/invites", { consent: true }),
+  invite: (code: string) =>
+    call<GunghapInviteView>("GET", `/api/gunghap/invites/${encodeURIComponent(code)}`),
+  joinInvite: (code: string) =>
+    call<GunghapInviteView>("POST", `/api/gunghap/invites/${encodeURIComponent(code)}/join`, {
+      consent: true,
+    }),
+  gunghap: (code: string, req: GunghapReadingRequest) =>
+    call<ReadingResult>("POST", `/api/gunghap/invites/${encodeURIComponent(code)}/reading`, req),
+  gunghapResult: (code: string) =>
+    call<ReadingResult>("GET", `/api/gunghap/invites/${encodeURIComponent(code)}/result`),
+  wsToken: (room: string) =>
+    call<{ token: string; channel: string; userId: string }>(
+      "GET",
+      `/api/ws-token?room=${encodeURIComponent(room)}`,
+    ),
 };

@@ -19,6 +19,7 @@ export const SECTION_ORDER: Record<ProductId, string[]> = {
     "elements",
     "yongsin",
   ],
+  gunghap: ["overall", "chemistry", "strengths", "friction", "tips"],
   tarot_one: ["card", "message"],
   tarot_three: ["past", "present", "future", "advice"],
   obanggi: ["flag", "message", "advice"],

@@ -14,6 +14,8 @@ import { goBack, navigate } from "../../app/router";
 import { SHOP_INFO } from "../../app/shops";
 import { callsLeft, lookOf } from "../../app/state";
 import { ShopScreen } from "../../shop/ShopScreen";
+import { shareInvite } from "../../shop/gunghap";
+import { usePairRoom } from "./pair";
 import "./street.css";
 
 const FADE_MS = 600;
@@ -25,8 +27,17 @@ const fadeMs = () => (reduceMotion() ? 120 : FADE_MS);
 type Status = "loading" | "ready" | "nogl" | "failed";
 type Stats = { fps: number; calls: number; triangles: number };
 
-export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: ProfileView }) {
+export function StreetScreen(props: {
+  shop: ShopId;
+  inside: boolean;
+  profile: ProfileView;
+  /** 궁합 둘만의 방 (F16): 상대가 보이고 같이 들어간다 */
+  pair?: { code: string };
+}) {
   const { shop } = props;
+  const code = props.pair?.code;
+  /** 내 목적지를 방에 보낸다 (pair.ts가 채운다) */
+  const walkRef = useRef<((x: number, z: number) => void) | null>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const stage = useRef<Stage | null>(null);
   const want = useRef(props.inside);
@@ -59,10 +70,13 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
             onNearDoor: (v) => setNear(v),
             onFirstMove: () => setWalked(true),
             onStep: () => sfx("step"),
+            onWalk: (x, z) => walkRef.current?.(x, z),
             onStats: debug ? (s) => setStats(s) : undefined,
           },
         );
         setStatus("ready");
+        // ?debug=1: 개발용으로 Stage를 창에 건다 (위치 확인 등)
+        if (debug) (window as unknown as { __stage?: Stage }).__stage = stage.current;
         // 첫 그림이 그려진 뒤 밝아진다 (탭이 숨겨져 rAF가 멈춰도 밝아지게 시간 제한)
         const reveal = () => alive && setDark(false);
         requestAnimationFrame(() => requestAnimationFrame(reveal));
@@ -126,9 +140,25 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
   const enter = () => {
     if (busy.current) return;
     setEnterFailed(false);
-    navigate({ name: "inside", shop });
+    navigate(code ? { name: "pair-in", code } : { name: "inside", shop });
   };
-  const exit = () => goBack({ name: "street", shop });
+  const exit = () => goBack(code ? { name: "pair", code } : { name: "street", shop });
+  const room = usePairRoom({
+    code,
+    stage,
+    ready: status === "ready",
+    walkRef,
+    // 둘 중 누가 "같이 들어가기"를 눌러도 둘 다 들어간다 (F16)
+    onGoInside: () => {
+      if (!want.current) enter();
+    },
+  });
+  const [sentNote, setSentNote] = useState("");
+  const resend = async () => {
+    if (!code) return;
+    const how = await shareInvite(`${location.origin}/?g=${code}`, props.profile.nickname);
+    setSentNote(how === "copied" ? "링크를 복사했어요" : "");
+  };
   const toMap = () => goBack({ name: "map" });
   const npc = (a: NpcAction) => stage.current?.npc(a);
 
@@ -187,7 +217,7 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
               <Icon.back />
               지도
             </button>
-            <div class="plaque">{name} 거리</div>
+            <div class="plaque">{code ? "궁합 골목" : `${name} 거리`}</div>
             <SoundButton />
           </div>
 
@@ -198,7 +228,19 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
                   문이 잘 열리지 않았어요. 다시 눌러 주세요.
                 </div>
               )}
-              {near ? (
+              {code ? (
+                <PairHud
+                  partner={room.partner?.nickname ?? null}
+                  left={room.partnerLeft}
+                  connecting={room.status !== "open"}
+                  closed={room.status === "closed"}
+                  meNear={room.meNear}
+                  partnerNear={room.partnerNear}
+                  onTogether={() => room.send({ t: "go_inside" })}
+                  onResend={resend}
+                  note={sentNote}
+                />
+              ) : near ? (
                 <>
                   <div class="arrived">문 앞에 도착했어요</div>
                   <button type="button" class="btn-enter" onClick={enter}>
@@ -227,6 +269,17 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
             onCallsLeft={(n) => {
               callsLeft.value = n;
             }}
+            pair={
+              code
+                ? {
+                    code,
+                    myId: room.myId,
+                    partnerName: room.partner?.nickname ?? null,
+                    send: (m) => room.send(m),
+                    event: room.event,
+                  }
+                : undefined
+            }
           />
         </div>
       )}
@@ -238,6 +291,56 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
           FPS {stats.fps} · draw {stats.calls} · tri {stats.triangles.toLocaleString()}
         </div>
       )}
+    </div>
+  );
+}
+
+/** 궁합 골목 아래쪽 안내 (F16) */
+function PairHud(props: {
+  partner: string | null;
+  left: string | null;
+  connecting: boolean;
+  closed: boolean;
+  meNear: boolean;
+  partnerNear: boolean;
+  onTogether: () => void;
+  onResend: () => void;
+  note: string;
+}) {
+  if (props.closed)
+    return <div class="enter-failed">연결이 끊겼어요. 화면을 다시 열어 주세요.</div>;
+  if (!props.partner)
+    return (
+      <>
+        <div class="arrived">
+          {props.left
+            ? `${props.left} 님이 나갔어요. 다시 들어오면 보여요`
+            : props.connecting
+              ? "골목에 불을 켜는 중…"
+              : "같이 볼 분이 들어오면 여기 나타나요"}
+        </div>
+        <button type="button" class="btn-map" onClick={props.onResend}>
+          링크 다시 보내기
+        </button>
+        {props.note && <div class="hint">{props.note}</div>}
+      </>
+    );
+  if (props.meNear && props.partnerNear)
+    return (
+      <>
+        <div class="arrived">둘 다 문 앞에 왔어요</div>
+        <button type="button" class="btn-enter" onClick={props.onTogether}>
+          <Icon.door />
+          같이 들어가기
+        </button>
+      </>
+    );
+  return (
+    <div class="hint">
+      <span class="dot" />
+      {props.meNear
+        ? `${props.partner} 님을 기다리는 중… 문 앞으로 오면 같이 들어가요`
+        : `${props.partner} 님과 사주집 문 앞으로 가요 · 문을 누르면 바로 가요`}
     </div>
   );
 }

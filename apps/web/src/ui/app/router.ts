@@ -12,7 +12,12 @@ export type Route =
   | { name: "street"; shop: ShopId }
   | { name: "inside"; shop: ShopId }
   | { name: "history"; id?: string }
-  | { name: "daily" };
+  | { name: "daily" }
+  /** 궁합 초대 받기 (F16): 링크 ?g=<code>로 들어오면 여기로 */
+  | { name: "join"; code: string }
+  /** 궁합 둘만의 사주집 거리 / 점집 안 (F16) */
+  | { name: "pair"; code: string }
+  | { name: "pair-in"; code: string };
 
 export const SHOP_IDS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
 const isShop = (s: string | undefined): s is ShopId => SHOP_IDS.includes(s as ShopId);
@@ -28,6 +33,10 @@ export function parse(hash: string): Route {
       return { name: "daily" };
     case "history":
       return arg ? { name: "history", id: decodeURIComponent(arg) } : { name: "history" };
+    case "join":
+    case "pair":
+    case "pair-in":
+      return arg && /^[a-z0-9]{10}$/.test(arg) ? { name, code: arg } : { name: "map" };
     case "street":
     case "inside":
       return isShop(arg) ? { name, shop: arg } : { name: "map" };
@@ -43,6 +52,10 @@ export function toHash(r: Route): string {
       return `#/${r.name}/${r.shop}`;
     case "history":
       return r.id ? `#/history/${encodeURIComponent(r.id)}` : "#/history";
+    case "join":
+    case "pair":
+    case "pair-in":
+      return `#/${r.name}/${r.code}`;
     default:
       return `#/${r.name}`;
   }
@@ -77,6 +90,20 @@ export function goBack(fallback: Route) {
 export function initHistory() {
   let r = parse(location.hash);
   if (r.name === "inside") r = { name: "street", shop: r.shop };
+  if (r.name === "pair-in") r = { name: "pair", code: r.code };
+  // 궁합 초대 링크 (?g=<code>, F16): 주소에서 지우고 초대 화면으로
+  const params = new URLSearchParams(location.search);
+  const g = params.get("g");
+  if (g && /^[a-z0-9]{10}$/.test(g)) {
+    r = { name: "join", code: g };
+    params.delete("g");
+    const q = params.toString();
+    history.replaceState(
+      history.state,
+      "",
+      `${location.pathname}${q ? `?${q}` : ""}${location.hash}`,
+    );
+  }
   const base = `${location.pathname}${location.search}`;
   history.replaceState({ depth: 0 }, "", `${base}#/map`);
   if (r.name !== "map") history.pushState({ depth: 1 }, "", `${base}${toHash(r)}`);

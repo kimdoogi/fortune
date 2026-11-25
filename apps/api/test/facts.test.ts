@@ -169,3 +169,34 @@ describe("점집별 부르는 말 (04 §3-1, D-088)", () => {
     expect(vocativeFor("dream", "지또")).toBe("아가");
   });
 });
+
+describe("궁합 facts (F16, D-089)", () => {
+  it("관계·두 사람 기운·점수·요인 문장이 들어가고 금지 표현이 없다", async () => {
+    const { gunghap } = await import("@fortune/fortune-engine");
+    const { buildGunghap } = await import("../src/facts/gunghap");
+    const dates = ["1996-06-01", "1997-06-01", "1990-06-01", "2000-06-01", "1991-06-01"];
+    for (const x of dates) {
+      for (const y of dates) {
+        const na = computePillars({ calendar: "solar", date: x, time: "09:00" });
+        const nb = computePillars({ calendar: "solar", date: y, time: "21:00" });
+        const r = gunghap(na.pillars, nb.pillars);
+        const p = buildGunghap(
+          { nickname: "하나", zodiac: "쥐", natal: na },
+          { nickname: "준호", zodiac: "소", natal: nb },
+          r,
+          "연인",
+        );
+        expectClean(p.facts);
+        expect(p.facts[0]).toBe("두 사람 사이: 연인.");
+        expect(p.facts.some((f) => f.startsWith(`궁합 점수: ${r.score}점`))).toBe(true);
+        expect(p.board.factors).toHaveLength(r.factors.length);
+        expect(p.board.a.nickname).toBe("하나");
+      }
+    }
+  });
+
+  it("초대 코드는 헷갈리는 글자 없는 10자", async () => {
+    const { newInviteCode } = await import("../src/gunghap/invites");
+    for (let i = 0; i < 50; i++) expect(newInviteCode()).toMatch(/^[2-9a-hjkmnp-z]{10}$/);
+  });
+});

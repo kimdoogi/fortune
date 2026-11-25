@@ -38,6 +38,7 @@ flowchart LR
 | [F07](F07-dolyeong.md) | 아기도령 오방기 | S4-3 | M2 | ✅ |
 | [F08](F08-dream.md) | 꿈해몽 | S4-4 | M2 | ✅ |
 | [F09](F09-free-question.md) | 자유질문 | S4-2, S4-3 | M4 | ✅ |
+| [F16](F16-gunghap.md) | 궁합 (둘이 같이, 초대 링크·실시간) | S3·S4-1 | M3 | ✅ |
 | [F10](F10-history.md) | 결과 저장 / 다시 보기 | S5 | M2 | ✅ |
 | [F11](F11-share.md) | 결과 공유 카드 | S5 | M4 | ✅ |
 | [F12](F12-coins.md) | 복채 지급 / 사용 | 공통 | M6 | ⏸ MVP 제외 (D-057) |

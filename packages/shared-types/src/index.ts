@@ -10,6 +10,8 @@ export type ProductId =
   | "obanggi"
   /** 아기도령 신점 대화 (F07, D-073) */
   | "sinjeom"
+  /** 궁합 (F16, D-089): 초대 링크로 둘이 같이 */
+  | "gunghap"
   | "dream";
 
 /** 오류 응답 (docs/09 §3) */
@@ -144,11 +146,15 @@ export type ClientMessage =
   | { t: "emote"; id: string }
   | { t: "chat"; id: string }
   | { t: "enter_shop"; shop: ShopId }
-  | { t: "exit_shop"; shop: ShopId };
+  | { t: "exit_shop"; shop: ShopId }
+  /** 궁합 둘만의 방 (F16): 같이 들어가기, 관계 고르기 */
+  | { t: "go_inside" }
+  | { t: "pick"; relation: string };
 
 export interface PlayerState {
   id: string;
   nickname: string;
+  /** "성별:나이대" (예: "female:20대"). 상대 캐릭터를 그린다 */
   avatar: string;
   x: number;
   z: number;
@@ -163,6 +169,11 @@ export type ServerMessage =
   | { t: "emoted"; id: string; emote: string }
   | { t: "chatted"; id: string; line: string }
   | { t: "hidden"; id: string }
-  | { t: "shown"; id: string };
+  | { t: "shown"; id: string }
+  /** 궁합 둘만의 방 (F16) */
+  | { t: "went_inside"; id: string }
+  | { t: "picked"; id: string; relation: string }
+  | { t: "result_ready" }
+  | { t: "result_failed"; message: string };
 export { type WsTokenPayload, signWsToken, verifyWsToken } from "./wsToken";
 export * from "./api";

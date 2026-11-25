@@ -121,9 +121,55 @@ export interface TarotCardView {
   reversed: boolean;
 }
 
+/** 궁합 관계 (F16) */
+export const GUNGHAP_RELATIONS = ["연인", "썸", "친구", "가족", "동료"] as const;
+export type GunghapRelation = (typeof GUNGHAP_RELATIONS)[number];
+
+/** 궁합 판 (F16 출력, 02 §5-9) */
+export interface GunghapBoard {
+  score: number;
+  label: string;
+  relation: GunghapRelation;
+  a: GunghapPerson;
+  b: GunghapPerson;
+  factors: { name: string; good: boolean }[];
+}
+export interface GunghapPerson {
+  nickname: string;
+  zodiac: string;
+  dayStem: string;
+  element: string;
+}
+
+/** POST /api/gunghap/invites 응답 */
+export interface GunghapInviteCreated {
+  code: string;
+  url: string;
+  expiresAt: string;
+}
+
+/** GET /api/gunghap/invites/:code 응답 */
+export interface GunghapInviteView {
+  code: string;
+  hostNickname: string;
+  guestNickname: string | null;
+  status: "open" | "joined" | "done";
+  role: "host" | "guest" | "none";
+  /** 다른 손님이 이미 들어와 내가 낄 수 없다 */
+  full: boolean;
+  relation: GunghapRelation | null;
+}
+
+/** POST /api/gunghap/invites/:code/reading 요청 */
+export interface GunghapReadingRequest {
+  relation: GunghapRelation;
+  requestId: string;
+}
+
 /** 결과 화면에 같이 그릴 "당시 입력" (F10: 다시 보기에도 그대로) */
 export type ReadingVisual =
   | { shop: "saju"; board: SajuBoard }
+  | { shop: "saju"; gunghap: GunghapBoard }
   | { shop: "tarot"; spread: "one" | "three"; category: TarotCategory; cards: TarotCardView[] }
   | {
       shop: "dolyeong";
@@ -244,12 +290,13 @@ export const PRODUCT_NAMES: Record<ProductId, string> = {
   tarot_three: "세 장 스프레드",
   obanggi: "오방기",
   sinjeom: "신점",
+  gunghap: "궁합",
   dream: "꿈해몽",
 };
 
 /** 점집별로 볼 수 있는 점 (F04 표) */
 export const SHOP_PRODUCTS: Record<ShopId, ProductId[]> = {
-  saju: ["daily", "saju_full"],
+  saju: ["daily", "saju_full", "gunghap"],
   tarot: ["tarot_one", "tarot_three"],
   dolyeong: ["sinjeom"],
   dream: ["dream"],
@@ -265,6 +312,10 @@ export const SECTION_TITLES: Record<string, string> = {
   yongsin: "나를 돕는 기운",
   daewoon: "10년 흐름",
   thisYear: "올해",
+  chemistry: "성격 궁합",
+  strengths: "잘 맞는 점",
+  friction: "부딪히는 점",
+  tips: "둘이 같이 할 일",
   months: "월별 운세",
   love: "연애",
   money: "돈",

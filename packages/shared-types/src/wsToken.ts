@@ -4,6 +4,8 @@ export interface WsTokenPayload {
   n: string;
   c: string;
   exp: number;
+  /** 외모 "성별:나이대" (궁합 방에서 상대를 그린다) */
+  a?: string;
 }
 
 const enc = new TextEncoder();

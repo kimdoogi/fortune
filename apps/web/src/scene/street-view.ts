@@ -10,6 +10,8 @@ import { type Street, type StreetLighting, buildStreet } from "./street";
 
 export const WALK_SPEED = 2.0; // m/s (F03)
 const DOOR_REACH = 0.6;
+/** 같이 들어가기: 둘 다 문 앞 이 거리 안 (F16) */
+export const PAIR_DOOR_REACH = 1.6;
 /** 캐릭터 기준 카메라 위치와, 화면 가운데에 올 지점(캐릭터 앞쪽) */
 const CAM_OFFSET = new THREE.Vector3(0, 3.7, 6.0);
 const LOOK_AHEAD = 3.2;
@@ -32,6 +34,8 @@ const DEFAULT_LIGHTING: StreetLighting = {
 
 export interface StreetEvents {
   onNearDoor(near: boolean): void;
+  /** 내가 어디로 걷기 시작했는지 (궁합 방에 목적지만 보낸다, F16) */
+  onWalk?(target: Point): void;
   /** 걷기 시작할 때마다 (Stage가 처음 한 번만 UI에 알린다) */
   onMove(): void;
   /** 발이 땅에 닿을 때마다 (발소리) */
@@ -43,6 +47,41 @@ function turnToward(current: number, target: number, k: number) {
   let d = target - current;
   d = Math.atan2(Math.sin(d), Math.cos(d));
   return current + d * k;
+}
+
+/** 머리 위 닉네임 표 (궁합 방의 상대, F16) */
+function nameTag(text: string): THREE.Sprite {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 64;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.font = '700 30px "Gowun Dodum", sans-serif';
+    const w = Math.min(240, ctx.measureText(text).width + 36);
+    ctx.fillStyle = "rgba(20, 22, 52, 0.78)";
+    ctx.beginPath();
+    ctx.roundRect((256 - w) / 2, 8, w, 48, 24);
+    ctx.fill();
+    ctx.fillStyle = "#fff1c8";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, 128, 33, 220);
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.SpriteMaterial({ map: tex, depthWrite: false, transparent: true });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(1.2, 0.3, 1);
+  sprite.position.y = 1.62;
+  sprite.renderOrder = 10;
+  return sprite;
+}
+
+interface Remote {
+  chibi: Chibi;
+  tag: THREE.Sprite;
+  path: Point[];
+  facing: number;
 }
 
 export class StreetView {
@@ -61,6 +100,8 @@ export class StreetView {
   private readonly marker: THREE.Mesh;
   private readonly markerMat: THREE.MeshBasicMaterial;
   private markerAge = 0;
+  /** 같은 방의 다른 사람 (궁합 둘만의 방, F16) */
+  private readonly remotes = new Map<string, Remote>();
 
   constructor(
     shop: ShopId,
@@ -159,11 +200,106 @@ export class StreetView {
     this.goingToDoor = toDoor;
     const last = this.path[this.path.length - 1];
     if (last) {
+      this.events.onWalk?.(last);
       this.marker.position.set(last.x, 0.04, last.z);
       this.marker.visible = true;
       this.markerAge = 0;
       this.justExited = false;
       this.events.onMove();
+    }
+  }
+
+  /** 내가 문 앞 이 거리 안에 서 있는가 */
+  meNear(reach: number): boolean {
+    const p = this.me.root.position;
+    return (
+      this.path.length === 0 &&
+      Math.hypot(p.x - this.street.doorFront.x, p.z - this.street.doorFront.z) < reach
+    );
+  }
+
+  /** 지금 내 위치 (방에 처음 들어갈 때 알린다) */
+  position(): Point {
+    return { x: this.me.root.position.x, z: this.me.root.position.z };
+  }
+
+  /** 상대 캐릭터를 세운다. 처음 위치는 마지막으로 알려진 목적지 (없으면 출발점 옆) */
+  addRemote(id: string, look: { gender: Gender; ageBand: AgeBand }, nickname: string, at?: Point) {
+    this.removeRemote(id);
+    const chibi = new Chibi(look);
+    const p = at ?? { x: this.street.spawn.x + 0.9, z: this.street.spawn.z + 0.3 };
+    chibi.root.position.set(p.x, 0, p.z);
+    const tag = nameTag(nickname);
+    chibi.root.add(tag);
+    this.scene.add(chibi.root);
+    this.remotes.set(id, { chibi, tag, path: [], facing: 0 });
+  }
+
+  /** 상대가 걷기 시작한 목적지. 내 화면에서 같은 길찾기로 걸어간다 (06 §5) */
+  moveRemote(id: string, target: Point) {
+    const r = this.remotes.get(id);
+    if (!r) return;
+    const from = { x: r.chibi.root.position.x, z: r.chibi.root.position.z };
+    r.path = this.street.nav.findPath(from, target);
+  }
+
+  removeRemote(id: string) {
+    const r = this.remotes.get(id);
+    if (!r) return;
+    this.scene.remove(r.chibi.root);
+    r.chibi.dispose();
+    r.tag.material.map?.dispose();
+    r.tag.material.dispose();
+    this.remotes.delete(id);
+  }
+
+  /** 상대가 문 앞에 서 있는가 (같이 들어가기, F16) */
+  remoteNearDoor(id: string): boolean {
+    const r = this.remotes.get(id);
+    if (!r) return false;
+    const p = r.chibi.root.position;
+    return (
+      r.path.length === 0 &&
+      Math.hypot(p.x - this.street.doorFront.x, p.z - this.street.doorFront.z) < PAIR_DOOR_REACH
+    );
+  }
+
+  /** 상대가 있던 자리 (거리를 다시 만들 때 그대로 세운다) */
+  remotePosition(id: string): Point | null {
+    const r = this.remotes.get(id);
+    if (!r) return null;
+    const last = r.path[r.path.length - 1];
+    return last ?? { x: r.chibi.root.position.x, z: r.chibi.root.position.z };
+  }
+
+  private updateRemotes(dt: number) {
+    for (const r of this.remotes.values()) {
+      const pos = r.chibi.root.position;
+      let budget = WALK_SPEED * dt;
+      let heading: number | null = null;
+      let moving = false;
+      while (budget > 0 && r.path.length > 0) {
+        const next = r.path[0] as Point;
+        const dx = next.x - pos.x;
+        const dz = next.z - pos.z;
+        const dist = Math.hypot(dx, dz);
+        if (dist > 1e-4) heading = Math.atan2(dx, dz);
+        if (dist <= budget) {
+          pos.x = next.x;
+          pos.z = next.z;
+          budget -= dist;
+          r.path.shift();
+        } else {
+          pos.x += (dx / dist) * budget;
+          pos.z += (dz / dist) * budget;
+          budget = 0;
+        }
+        moving = true;
+      }
+      if (heading !== null) r.facing = turnToward(r.facing, heading, 1 - Math.exp(-dt * 14));
+      r.chibi.root.rotation.y = r.facing;
+      r.chibi.update(dt, moving);
+      r.chibi.takeStep();
     }
   }
 
@@ -221,6 +357,7 @@ export class StreetView {
     }
     this.me.root.rotation.y = this.facing;
     this.me.update(dt, moving);
+    this.updateRemotes(dt);
     if (this.me.takeStep()) this.events.onStep?.();
 
     // 탭 표시: 퍼지며 흐려진다
@@ -241,6 +378,7 @@ export class StreetView {
   }
 
   dispose() {
+    for (const id of [...this.remotes.keys()]) this.removeRemote(id);
     this.street.dispose();
     this.me.dispose();
     this.marker.geometry.dispose();

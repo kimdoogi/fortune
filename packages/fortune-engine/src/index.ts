@@ -6,3 +6,4 @@ export * from "./pillars";
 export { JEOL, TERM_NAMES, termUtcMs } from "./solarTerms";
 export { resolveSeoulLocal, seoulOffsetAt } from "./time";
 export * from "./fortune";
+export * from "./gunghap";

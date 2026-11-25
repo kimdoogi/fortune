@@ -1287,3 +1287,32 @@
   color: #ff9a8a;
   font-weight: 700;
 }
+
+/* ── 궁합 초대·관계 고르기 (F16) ── */
+.sh-gh {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sh-gh-consent,
+.sh-gh-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #fff1c8;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  word-break: keep-all;
+}
+
+.sh-gh-link {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(20, 22, 52, 0.6);
+  border: 1px dashed rgba(242, 211, 138, 0.6);
+  color: #f6dc97;
+  font-size: 13px;
+  word-break: break-all;
+  user-select: all;
+}

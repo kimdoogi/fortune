@@ -52,6 +52,7 @@ export const PRODUCT_BLURB: Record<string, string> = {
   sinjeom: "아기도령이 먼저 맞혀 보는 신점",
   daily: "오늘 하루의 흐름과 작은 행동 하나",
   saju_full: "타고난 여덟 글자와 올해의 흐름",
+  gunghap: "링크를 보내 둘이 같이 보는 궁합",
   tarot_one: "오늘 나에게 오는 카드 한 장",
   tarot_three: "과거 · 현재 · 미래를 잇는 이야기",
   obanggi: "다섯 색 깃발 중 하나를 뽑아요",

@@ -31,6 +31,11 @@
 - ✅ 마이그레이션: `wrangler d1 migrations` (SQL 파일, `apps/api/migrations/`). 이전 코드와도 동작하게 쓴다 ([15 §7](15-infrastructure.md#7-배포))
 - ✅ 인덱스: `readings(user_id, created_at DESC)`, `readings(user_id, seed_key)` UNIQUE (결과 고정), `daily_usage(user_id, date)` PK, `reports(created_at)`
 
+### 궁합 초대 (D-089, 마이그레이션 0003)
+| 테이블 | 필드 | 비고 |
+|---|---|---|
+| `gunghap_invites` | code(PK), host_id, guest_id, status(`open`·`joined`·`done`), relation, created_at, expires_at | 30분 안에 참여 없으면 만료, 참여 뒤 3시간. 결과는 두 사람 `readings`에 한 줄씩 (`seed_key = gunghap:<code>`) |
+
 ## 3. API 목록 (초안)
 | 메서드 | 경로 | 설명 | 인증 |
 |---|---|---|---|
@@ -45,7 +50,13 @@
 | POST | `/api/readings/:id/followups` | 이어 묻기 (F15, 한 풀이에 3번) | ✅ |
 | POST | `/api/payments/...` | 결제 (출시 후, D-019) | — |
 | GET | `/api/daily` | 오늘의 운세 | ✅ |
-| WS | `/ws/village/:channel` | 마을 멀티플레이 | ✅ |
+| POST | `/api/gunghap/invites` | 궁합 초대 만들기 [F16](features/F16-gunghap.md) | ✅ |
+| GET | `/api/gunghap/invites/:code` | 초대 보기 (초대한 사람 닉네임, 내 역할) | ✅ |
+| POST | `/api/gunghap/invites/:code/join` | 초대 참여 (동의) | ✅ |
+| POST | `/api/gunghap/invites/:code/reading` | 궁합 풀이 (관계 선택) | ✅ |
+| GET | `/api/gunghap/invites/:code/result` | 내 궁합 결과 | ✅ |
+| GET | `/api/ws-token?shop=` / `?room=pair:<code>` | 실시간 접속 토큰 | ✅ |
+| WS | `/ws/village/:channel`, `/ws/pair/:code` | 마을 멀티플레이 / 궁합 둘만의 방 | ✅ |
 
 - ✅ 요청/응답 타입은 `packages/shared-types`에 두고, API 입구에서 zod 스키마로 검증한다
 - ✅ 오류 형식: `{ "error": { "code": "DAILY_LIMIT", "message": "사용자에게 보여줄 문구" } }`

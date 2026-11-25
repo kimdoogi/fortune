@@ -99,6 +99,22 @@ function makeProfile(input: ProfileInput): ProfileView {
 }
 
 const OUT: Record<ProductId, InterpretOutput> = {
+  gunghap: {
+    greeting: "두 분, 나란히 앉으니 보기 좋구려.",
+    summary: "준호 님과 궁합 · 서로 키워 주는 사이",
+    sections: {
+      overall:
+        "두 분은 한쪽이 밀어 주면 다른 쪽이 자라는 짝이오. 처음 만났을 때부터 묘하게 편했을 것이오. 다만 띠끼리 서운함이 쌓이기 쉬우니, 작은 섭섭함을 그날그날 말로 풀어야 하오.",
+      chemistry:
+        "하나 님은 물처럼 흐르며 살피고, 준호 님은 나무처럼 곧게 뻗어 나가오. 하나 님이 마음을 채워 주면 준호 님이 앞장서는 모양이구려.",
+      strengths:
+        "함께 계획을 세우면 금방 실행으로 옮기오. 서로 모자란 걸 먼저 알아채고 챙겨 주는 사이요.",
+      friction:
+        "답장이 늦거나 약속을 바꿀 때 괜히 서운한 마음이 쌓이기 쉽소. 바쁜 주에는 한 사람만 계속 맞추다 지치기도 하오.",
+      tips: "한 달에 한 번 둘만의 산책 날을 잡으시오. 섭섭한 일은 메시지보다 통화로 푸는 게 좋소.",
+    },
+    advice: "서로 고마운 걸 한 가지씩 말해 보시오.",
+  },
   daily: {
     greeting: "어서 오시오, 오늘 하루를 같이 살펴봅시다.",
     summary: "작은 정성이 큰 인연으로 이어지는 날이오.",
@@ -308,7 +324,17 @@ function needProfile() {
   return db.profile;
 }
 
+const NO_PAIR = () => {
+  throw fail("NOT_FOUND", "[mock] 궁합 둘만의 방은 실제 서버(wrangler dev)에서만 돼요", 404);
+};
+
 export const mockApi: Api = {
+  createInvite: async () => NO_PAIR(),
+  invite: async () => NO_PAIR(),
+  joinInvite: async () => NO_PAIR(),
+  gunghap: async () => NO_PAIR(),
+  gunghapResult: async () => NO_PAIR(),
+  wsToken: async () => NO_PAIR(),
   async session() {
     await wait(300);
     return { userId: "mock-user", hasProfile: !!db.profile, todayCallsLeft: db.calls };

@@ -4,6 +4,13 @@
  */
 import { getDaily } from "./daily";
 import type { Env } from "./env";
+import {
+  createGunghapReading,
+  createInvite,
+  getGunghapResult,
+  joinInvite,
+  viewInvite,
+} from "./gunghap/invites";
 import { HttpError, fail, json } from "./http";
 import { getMenu } from "./menu";
 import { getProfile, putProfile } from "./profile";
@@ -47,6 +54,17 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
   if (path === "/api/readings") {
     if (method === "POST") return createReading(req, env, ctx, user);
     if (method === "GET") return listReadings(url, env, user);
+  }
+  // 궁합 (F16)
+  if (path === "/api/gunghap/invites" && method === "POST") return createInvite(req, env, user);
+  const gi = /^\/api\/gunghap\/invites\/([a-z0-9]{10})(?:\/(join|reading|result))?$/.exec(path);
+  if (gi?.[1]) {
+    const code = gi[1];
+    if (!gi[2] && method === "GET") return viewInvite(code, env, user);
+    if (gi[2] === "join" && method === "POST") return joinInvite(code, req, env, user);
+    if (gi[2] === "reading" && method === "POST")
+      return createGunghapReading(code, req, env, ctx, user);
+    if (gi[2] === "result" && method === "GET") return getGunghapResult(code, env, user);
   }
   const fu = /^\/api\/readings\/([A-Za-z0-9-]{1,64})\/followups$/.exec(path);
   if (fu?.[1] && method === "POST") return createFollowup(fu[1], req, env, ctx, user);

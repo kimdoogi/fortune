@@ -24,6 +24,22 @@ export const LAB_PROFILE: ProfileView = {
 };
 
 export const LAB_OUTPUT: Record<ProductId, InterpretOutput> = {
+  gunghap: {
+    greeting: "두 분, 나란히 앉으니 보기 좋구려.",
+    summary: "준호 님과 궁합 · 서로 키워 주는 사이",
+    sections: {
+      overall:
+        "두 분은 한쪽이 밀어 주면 다른 쪽이 자라는 짝이오. 처음 만났을 때부터 묘하게 편했을 것이오. 다만 띠끼리 서운함이 쌓이기 쉬우니, 작은 섭섭함을 그날그날 말로 풀어야 하오.",
+      chemistry:
+        "하나 님은 물처럼 흐르며 살피고, 준호 님은 나무처럼 곧게 뻗어 나가오. 하나 님이 마음을 채워 주면 준호 님이 앞장서는 모양이구려.",
+      strengths:
+        "함께 계획을 세우면 금방 실행으로 옮기오. 서로 모자란 걸 먼저 알아채고 챙겨 주는 사이요.",
+      friction:
+        "답장이 늦거나 약속을 바꿀 때 괜히 서운한 마음이 쌓이기 쉽소. 바쁜 주에는 한 사람만 계속 맞추다 지치기도 하오.",
+      tips: "한 달에 한 번 둘만의 산책 날을 잡으시오. 섭섭한 일은 메시지보다 통화로 푸는 게 좋소.",
+    },
+    advice: "서로 고마운 걸 한 가지씩 말해 보시오.",
+  },
   daily: {
     greeting: "그대, 오늘 하루도 잘 왔구려.",
     summary: "작은 정리가 큰 여유를 부르는 날이오",
@@ -176,6 +192,22 @@ export function labVisual(
         flag: { color: "노랑", grade: "길" },
         mode: "sinjeom",
         rice: { count: 7, grade: "대길" },
+      };
+    case "gunghap":
+      return {
+        shop: "saju",
+        gunghap: {
+          score: 78,
+          label: "잘 맞는 사이",
+          relation: "연인",
+          a: { nickname: "하나", zodiac: "쥐", dayStem: "임", element: "수" },
+          b: { nickname: "준호", zodiac: "소", dayStem: "갑", element: "목" },
+          factors: [
+            { name: "물·나무 서로 살림", good: true },
+            { name: "쥐띠·소띠 잘 맞음", good: true },
+            { name: "가까울수록 다툼", good: false },
+          ],
+        },
       };
     case "obanggi":
       return {

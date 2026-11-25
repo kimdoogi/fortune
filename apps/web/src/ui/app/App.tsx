@@ -16,6 +16,7 @@ import { boot, bootError, phase, profile } from "./state";
 const Street = lazy(() => loadStreet().then((m) => m.StreetScreen));
 const History = lazy(() => import("../screens/history/HistoryScreen").then((m) => m.HistoryScreen));
 const Daily = lazy(() => import("../screens/daily/DailyScreen").then((m) => m.DailyScreen));
+const Join = lazy(() => import("../screens/join/JoinScreen").then((m) => m.JoinScreen));
 
 function Splash(props: { failed?: string }) {
   return (
@@ -62,6 +63,20 @@ function Routes() {
       return <History id={r.id} />;
     case "daily":
       return <Daily />;
+    // 궁합 (F16): 초대 받기 → 둘만의 사주집 거리
+    case "join":
+      return <Join code={r.code} />;
+    case "pair":
+    case "pair-in":
+      return (
+        <Street
+          key={`pair:${r.code}`}
+          shop="saju"
+          inside={r.name === "pair-in"}
+          profile={p}
+          pair={{ code: r.code }}
+        />
+      );
     default:
       return <MapScreen />;
   }
@@ -87,7 +102,9 @@ export function App() {
           mode="new"
           onDone={() => {
             phase.value = "ready";
-            navigate({ name: "map" }, { replace: true });
+            // 궁합 초대 링크로 처음 온 사람은 프로필을 만든 뒤 초대 화면으로 (F16)
+            const r = route.value;
+            navigate(r.name === "join" ? r : { name: "map" }, { replace: true });
           }}
         />
       );

@@ -10,7 +10,7 @@ import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js
 import { type BakeEnv, bakeLighting } from "./bake";
 import { Chibi, type ChibiLook } from "./chibi";
 import { DECOR, type Palette } from "./decor";
-import { type Kit, box, newKit } from "./furniture";
+import { type Kit, box, cushion, newKit } from "./furniture";
 import { colored, gradient, hash } from "./geo";
 import { glowMaterial, glowPoints } from "./glow";
 import { Npc, type NpcAction } from "./npc";
@@ -283,7 +283,10 @@ function ceiling(kit: Kit, pal: Palette) {
   kit.parts.push(colored(beam, pal.woodDark));
 }
 
-export function buildInterior(shop: ShopId, look: ChibiLook): Interior {
+/** 궁합(F16): 둘이 나란히 앉는 자리. 초대한 사람이 왼쪽 */
+export const PAIR_SEATS = { me: { x: -0.46, z: 0.9 }, partner: { x: 0.46, z: 0.9 } };
+
+export function buildInterior(shop: ShopId, look: ChibiLook, partner?: ChibiLook | null): Interior {
   const decor = DECOR[shop];
   const pal = decor.palette;
   const kit = newKit();
@@ -308,6 +311,8 @@ export function buildInterior(shop: ShopId, look: ChibiLook): Interior {
   ceiling(kit, pal);
   // 점집 소품 (탁자·방석 포함)
   decor.build(kit);
+  // 궁합: 상대 방석 하나 더 (F16)
+  if (partner) cushion(kit, PAIR_SEATS.partner.x, PAIR_SEATS.partner.z, 0.72, "#3c6fd6", "#2a4fa8");
 
   // 조명 굽기 → 정적 배경 한 덩어리 (빛나는 조각은 굽지 않고 함께 합친다)
   const env: BakeEnv = {
@@ -361,13 +366,23 @@ export function buildInterior(shop: ShopId, look: ChibiLook): Interior {
   scene.add(npc.root);
   owned.push(npc);
 
-  // 내 캐릭터: 탁자 앞 방석에 앉아 점술가를 본다 (뒷모습)
-  const me = new Chibi(look).sit().compact();
-  me.root.position.set(SEATS.player.x, SEATS.cushionH, SEATS.player.z);
-  // 점술가 쪽으로 몸을 돌린다
-  me.root.rotation.y = Math.atan2(SEATS.npc.x - SEATS.player.x, SEATS.npc.z - SEATS.player.z);
-  scene.add(me.root);
-  owned.push(me);
+  // 내 캐릭터: 탁자 앞 방석에 앉아 점술가를 본다 (뒷모습). 궁합이면 둘이 나란히 (F16)
+  const seats: [ChibiLook, { x: number; z: number }][] = partner
+    ? [
+        [look, PAIR_SEATS.me],
+        [partner, PAIR_SEATS.partner],
+      ]
+    : [[look, SEATS.player]];
+  const sitters: Chibi[] = [];
+  for (const [l, seat] of seats) {
+    const c = new Chibi(l).sit().compact();
+    sitters.push(c);
+    c.root.position.set(seat.x, SEATS.cushionH, seat.z);
+    // 점술가 쪽으로 몸을 돌린다
+    c.root.rotation.y = Math.atan2(SEATS.npc.x - seat.x, SEATS.npc.z - seat.z);
+    scene.add(c.root);
+    owned.push(c);
+  }
 
   // 빛무리 + 떠다니는 먼지
   const glowMat = glowMaterial(0.75);
@@ -431,7 +446,7 @@ export function buildInterior(shop: ShopId, look: ChibiLook): Interior {
     },
     update(dt, time) {
       npc.update(dt);
-      me.update(dt, false);
+      for (const c of sitters) c.update(dt, false);
       for (const f of kit.updaters) f(dt, time);
       for (const m of [glowMat, dustMat]) {
         const u = m.uniforms.uTime;

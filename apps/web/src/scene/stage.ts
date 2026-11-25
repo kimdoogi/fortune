@@ -5,10 +5,10 @@
  */
 import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
-import type { AgeBand, Gender } from "./chibi";
+import type { AgeBand, ChibiLook, Gender } from "./chibi";
 import { type Interior, buildInterior } from "./interior";
 import type { NpcAction } from "./npc";
-import { StreetView } from "./street-view";
+import { PAIR_DOOR_REACH, StreetView } from "./street-view";
 
 export type { NpcAction } from "./npc";
 
@@ -18,6 +18,8 @@ export interface StageEvents {
   onFirstMove?(): void;
   /** 내 캐릭터 발이 땅에 닿을 때마다 (발소리, 08 §5) */
   onStep?(): void;
+  /** 내가 걷기 시작한 목적지 (궁합 방, F16) */
+  onWalk?(x: number, z: number): void;
   onStats?(s: { fps: number; calls: number; triangles: number }): void;
 }
 
@@ -56,6 +58,13 @@ export class Stage {
   /** enterShop/exitShop이 겹치면 늦게 온 쪽만 유효하다 */
   private token = 0;
   private moved = false;
+  /** 궁합 상대 (점집 안에서 나란히 앉는다, F16) */
+  private partner: ChibiLook | null = null;
+  /** 같은 방의 다른 사람. 거리를 다시 만들 때 그대로 세운다 */
+  private readonly remoteInfo = new Map<
+    string,
+    { look: ChibiLook; nickname: string; at?: { x: number; z: number } }
+  >();
   private disposed = false;
   private raf = 0;
   private frames = 0;
@@ -103,6 +112,7 @@ export class Stage {
         this.events.onFirstMove?.();
       },
       onStep: () => this.events.onStep?.(),
+      onWalk: (p) => this.events.onWalk?.(p.x, p.z),
     });
   }
 
@@ -114,7 +124,7 @@ export class Stage {
       if (this.disposed || this._inside || this.prebuilt) return;
       try {
         const t0 = performance.now();
-        this.prebuilt = buildInterior(this.opts.shop, this.opts.look);
+        this.prebuilt = buildInterior(this.opts.shop, this.opts.look, this.partner);
         this.lastBuildMs = performance.now() - t0;
       } catch {
         this.prebuilt = null; // 들어갈 때 다시 시도한다
@@ -150,7 +160,7 @@ export class Stage {
     try {
       const t0 = performance.now();
       if (!room) {
-        room = buildInterior(this.opts.shop, this.opts.look);
+        room = buildInterior(this.opts.shop, this.opts.look, this.partner);
         this.lastBuildMs = performance.now() - t0;
       }
       room.resize(this.width, this.height, this.renderer.getPixelRatio());
@@ -179,9 +189,49 @@ export class Stage {
     this.interior?.dispose();
     this.interior = null;
     this._inside = false;
-    if (!this.street) this.street = this.makeStreet();
+    if (!this.street) {
+      this.street = this.makeStreet();
+      for (const [id, r] of this.remoteInfo) this.street.addRemote(id, r.look, r.nickname, r.at);
+    }
     this.street.resize(this.width, this.height, this.renderer.getPixelRatio());
     this.street.standAtDoor();
+  }
+
+  // ── 궁합 둘만의 방 (F16) ──
+  /** 점집 안에서 옆에 앉을 사람. 바뀌면 미리 만든 내부를 버린다 */
+  setPartner(look: ChibiLook | null) {
+    this.partner = look;
+    this.dropPrebuilt();
+  }
+
+  addRemote(id: string, look: ChibiLook, nickname: string, at?: { x: number; z: number }) {
+    this.remoteInfo.set(id, { look, nickname, at });
+    this.street?.addRemote(id, look, nickname, at);
+  }
+
+  moveRemote(id: string, x: number, z: number) {
+    const r = this.remoteInfo.get(id);
+    if (r) r.at = { x, z };
+    this.street?.moveRemote(id, { x, z });
+  }
+
+  removeRemote(id: string) {
+    this.remoteInfo.delete(id);
+    this.street?.removeRemote(id);
+  }
+
+  remoteNearDoor(id: string): boolean {
+    return this.street?.remoteNearDoor(id) ?? false;
+  }
+
+  /** 내가 문 앞(같이 들어가기 거리 안)에 있는가 */
+  meNearDoor(): boolean {
+    return this.street?.meNear(PAIR_DOOR_REACH) ?? false;
+  }
+
+  /** 지금 내 위치 */
+  myPosition(): { x: number; z: number } | null {
+    return this.street?.position() ?? null;
   }
 
   /** 점술가 동작 (UI가 대사·연출에 맞춰 부른다) */

@@ -116,6 +116,12 @@ sequenceDiagram
 - ✅ 재접속: 1, 2, 4, 8초 간격으로 최대 5번, 같은 채널로 ([F03](features/F03-street.md))
 - ✅ **WebSocket 인증:** app Worker가 `userId·채널·만료(5분)`에 HMAC 서명한 토큰을 발급하고, Durable Object가 `WS_TOKEN_KEY`로 검증한다. 메시지는 JSON, 1개 최대 512바이트
 
+### 둘만의 방 (궁합, D-089)
+- ✅ `pair:<code>` = Durable Object 1개 (같은 `VillageChannel` 클래스, 정원 2). 토큰 채널이 `pair:<code>`이고, app Worker는 초대의 초대한 사람·손님에게만 토큰을 준다
+- ✅ 토큰에 외모(`성별:나이대`)를 넣어 상대 캐릭터를 그린다
+- ✅ 추가 메시지: 클라 → `go_inside`(같이 들어가기), `pick`(관계), 서버 → `went_inside`, `picked`, `result_ready`(app Worker가 DO RPC `notify()`로 보냄)
+- ✅ 점집 안에서도 연결을 유지해 관계 고르기와 결과 알림을 주고받는다
+
 ### 개인 공간 (점집 내부)
 - 점집 내부는 서버 동기화 없음. 클라이언트에서만 렌더링한다
 - 점 보기는 위 [풀이 요청 흐름](#3-풀이-요청-흐름)의 HTTPS API만 사용한다

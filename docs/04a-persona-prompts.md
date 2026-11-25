@@ -218,6 +218,7 @@
 |---|---|---|
 | `daily` | overall 250, tip 80 | 오늘 하루의 흐름과 작은 행동 하나. 코드가 준 점수 등급과 말투를 맞춘다 (v2, D-080) |
 | `saju_full` | (v3: 쉬운 말·요즘 추천, D-083) overall 300, thisYear 260, months 450, money 170, work 170, love 170, daewoon 180, personality 180, elements 150, yongsin 150 | **현실적으로** (v2, D-079): 올해(연말이면 내년까지) 생길 일을 이직·계약·이사·연애·시험·돈 같은 실제 일로 말한다. `months`는 코드가 고른 좋은 달·조심할 달만 한 줄에 한 달씩 "N월 — 무엇이 생기고 어떻게 하라". 성격·오행·용신은 짧게 |
+| `gunghap` | overall 260, chemistry 200, strengths 180, friction 200, tips 180 | 두 사람(입력 `partner`)을 함께 부른다("두 분"). 관계(연인·썸·친구·가족·동료)에 맞춰 말하고, 부딪히는 점도 솔직하게. facts의 요인만 쓴다 (v1, D-089) |
 | `tarot_one` | card 200, message 130 | 카드 그림 묘사 → 뜻 → 오늘의 한마디 |
 | `tarot_three` | past 220, present 250, future 250, advice 180 | 세 장을 하나의 이야기로 잇는다. 미래는 언제쯤 어떻게 올지 시원하게 |
 | `obanggi` | flag 250, message 380, advice 220 | 깃발 색 → 뜻 → 질문(있으면)에 대한 답 |

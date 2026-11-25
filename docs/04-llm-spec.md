@@ -132,6 +132,7 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
 | 상품 ID | 점집 | 요금 | 섹션 (순서대로) | 전체 길이 | 잠금 (MVP) |
 |---|---|---|---|---|---|
 | `daily` | 사주집 | 무료 | `overall`, `tip` (+ 코드가 붙이는 점수·행운의 숫자, D-080) | 300~400자 | 없음 |
+| `gunghap` | 사주집 | 무료 | `overall`, `chemistry`, `strengths`, `friction`, `tips` (+ 코드가 붙이는 점수·요인, D-089) | 1,000자 안팎 | 없음 |
 | `saju_full` | 사주집 | 무료 | `overall`(요약), `thisYear`, `months`(앞으로 12달 좋은 달·조심할 달), `money`, `work`, `love`, `daewoon`, `personality`, `elements`, `yongsin` | 2,300자 안팎 (요약 300자) | 없음 |
 | `tarot_one` | 타로집 | 무료 | `card`, `message` | 300~400자 | 없음 |
 | `tarot_three` | 타로집 | 무료 | `past`, `present`, `future`, `advice` | 800~1,000자 | 없음 |

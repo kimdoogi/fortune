@@ -23,6 +23,7 @@ export const SECTION_TARGETS: Record<ProductId, Record<string, number>> = {
     elements: 150,
     yongsin: 150,
   },
+  gunghap: { overall: 260, chemistry: 200, strengths: 180, friction: 200, tips: 180 },
   tarot_one: { card: 200, message: 130 },
   tarot_three: { past: 220, present: 250, future: 250, advice: 180 },
   obanggi: { flag: 250, message: 380, advice: 220 },
@@ -33,6 +34,7 @@ export const SECTION_TARGETS: Record<ProductId, Record<string, number>> = {
 export const PRODUCT_SHOP: Record<ProductId, ShopId> = {
   daily: "saju",
   saju_full: "saju",
+  gunghap: "saju",
   tarot_one: "tarot",
   tarot_three: "tarot",
   obanggi: "dolyeong",

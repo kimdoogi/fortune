@@ -31,6 +31,7 @@ import {
   SajuFlow,
   TarotFlow,
 } from "./flows";
+import { GunghapFlow, InviteFlow, type PairCtx } from "./gunghap";
 import { SinjeomFlow } from "./sinjeom";
 import "./shop.css";
 
@@ -79,11 +80,15 @@ export function ShopScreen(props: {
   onExit: () => void;
   /** 오늘 남은 횟수가 바뀌면 알려 준다 */
   onCallsLeft?: (n: number) => void;
+  /** 궁합 둘만의 방으로 같이 들어왔을 때 (F16). 메뉴 없이 바로 궁합을 본다 */
+  pair?: PairCtx;
 }): JSX.Element {
   const { shop, profile } = props;
   const c = CHARACTERS[shop];
   const nick = profile.nickname;
-  const [view, setView] = useState<View>({ k: "menu" });
+  const [view, setView] = useState<View>(
+    props.pair ? { k: "flow", product: "gunghap", n: 1 } : { k: "menu" },
+  );
   const [line, setLine] = useState(() => {
     const xs = greetings[shop].enter;
     return fillTemplate(xs[Math.floor(Math.random() * xs.length)] ?? "", nick);
@@ -117,13 +122,18 @@ export function ShopScreen(props: {
   // biome-ignore lint/correctness/useExhaustiveDependencies: 점집에 들어올 때 한 번만
   useEffect(() => {
     props.npc("greet");
-    loadMenu();
+    if (!props.pair) loadMenu();
     return () => {
       alive.current = false;
     };
   }, [shop]);
 
   const toMenu = (text = c.again) => {
+    // 궁합 둘만의 방에서는 메뉴가 없다: 거리로 나간다
+    if (props.pair) {
+      props.onExit();
+      return;
+    }
     setView({ k: "menu" });
     say(text);
     props.npc("idle");
@@ -200,12 +210,18 @@ export function ShopScreen(props: {
         return <SinjeomFlow key={key} {...fp} />;
       case "dream":
         return <DreamFlow key={key} {...fp} />;
+      case "gunghap":
+        return props.pair ? (
+          <GunghapFlow key={key} {...fp} pair={props.pair} />
+        ) : (
+          <InviteFlow key={key} {...fp} />
+        );
       default:
         return null;
     }
   };
 
-  const inFlow = view.k === "flow";
+  const inFlow = view.k === "flow" && !props.pair;
   const covered = view.k === "result" || view.k === "daily" || view.k === "crisis";
 
   return (

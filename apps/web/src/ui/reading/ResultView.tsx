@@ -20,6 +20,7 @@ import {
   FLAG_ADJ,
   FlagArt,
   GradeSeal,
+  GunghapBoardView,
   SajuBoardView,
   TarotSpreadView,
 } from "./visuals";
@@ -246,7 +247,11 @@ function VisualHeader(props: { result: ReadingResult }) {
   const v = props.result.visual;
   switch (v.shop) {
     case "saju":
-      return <SajuBoardView board={v.board} />;
+      return "gunghap" in v ? (
+        <GunghapBoardView board={v.gunghap} />
+      ) : (
+        <SajuBoardView board={v.board} />
+      );
     case "tarot":
       return <TarotSpreadView cards={v.cards} />;
     case "dolyeong":

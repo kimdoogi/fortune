@@ -2,7 +2,14 @@
  * 결과 위쪽에 그리는 점집별 그림 (F05 사주판, F06 카드, F07 깃발, F08 꿈 상징).
  * 다시 보기(F10)에서도 같은 그림을 그대로 쓴다.
  */
-import type { FlagColor, FlagGrade, SajuBoard, TarotCardView } from "@fortune/shared-types";
+import type {
+  FlagColor,
+  FlagGrade,
+  GunghapBoard,
+  GunghapPerson,
+  SajuBoard,
+  TarotCardView,
+} from "@fortune/shared-types";
 import type { JSX } from "preact";
 import { useId } from "preact/hooks";
 import { ELEMENTS, ELEMENT_COLOR, type GlyphInfo, pillarInfo } from "./format";
@@ -106,6 +113,61 @@ export function SajuBoardView(props: { board: SajuBoard }): JSX.Element {
 }
 
 const GRADE_NAME = { good: "좋은 달", normal: "보통", caution: "조심할 달" } as const;
+
+// ── 궁합 판 (F16, D-089) ──────────────────────────────
+function PairPerson(props: { p: GunghapPerson; side: "a" | "b" }) {
+  const { p } = props;
+  const color = ELEMENT_COLOR[p.element as keyof typeof ELEMENT_COLOR] ?? "#8a6a4a";
+  return (
+    <div class={`rd-gh-person rd-gh-${props.side}`}>
+      <span class="rd-gh-stem" style={{ "--el": color }}>
+        {p.dayStem}
+      </span>
+      <b class="rd-gh-name">{p.nickname}</b>
+      <span class="rd-gh-sub">
+        {p.zodiac}띠 · {EL_WORD[p.element as keyof typeof EL_WORD] ?? p.element}
+      </span>
+    </div>
+  );
+}
+
+/** 두 사람, 궁합 점수와 등급, 잘 맞는 요인·부딪히는 요인 */
+export function GunghapBoardView(props: { board: GunghapBoard }): JSX.Element {
+  const b = props.board;
+  const R = 30;
+  const C = 2 * Math.PI * R;
+  return (
+    <div class="rd-board rd-gh">
+      <p class="rd-gh-rel">{b.relation} 궁합</p>
+      <div class="rd-gh-row">
+        <PairPerson p={b.a} side="a" />
+        <div class="rd-gh-score" role="img" aria-label={`궁합 ${b.score}점, ${b.label}`}>
+          <svg viewBox="0 0 72 72" aria-hidden="true">
+            <circle class="rd-gh-track" cx="36" cy="36" r={R} />
+            <circle
+              class="rd-gh-fill"
+              cx="36"
+              cy="36"
+              r={R}
+              stroke-dasharray={C}
+              stroke-dashoffset={C * (1 - b.score / 100)}
+            />
+          </svg>
+          <b>{b.score}</b>
+        </div>
+        <PairPerson p={b.b} side="b" />
+      </div>
+      <p class="rd-gh-label">{b.label}</p>
+      <ul class="rd-gh-factors">
+        {b.factors.map((f) => (
+          <li key={f.name} class={f.good ? "good" : "bad"}>
+            {f.name}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 /** 앞으로 12달 띠 (D-079): 좋은 달은 등불색, 조심할 달은 붉은 점 */
 function MonthStrip(props: { months: NonNullable<SajuBoard["months"]> }): JSX.Element {

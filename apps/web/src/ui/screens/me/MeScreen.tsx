@@ -90,6 +90,8 @@ export function MeScreen(props: { profile: ProfileView }) {
             <p class="me-foot">
               가입 없이 이 브라우저에 기록이 남아요. 브라우저 데이터를 지우면 기록이 사라져요.
             </p>
+            {/* 08 §5 라이선스: 출처 표시 */}
+            <p class="me-foot">배경음·효과음: ElevenLabs로 만들었어요.</p>
           </section>
         </div>
       </div>

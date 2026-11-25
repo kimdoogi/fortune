@@ -15,6 +15,7 @@ import type {
 import type { JSX } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { api, newRequestId } from "../../api/client";
+import { sfx } from "../../audio/sound";
 import { OutputView, ResultSheet } from "../reading/ResultView";
 import { TarotBack, TarotFace } from "../reading/tarotArt";
 import {
@@ -196,6 +197,7 @@ export function TarotFlow(
         api.read({ shop: "tarot", product: props.product, category, requestId: newRequestId() }),
       );
       props.npc("present");
+      sfx("shuffle");
       props.say(
         need === 3
           ? "마음속으로 질문을 떠올리고, 끌리는 카드 세 장을 골라 봐요."
@@ -233,6 +235,7 @@ export function TarotFlow(
     const id = setInterval(() => {
       k += 1;
       setFlipped(k);
+      sfx("flip");
       if (k >= cards.length) clearInterval(id);
     }, 650);
     return () => clearInterval(id);
@@ -261,7 +264,10 @@ export function TarotFlow(
                 style={{ "--a": `${a}deg`, "--i": i }}
                 aria-label={`${i + 1}번째 카드`}
                 disabled={on || picked.length >= need}
-                onClick={() => setPicked([...picked, i])}
+                onClick={() => {
+                  sfx("flip");
+                  setPicked([...picked, i]);
+                }}
               >
                 <TarotBack />
               </button>
@@ -352,6 +358,7 @@ export function DolyeongFlow(props: FlowProps): JSX.Element {
         api.read({ shop: "dolyeong", product: "obanggi", category, requestId: newRequestId() }),
       );
       props.npc("present");
+      sfx("bell");
       props.say("딸랑딸랑! 깃발 다섯 개 말아 왔어. 마음에 드는 거 하나 뽑아!");
     }
   }, [stage]);
@@ -475,6 +482,7 @@ export function DreamFlow(props: FlowProps): JSX.Element {
   // biome-ignore lint/correctness/useExhaustiveDependencies: 단계가 바뀔 때만 실행한다 (콜백은 렌더마다 새로 만들어짐)
   useEffect(() => {
     if (stage !== "brewing" || !checkId) return;
+    sfx("pour");
     props.npc("talk");
     props.say(c.loading, true);
     atLeast(

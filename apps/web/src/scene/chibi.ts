@@ -149,6 +149,9 @@ export class Chibi {
   private readonly arms: THREE.Group[] = [];
   private readonly eyes: THREE.Object3D[] = [];
   private phase = 0;
+  /** 걸음 수 (다리 흔들기 반 바퀴 = 한 걸음). 발소리용 */
+  private stepIdx = 0;
+  private stepped = false;
   private time = Math.random() * 10;
   private nextBlink = 2 + Math.random() * 3;
   /** 점집 안에서 방석에 앉은 자세 */
@@ -323,10 +326,24 @@ export class Chibi {
     this.owned.length = 0;
   }
 
+  /** 지난 update 이후 한 걸음을 디뎠으면 true (한 번만) */
+  takeStep(): boolean {
+    const s = this.stepped;
+    this.stepped = false;
+    return s;
+  }
+
   /** 걸을 때는 통통 튀며 팔다리를 흔들고, 서 있을 때는 숨쉬듯 움직이고 눈을 깜빡인다 */
   update(dt: number, moving: boolean) {
     this.time += dt;
     this.phase = moving ? this.phase + dt * 11 : this.phase * 0.85;
+    if (moving) {
+      const idx = Math.floor(this.phase / Math.PI);
+      if (idx !== this.stepIdx) {
+        this.stepIdx = idx;
+        this.stepped = true;
+      }
+    }
     const s = Math.sin(this.phase);
     this.body.position.y = moving ? Math.abs(s) * 0.055 : 0;
     this.body.rotation.x = moving ? 0.07 : 0;

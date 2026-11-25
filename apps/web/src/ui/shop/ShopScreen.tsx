@@ -16,6 +16,8 @@ import {
 import type { JSX } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { api } from "../../api/client";
+import { sfx } from "../../audio/sound";
+import { SoundButton } from "../app/kit";
 import { CrisisScreen, ResultView } from "../reading/ResultView";
 import { Dialogue } from "./Dialogue";
 import { CHARACTERS, PRODUCT_BLURB } from "./characters";
@@ -142,6 +144,7 @@ export function ShopScreen(props: {
   const showResult = (r: ReadingResult, animate: boolean) => {
     props.onCallsLeft?.(r.todayCallsLeft);
     setView({ k: "result", result: r, animate });
+    sfx("reveal");
     if (animate) props.npc("talk");
   };
 
@@ -213,6 +216,7 @@ export function ShopScreen(props: {
           {inFlow ? "뒤로" : "나가기"}
         </button>
         <div class="sh-plaque">{c.shopName}</div>
+        <SoundButton />
       </header>
 
       <div class={covered ? "sh-panel sh-panel-hidden" : "sh-panel"}>

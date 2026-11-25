@@ -3,6 +3,7 @@
  */
 import type { ComponentChildren, JSX } from "preact";
 import { useEffect } from "preact/hooks";
+import { setSoundOn, soundOn } from "../../audio/sound";
 import { toasts } from "./state";
 
 type IconProps = { size?: number };
@@ -83,7 +84,39 @@ export const Icon = {
     2,
   ),
   chevron: svg(<path d="M9 5l7 7-7 7" />, 2.4),
+  /** 소리 켜짐: 스피커와 소리 물결 */
+  soundOn: svg(
+    <>
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" />
+      <path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.5a7.8 7.8 0 0 1 0 11" />
+    </>,
+    2,
+  ),
+  /** 소리 꺼짐: 스피커와 X */
+  soundOff: svg(
+    <>
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" />
+      <path d="M16 9.5l5 5M21 9.5l-5 5" />
+    </>,
+    2,
+  ),
 };
+
+/** 소리 켜기/끄기 (08 §5). 위쪽 막대 오른쪽에 둔다 */
+export function SoundButton() {
+  const on = soundOn.value;
+  return (
+    <button
+      type="button"
+      class={on ? "btn-sound" : "btn-sound off"}
+      aria-label={on ? "소리 끄기" : "소리 켜기"}
+      aria-pressed={!on}
+      onClick={() => setSoundOn(!on)}
+    >
+      {on ? <Icon.soundOn /> : <Icon.soundOff />}
+    </button>
+  );
+}
 
 /** 목재 현판 (제목) */
 export function Plaque(props: { children: ComponentChildren; class?: string }) {

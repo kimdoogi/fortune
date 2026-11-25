@@ -93,6 +93,38 @@ button:active {
   height: 20px;
 }
 
+/* 소리 켜기/끄기 (08 §5): 위쪽 막대 오른쪽 끝 */
+.btn-sound {
+  pointer-events: auto;
+  flex: none;
+  margin-left: auto;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(110, 68, 41, 0.35);
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fbf3e2, var(--hanji));
+  color: var(--ink);
+  box-shadow: 0 4px 12px rgba(8, 6, 20, 0.35);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-sound svg {
+  width: 22px;
+  height: 22px;
+}
+
+.btn-sound.off {
+  color: rgba(60, 40, 28, 0.55);
+}
+
+.btn-sound:active {
+  transform: scale(0.94);
+}
+
 .plaque {
   position: absolute;
   left: 50%;

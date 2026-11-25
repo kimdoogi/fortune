@@ -5,7 +5,7 @@
  */
 import { PRODUCT_NAMES, SHOP_PRODUCTS, type ShopId } from "@fortune/shared-types";
 import { useEffect, useState } from "preact/hooks";
-import { Icon, Plaque } from "../../app/kit";
+import { Icon, Plaque, SoundButton } from "../../app/kit";
 import { hasWebGL2, loadStage, loadStreet, prefetch3d } from "../../app/preload";
 import { navigate } from "../../app/router";
 import { Portrait, SHOP_INFO } from "../../app/shops";
@@ -67,6 +67,7 @@ export function MapScreen() {
 
       <div class="map-top">
         <Plaque>점집 거리</Plaque>
+        <SoundButton />
         {callsLeft.value !== null && (
           <div class="calls" title="하루에 볼 수 있는 점">
             오늘 남은 점 <b>{callsLeft.value}</b>번

@@ -7,6 +7,7 @@ import type { ReadingResult } from "@fortune/shared-types";
 import type { JSX } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { ApiFailure, api, newRequestId } from "../../api/client";
+import { sfx } from "../../audio/sound";
 import type { FlowProps } from "./flows";
 
 /** 빠른 답: 맞히기 놀이가 아니라 도움(할 일·조심할 것)으로 이어지게 (F07, D-074) */
@@ -37,6 +38,7 @@ export function SinjeomFlow(props: FlowProps): JSX.Element {
   useEffect(() => {
     props.npc("present");
     props.say("딸랑딸랑… 잠깐만! 눈 감고 볼게!", true);
+    sfx("bell");
     api.read({ shop: "dolyeong", product: "sinjeom", requestId: newRequestId() }).then(
       (r) => {
         if (!alive.current) return;
@@ -82,6 +84,7 @@ export function SinjeomFlow(props: FlowProps): JSX.Element {
     setText("");
     props.npc("talk");
     props.say("딸랑딸랑…", true);
+    sfx("bell");
     try {
       const res = await api.followup(result.id, { question, requestId: requestId.current });
       requestId.current = newRequestId();

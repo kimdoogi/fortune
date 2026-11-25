@@ -16,6 +16,8 @@ export interface StageEvents {
   onNearDoor(near: boolean): void;
   /** 처음 걷기 시작했을 때 한 번 (안내 문구를 숨긴다) */
   onFirstMove?(): void;
+  /** 내 캐릭터 발이 땅에 닿을 때마다 (발소리, 08 §5) */
+  onStep?(): void;
   onStats?(s: { fps: number; calls: number; triangles: number }): void;
 }
 
@@ -100,6 +102,7 @@ export class Stage {
         this.moved = true;
         this.events.onFirstMove?.();
       },
+      onStep: () => this.events.onStep?.(),
     });
   }
 

@@ -328,6 +328,12 @@
   pointer-events: none;
 }
 
+.map-top .btn-sound {
+  position: absolute;
+  top: 0;
+  right: 12px;
+}
+
 .map-top .plaque {
   position: relative;
   left: auto;

@@ -34,6 +34,8 @@ export interface StreetEvents {
   onNearDoor(near: boolean): void;
   /** 걷기 시작할 때마다 (Stage가 처음 한 번만 UI에 알린다) */
   onMove(): void;
+  /** 발이 땅에 닿을 때마다 (발소리) */
+  onStep?(): void;
 }
 
 /** 두 각도 사이를 가장 짧은 쪽으로 보간 */
@@ -219,6 +221,7 @@ export class StreetView {
     }
     this.me.root.rotation.y = this.facing;
     this.me.update(dt, moving);
+    if (this.me.takeStep()) this.events.onStep?.();
 
     // 탭 표시: 퍼지며 흐려진다
     if (this.marker.visible) {

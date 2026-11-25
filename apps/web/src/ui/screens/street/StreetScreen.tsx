@@ -6,8 +6,9 @@
  */
 import type { ProfileView, ShopId } from "@fortune/shared-types";
 import { useEffect, useRef, useState } from "preact/hooks";
+import { sfx } from "../../../audio/sound";
 import type { NpcAction, Stage } from "../../../scene/stage";
-import { Icon, Plaque } from "../../app/kit";
+import { Icon, Plaque, SoundButton } from "../../app/kit";
 import { hasWebGL2, loadStage } from "../../app/preload";
 import { goBack, navigate } from "../../app/router";
 import { SHOP_INFO } from "../../app/shops";
@@ -57,6 +58,7 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
           {
             onNearDoor: (v) => setNear(v),
             onFirstMove: () => setWalked(true),
+            onStep: () => sfx("step"),
             onStats: debug ? (s) => setStats(s) : undefined,
           },
         );
@@ -93,6 +95,7 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
         const s = stage.current;
         if (!s || want.current === s.inside) break;
         const ms = fadeMs();
+        sfx("door");
         setDark(true);
         await sleep(ms);
         if (stage.current !== s) break;
@@ -185,6 +188,7 @@ export function StreetScreen(props: { shop: ShopId; inside: boolean; profile: Pr
               지도
             </button>
             <div class="plaque">{name} 거리</div>
+            <SoundButton />
           </div>
 
           {status === "ready" && (

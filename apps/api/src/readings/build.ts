@@ -58,6 +58,20 @@ export interface PlanContext {
   check?: DreamCheck;
 }
 
+/** 점집별 부르는 말 (04 §3-1, D-088) */
+export function vocativeFor(shop: ShopId, nickname: string): string {
+  switch (shop) {
+    case "saju":
+      return "그대";
+    case "tarot":
+      return `${nickname} 님`;
+    case "dolyeong":
+      return fillTemplate("{닉네임}아", nickname);
+    case "dream":
+      return "아가";
+  }
+}
+
 function base(ctx: PlanContext, shop: ShopId, product: ProductId, facts: string[]): InterpretInput {
   return {
     shop,
@@ -67,8 +81,8 @@ function base(ctx: PlanContext, shop: ShopId, product: ProductId, facts: string[
       nickname: ctx.profile.nickname,
       gender: ctx.profile.gender,
       ageBand: ctx.ageBand,
-      // 아기도령이 받침에 맞게 부르도록 코드가 정한다 (하나야, 민준아)
-      vocative: fillTemplate("{닉네임}아", ctx.profile.nickname),
+      // 부르는 말은 점집마다 코드가 정한다 (D-088): 타로 "하나 님", 아기도령 "하나야/민준아"
+      vocative: vocativeFor(shop, ctx.profile.nickname),
     },
     facts,
     question: null,

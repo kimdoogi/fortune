@@ -49,6 +49,9 @@ describe("시스템 프롬프트 (04 §2)", () => {
     }
     // 조심할 것은 넓게 (D-076)
     for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("[조심할 것 말하기]");
+    // 끝맺음을 다양하게, 덧붙임 물음 금지 (D-088)
+    for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("[자연스럽게 말하기]");
+    expect(systemPrompt("tarot_one")).toContain("반말 호칭은 쓰지 않는다");
     // 좋은 말만 하지 않고 쓴소리도 (D-081)
     for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("좋은 말만 하지 않는다");
     // 얼버무리지 않고 시원하게 (D-072)
@@ -60,7 +63,7 @@ describe("시스템 프롬프트 (04 §2)", () => {
   });
 
   it("프롬프트 버전이 저장용 문자열로 나온다", () => {
-    expect(promptVersion("obanggi")).toBe("common@7+dolyeong@4+obanggi@1");
+    expect(promptVersion("obanggi")).toBe("common@8+dolyeong@4+obanggi@1");
   });
 
   it("대체 문장·위기 안내에 금지 표현이 없다", () => {
@@ -139,13 +142,13 @@ describe("이어 묻기 (F15, 04 §13)", () => {
     expect(followupSystemPrompt("tarot", "tarot_three")).toBe(
       followupSystemPrompt("tarot", "tarot_three"),
     );
-    expect(followupVersion("saju", "saju_full")).toBe("common@7+saju@3+followup@4");
+    expect(followupVersion("saju", "saju_full")).toBe("common@8+saju@3+followup@4");
     expect(FOLLOWUP_SCHEMA.required).toEqual(["risk", "answer"]);
     // 아기도령 신점은 대화 지시를 쓴다 (F07)
     expect(followupSystemPrompt("dolyeong", "sinjeom")).toContain(
       "[이번 대화: 아기도령 신점 대화]",
     );
-    expect(followupVersion("dolyeong", "sinjeom")).toBe("common@7+dolyeong@4+talk@5");
+    expect(followupVersion("dolyeong", "sinjeom")).toBe("common@8+dolyeong@4+talk@5");
     expect(systemPrompt("sinjeom")).toContain("[이번 점: 신점");
   });
 

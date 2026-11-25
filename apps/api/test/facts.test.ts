@@ -158,3 +158,14 @@ describe("신점 쌀점과 숨은 점괘 (F07, D-087)", () => {
     expect(seen.size).toBe(10);
   });
 });
+
+describe("점집별 부르는 말 (04 §3-1, D-088)", () => {
+  it("타로는 님, 아기도령은 받침에 맞게 아/야, 사주는 그대, 꿈해몽은 아가", async () => {
+    const { vocativeFor } = await import("../src/readings/build");
+    expect(vocativeFor("tarot", "지또")).toBe("지또 님");
+    expect(vocativeFor("dolyeong", "지또")).toBe("지또야");
+    expect(vocativeFor("dolyeong", "민준")).toBe("민준아");
+    expect(vocativeFor("saju", "지또")).toBe("그대");
+    expect(vocativeFor("dream", "지또")).toBe("아가");
+  });
+});

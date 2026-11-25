@@ -29,5 +29,6 @@
 - ✅ 숨긴 글(보이지 않는 키워드)은 쓰지 않는다. 소개 페이지와 FAQ는 화면에 보이는 그대로
 
 ## 4. 주소
-- 지금 공개 주소: `https://fortune-app.dugiz94.workers.dev` (D-023, 15 §2)
-- [ ] 도메인을 정하면 아래 파일의 절대 주소를 함께 바꾼다: `apps/web/index.html`, `apps/web/public/about.html`, `robots.txt`, `sitemap.xml`, `llms.txt`
+- ✅ 대표 주소: **`https://jumjip.app`** (D-085, [15 §2](15-infrastructure.md#공개-주소-d-085)). 아래 파일의 절대 주소가 모두 이 주소다: `apps/web/index.html`, `apps/web/public/about.html`, `robots.txt`, `sitemap.xml`, `llms.txt`
+- 옛 주소 `fortune-app.dugiz94.workers.dev`도 열려 있지만, canonical이 jumjip.app을 가리켜 검색에는 한 주소로 잡힌다
+- [ ] 네이버 서치어드바이저·구글 서치 콘솔에는 jumjip.app으로 등록한다 ⬜

@@ -4,4 +4,4 @@ Allow: /
 Disallow: /api/
 Disallow: /ws/
 
-Sitemap: https://fortune-app.dugiz94.workers.dev/sitemap.xml
+Sitemap: https://jumjip.app/sitemap.xml

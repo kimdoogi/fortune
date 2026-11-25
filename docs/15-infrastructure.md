@@ -41,6 +41,13 @@ flowchart LR
 | **Cron Triggers** | 매일 12:00 KST(`0 3 * * *` UTC)에 다음 날 오늘의 운세 Batch 요청, 13:00·18:00·23:00에 결과 확인·저장 | — |
 | **Analytics Engine** | 채널별 동시 접속, 점집별 이용 수, 하루 상한 도달 수 ([12](12-analytics-ops.md)) | — |
 
+### 공개 주소 (D-085)
+- ✅ **대표 주소: `https://jumjip.app`** (2026-11-25 Cloudflare Registrar에서 구매). app Worker에 Custom Domain으로 붙인다 (`routes: [{ pattern: "jumjip.app", custom_domain: true }]`). DNS 레코드와 인증서는 Cloudflare가 자동으로 만든다. `.app`은 HTTPS만 열린다
+- ✅ 옛 주소 `fortune-app.dugiz94.workers.dev`는 당분간 그대로 연다 (테스트하던 사용자의 세션 쿠키가 그 주소에만 있음). 검색·공유용 대표 주소(canonical, og:url, sitemap)는 모두 jumjip.app ([16 §4](16-seo-share.md#4-주소))
+- 옛 주소를 새 주소로 넘기지 않는 이유: 화면 파일은 Worker를 거치지 않고 Static Assets가 바로 내보내서(`run_worker_first`는 `/api/*`, `/ws/*`만), 넘기려면 모든 파일 요청에 Worker를 돌려야 한다
+- [ ] 정식 출시 때 `workers_dev = false`로 옛 주소를 닫는다 ⬜
+- [ ] `www.jumjip.app`은 MVP에서 쓰지 않는다 (필요하면 Cloudflare 리다이렉트 규칙으로 jumjip.app에)
+
 ### Workers에서 LLM을 호출해도 안전한가 (2026-11-24 Cloudflare 문서로 확인)
 - **키가 코드와 브라우저에 노출되지 않는다.** AI Gateway BYOK를 쓰면 키가 Secrets Store에 보관되어 Worker 코드에도 들어오지 않는다.
 - **reading Worker는 인터넷에서 호출할 수 없다.** Service Binding은 공개 URL을 거치지 않는다. `workers_dev = false`, `preview_urls = false`로 공개 주소를 모두 끈다.

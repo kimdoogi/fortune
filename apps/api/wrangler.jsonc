@@ -4,7 +4,9 @@
   "name": "fortune-app",
   "main": "src/index.ts",
   "compatibility_date": "2026-11-01",
-  // 공개 주소는 app Worker 하나뿐 (docs/15 §2). 도메인을 정하면 routes로 옮긴다
+  // 공개 주소는 app Worker 하나뿐 (docs/15 §2). 대표 주소 jumjip.app (D-085).
+  // 옛 workers.dev 주소는 테스트 사용자 세션 때문에 당분간 열어 둔다
+  "routes": [{ "pattern": "jumjip.app", "custom_domain": true }],
   "workers_dev": true,
   "preview_urls": false,
   "observability": { "enabled": true },

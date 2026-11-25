@@ -211,7 +211,11 @@ export const FOLLOWUP_SCHEMA = {
   type: "object",
   properties: {
     risk: { type: "string", enum: [...CLASSIFY_RISKS] },
-    answer: { type: "string", description: "200자 안팎. 위험·차단이면 빈 문자열" },
+    answer: {
+      type: "string",
+      description:
+        "200자 안팎. 첫 문장은 결론(된다/온다/언제)으로 시작. '가능성', '~것 같아요', '알 수 없어요' 금지. 위험·차단이면 빈 문자열",
+    },
   },
   required: ["risk", "answer"],
   additionalProperties: false,
@@ -240,10 +244,15 @@ export function checkFollowup(raw: unknown): FollowupCheck {
   if (!risk) return { ok: false, reason: "invalid_output", detail: "bad risk" };
   const answer = typeof o.answer === "string" ? o.answer.trim() : "";
   // 위험·차단이면 답은 버린다 (코드가 위기 안내·차단 문장을 보여 준다)
-  if (risk === "self_harm" || risk === "sexual" || risk === "violence" || risk === "other") {
+  if (risk === "self_harm" || risk === "sexual" || risk === "violence") {
     return { ok: true, risk, answer: "", lengthWarning: null };
   }
+  // other는 오탐이 잦다: 답을 썼으면 보여 주고(none으로 본다), 비었을 때만 차단 (F15)
+  if (risk === "other") {
+    if (!answer) return { ok: true, risk, answer: "", lengthWarning: null };
+  }
   if (!answer) return { ok: false, reason: "invalid_output", detail: "empty answer" };
+  const shownRisk: FollowupRisk = risk === "other" ? "none" : risk;
   const hits = findBanned(answer);
   if (hits.length) return { ok: false, reason: "banned", detail: hits.join(",") };
   const len = [...answer].length;
@@ -251,5 +260,5 @@ export function checkFollowup(raw: unknown): FollowupCheck {
     len < FOLLOWUP_TARGET * 0.5 || len > FOLLOWUP_TARGET * 1.6
       ? `answer:${len}/${FOLLOWUP_TARGET}`
       : null;
-  return { ok: true, risk, answer, lengthWarning: warn };
+  return { ok: true, risk: shownRisk, answer, lengthWarning: warn };
 }

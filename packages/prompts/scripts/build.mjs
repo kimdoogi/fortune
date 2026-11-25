@@ -18,7 +18,7 @@ export function render() {
     .map((s) => `${s.id}: ${s.name} (${s.synonyms.filter((w) => w !== s.name).join(", ")})`)
     .join("\n");
   const data = {
-    common: { v: 4, text: read("common/v4.md") },
+    common: { v: 5, text: read("common/v5.md") },
     persona: {
       saju: { v: 1, text: read("saju/persona.v1.md") },
       tarot: { v: 1, text: read("tarot/persona.v1.md") },
@@ -29,11 +29,11 @@ export function render() {
       daily: { v: 1, text: read("saju/daily.v1.md") },
       saju_full: { v: 1, text: read("saju/saju_full.v1.md") },
       tarot_one: { v: 1, text: read("tarot/tarot_one.v1.md") },
-      tarot_three: { v: 1, text: read("tarot/tarot_three.v1.md") },
+      tarot_three: { v: 2, text: read("tarot/tarot_three.v2.md") },
       obanggi: { v: 1, text: read("dolyeong/obanggi.v1.md") },
       dream: { v: 1, text: read("dream/dream.v1.md") },
     },
-    followup: { v: 1, text: read("followup/v1.md") },
+    followup: { v: 3, text: read("followup/v3.md") },
     classify: {
       v: 1,
       text: `${read("classify/v1.md")}\n\n[상징 목록] ID: 이름 (동의어)\n${symbolLines}`,

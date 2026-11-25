@@ -42,6 +42,8 @@ describe("시스템 프롬프트 (04 §2)", () => {
     }
     expect(systemPrompt("tarot_one")).toContain("달님 언니");
     expect(systemPrompt("dream")).toContain("몽실 할매");
+    // 얼버무리지 않고 시원하게 (D-072)
+    for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("얼버무리는 말을 하지 않는다");
     // 나이대·성별 맞춤은 모든 상품에 들어간다 (D-069)
     for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("[나이대와 성별에 맞추기]");
     // 콕 집어 말하기도 모든 상품에 (D-070)
@@ -49,7 +51,7 @@ describe("시스템 프롬프트 (04 §2)", () => {
   });
 
   it("프롬프트 버전이 저장용 문자열로 나온다", () => {
-    expect(promptVersion("obanggi")).toBe("common@4+dolyeong@2+obanggi@1");
+    expect(promptVersion("obanggi")).toBe("common@5+dolyeong@2+obanggi@1");
   });
 
   it("대체 문장·위기 안내에 금지 표현이 없다", () => {
@@ -126,7 +128,7 @@ describe("이어 묻기 (F15, 04 §13)", () => {
     expect(followupSystemPrompt("tarot")).toContain("[이번 대화: 이어 묻기]");
     expect(followupSystemPrompt("tarot")).toContain("달님 언니");
     expect(followupSystemPrompt("tarot")).toBe(followupSystemPrompt("tarot"));
-    expect(followupVersion("saju")).toBe("common@4+saju@1+followup@1");
+    expect(followupVersion("saju")).toBe("common@5+saju@1+followup@3");
     expect(FOLLOWUP_SCHEMA.required).toEqual(["risk", "answer"]);
   });
 
@@ -136,13 +138,23 @@ describe("이어 묻기 (F15, 04 §13)", () => {
   });
 
   it("위험·차단이면 답을 버린다", () => {
-    for (const risk of ["self_harm", "sexual", "violence", "other"]) {
+    for (const risk of ["self_harm", "sexual", "violence"]) {
       expect(checkFollowup({ risk, answer: "무언가" })).toMatchObject({
         ok: true,
         risk,
         answer: "",
       });
     }
+    // other는 답이 비었을 때만 차단, 답이 있으면 보여 준다 (오탐 방지)
+    expect(checkFollowup({ risk: "other", answer: "" })).toMatchObject({
+      ok: true,
+      risk: "other",
+      answer: "",
+    });
+    expect(checkFollowup({ risk: "other", answer: "가".repeat(200) })).toMatchObject({
+      ok: true,
+      risk: "none",
+    });
   });
 
   it("주의 분류는 답을 남긴다", () => {

@@ -31,15 +31,15 @@ export function render() {
       tarot_one: { v: 1, text: read("tarot/tarot_one.v1.md") },
       tarot_three: { v: 2, text: read("tarot/tarot_three.v2.md") },
       obanggi: { v: 1, text: read("dolyeong/obanggi.v1.md") },
-      dream: { v: 1, text: read("dream/dream.v1.md") },
+      dream: { v: 2, text: read("dream/dream.v2.md") },
       sinjeom: { v: 3, text: read("dolyeong/sinjeom.v3.md") },
     },
     followup: { v: 3, text: read("followup/v3.md") },
     // 아기도령 신점 대화 (F07, D-073)
     talk: { v: 3, text: read("dolyeong/talk.v3.md") },
     classify: {
-      v: 1,
-      text: `${read("classify/v1.md")}\n\n[상징 목록] ID: 이름 (동의어)\n${symbolLines}`,
+      v: 2,
+      text: `${read("classify/v2.md")}\n\n[상징 목록] ID: 이름 (동의어)\n${symbolLines}`,
     },
     symbolIds: dream.map((s) => s.id),
   };

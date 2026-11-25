@@ -265,6 +265,19 @@ function VisualHeader(props: { result: ReadingResult }) {
         </div>
       );
     case "dream":
+      // 두 사람 꿈풀이 (D-090): 두 꿈을 나란히
+      if ("pair" in v)
+        return (
+          <div class="rd-dream-head rd-dream-pair">
+            {v.pair.map((p) => (
+              <div class="rd-dream-one" key={p.nickname}>
+                <span class="rd-dream-who">{p.nickname} 님의 꿈</span>
+                <p class="rd-dream-text">{p.dream}</p>
+                <DreamSymbols symbols={p.symbols} />
+              </div>
+            ))}
+          </div>
+        );
       return (
         <div class="rd-dream-head">
           <p class="rd-dream-text">{v.dream}</p>

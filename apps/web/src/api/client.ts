@@ -12,8 +12,10 @@ import type {
   FollowupResponse,
   GunghapInviteCreated,
   GunghapInviteView,
-  GunghapReadingRequest,
   MenuResponse,
+  PairDreamResponse,
+  PairReadingRequest,
+  ProductId,
   ProfileInput,
   ProfileView,
   ReadingList,
@@ -83,18 +85,25 @@ export const api = {
   /** F15: 풀이에 이어 묻기 (한 풀이에 3번) */
   followup: (id: string, req: FollowupRequest) =>
     call<FollowupResponse>("POST", `/api/readings/${encodeURIComponent(id)}/followups`, req),
-  // ── 궁합 (F16) ──
-  createInvite: () => call<GunghapInviteCreated>("POST", "/api/gunghap/invites", { consent: true }),
+  // ── 같이 보기 (F16) ──
+  createInvite: () => call<GunghapInviteCreated>("POST", "/api/pair/invites", { consent: true }),
   invite: (code: string) =>
-    call<GunghapInviteView>("GET", `/api/gunghap/invites/${encodeURIComponent(code)}`),
+    call<GunghapInviteView>("GET", `/api/pair/invites/${encodeURIComponent(code)}`),
   joinInvite: (code: string) =>
-    call<GunghapInviteView>("POST", `/api/gunghap/invites/${encodeURIComponent(code)}/join`, {
+    call<GunghapInviteView>("POST", `/api/pair/invites/${encodeURIComponent(code)}/join`, {
       consent: true,
     }),
-  gunghap: (code: string, req: GunghapReadingRequest) =>
-    call<ReadingResult>("POST", `/api/gunghap/invites/${encodeURIComponent(code)}/reading`, req),
-  gunghapResult: (code: string) =>
-    call<ReadingResult>("GET", `/api/gunghap/invites/${encodeURIComponent(code)}/result`),
+  /** 궁합·관계 타로·둘의 신점: 관계를 고르면 풀이 */
+  pairReading: (code: string, req: PairReadingRequest) =>
+    call<ReadingResult>("POST", `/api/pair/${encodeURIComponent(code)}/readings`, req),
+  /** 두 사람 꿈풀이: 내 꿈 내기 */
+  pairDream: (code: string, text: string) =>
+    call<PairDreamResponse>("POST", `/api/pair/${encodeURIComponent(code)}/dream`, { text }),
+  pairResult: (code: string, product: ProductId) =>
+    call<ReadingResult>(
+      "GET",
+      `/api/pair/${encodeURIComponent(code)}/result?product=${encodeURIComponent(product)}`,
+    ),
   wsToken: (room: string) =>
     call<{ token: string; channel: string; userId: string }>(
       "GET",

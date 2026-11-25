@@ -4,8 +4,10 @@ export interface WsTokenPayload {
   n: string;
   c: string;
   exp: number;
-  /** 외모 "성별:나이대" (궁합 방에서 상대를 그린다) */
+  /** 외모 "성별:나이대" (같이 보기 방에서 상대를 그린다) */
   a?: string;
+  /** 같이 보기 방의 역할 (방장만 장소를 옮긴다, D-090) */
+  r?: "host" | "guest";
 }
 
 const enc = new TextEncoder();

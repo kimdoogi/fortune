@@ -17,9 +17,10 @@ export async function wsToken(url: URL, env: Env, user: User): Promise<Response>
   const look = profile ? `${profile.gender}:${ageBandAt(natalOf(profile))}` : undefined;
   const room = url.searchParams.get("room");
   let channel: string;
+  let role: "host" | "guest" | undefined;
   if (room?.startsWith("pair:")) {
     const code = room.slice(5);
-    await inviteForMember(env, code, user.id);
+    role = (await inviteForMember(env, code, user.id)).role;
     channel = `pair:${code}`;
   } else {
     const shop = parseShop(url.searchParams.get("shop"));
@@ -32,6 +33,8 @@ export async function wsToken(url: URL, env: Env, user: User): Promise<Response>
       c: channel,
       exp: Date.now() + 5 * 60_000,
       ...(look ? { a: look } : {}),
+      // 둘만의 방에서 점집을 고를(travel) 수 있는 사람은 방장뿐 (F16, D-090)
+      ...(role ? { r: role } : {}),
     },
     env.WS_TOKEN_KEY,
   );

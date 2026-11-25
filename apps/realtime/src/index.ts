@@ -3,8 +3,9 @@ import { DurableObject } from "cloudflare:workers";
  * 점집 거리 채널 (docs/15 §4, F03). M1 뼈대: 접속, snapshot, 이동·이모트 중계, 빈도 제한.
  * 궁합 둘만의 방 (F16, D-089): 채널이 `pair:<code>`면 정원 2, 같이 들어가기·관계 고르기를 중계하고,
  * app Worker가 RPC `notify()`로 결과 알림을 보낸다. 걷는 속도 검사와 신고는 M3에서 채운다.
+ * 같이 보기 (D-090): 방장만 `travel`로 둘이 갈 곳(점집 또는 지도)을 정하고, 방은 마지막 곳을 기억한다.
  */
-import type { ClientMessage, PlayerState, ServerMessage } from "@fortune/shared-types";
+import type { ClientMessage, PlayerState, ServerMessage, ShopId } from "@fortune/shared-types";
 import { verifyWsToken } from "@fortune/shared-types";
 
 interface Env {
@@ -22,10 +23,15 @@ const MIN_INTERVAL_MS: Record<ClientMessage["t"], number> = {
   exit_shop: 500,
   go_inside: 1000,
   pick: 1000,
+  travel: 800,
 };
+
+const PLACES: readonly (ShopId | "map")[] = ["map", "saju", "tarot", "dolyeong", "dream"];
 
 interface Attachment extends PlayerState {
   last: Partial<Record<ClientMessage["t"], number>>;
+  /** 둘만의 방의 방장 (토큰 역할) */
+  host?: boolean;
 }
 
 export class VillageChannel extends DurableObject<Env> {
@@ -72,16 +78,23 @@ export class VillageChannel extends DurableObject<Env> {
       z: 0,
       inside: false,
       last: {},
+      ...(token.r === "host" ? { host: true } : {}),
     };
     this.ctx.acceptWebSocket(server);
     server.serializeAttachment(me);
     const others = this.players()
       .filter((p) => p.id !== me.id && p.id)
-      .map(({ last: _l, ...p }) => p);
+      .map(({ last: _l, host: _h, ...p }) => p);
+    const place = room ? await this.ctx.storage.get<ShopId | "map">("place") : undefined;
     server.send(
-      JSON.stringify({ t: "snapshot", you: me.id, players: others } satisfies ServerMessage),
+      JSON.stringify({
+        t: "snapshot",
+        you: me.id,
+        players: others,
+        ...(place ? { place } : {}),
+      } satisfies ServerMessage),
     );
-    const { last: _l, ...publicMe } = me;
+    const { last: _l, host: _h, ...publicMe } = me;
     this.broadcast({ t: "joined", player: publicMe }, me.id);
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -127,6 +140,12 @@ export class VillageChannel extends DurableObject<Env> {
       case "pick":
         if (typeof msg.relation !== "string" || msg.relation.length > 8) return;
         this.broadcast({ t: "picked", id: me.id, relation: msg.relation });
+        break;
+      // 같이 보기 (D-090): 방장이 고른 곳으로 둘 다 간다. 보낸 사람에게도 돌려준다
+      case "travel":
+        if (!me.host || !PLACES.includes(msg.place)) return;
+        await this.ctx.storage.put("place", msg.place);
+        this.broadcast({ t: "traveled", place: msg.place });
         break;
     }
     ws.serializeAttachment(me);

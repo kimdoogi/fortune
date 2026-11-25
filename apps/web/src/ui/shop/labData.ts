@@ -40,6 +40,40 @@ export const LAB_OUTPUT: Record<ProductId, InterpretOutput> = {
     },
     advice: "서로 고마운 걸 한 가지씩 말해 보시오.",
   },
+  tarot_pair: {
+    greeting: "두 분, 나란히 앉으시니 카드도 설레나 봐요.",
+    summary: "준호 님과 관계 타로 · 마음은 같은 쪽",
+    sections: {
+      hearts:
+        "하나 님 자리에는 별 카드가 떴어요. 요즘 하나 님은 이 관계에 조용히 기대를 걸고 계세요. 준호 님 자리의 달 카드는 역방향이라, 마음은 있는데 표현이 서툴러 오해가 생기기 쉬운 때예요. 두 분 다 같은 쪽을 보고 있지만, 말로 꺼내는 속도가 달라요.",
+      future:
+        "두 사람의 앞날에는 태양 카드가 나왔어요. 다음 달쯤 같이 웃을 일이 하나 생겨요. 다만 그 전에 한 번은 서로 서운한 얘기를 꺼내야 길이 열려요.",
+      advice:
+        "이번 주에 둘이 같이 산책 한 번 해 보세요. 하나 님은 기다리기보다 먼저 묻고, 준호 님은 대답을 미루지 않으면 좋아요.",
+    },
+    advice: "말 한마디가 카드 세 장보다 빨라요.",
+  },
+  sinjeom_pair: {
+    greeting: "딸랑딸랑!",
+    summary: "준호랑 둘의 신점 · 쌀 7알",
+    sections: {
+      gongsu:
+        "쌀이 일곱 알! 제일 좋은 수야!\n요즘 둘이 같이 밥 먹다 크게 웃은 적 있지?\n할아버지가 둘이 손잡고 가면 봄에 좋은 일 온대.\n같이 사진 한 장 찍고, 말 끊는 건 조심해!",
+    },
+    advice: "오늘 둘이 맛있는 거 먹어!",
+  },
+  dream_pair: {
+    greeting: "아이고, 둘이 같이 왔구먼.",
+    summary: "준호랑 꿈풀이 · 물과 날개",
+    sections: {
+      dreams:
+        "하나는 맑은 냇가에서 물고기를 잡았지. 물고기는 들어오는 복이고 맑은 물은 마음이 편하다는 뜻이야. 준호는 하늘을 나는 꿈을 꿨구먼. 나는 꿈은 답답한 데서 벗어나고 싶다는 마음이야.",
+      meaning:
+        "둘 꿈을 이어 보면 하나는 붙잡고 싶고 준호는 훌쩍 떠나고 싶은 때야. 같은 쪽을 보는데 속도가 달라. 그래서 요즘 작은 일로 서운함이 생기기 쉬워. 그래도 둘 다 좋은 기운이라 크게 걱정할 건 없어.",
+      advice: "이번 주말에 둘이 물가로 바람 쐬러 가 봐. 하나는 붙잡고, 준호는 날고, 딱 좋아.",
+    },
+    advice: "꿈은 꿈이고, 오늘은 둘이 같이 웃어.",
+  },
   daily: {
     greeting: "그대, 오늘 하루도 잘 왔구려.",
     summary: "작은 정리가 큰 여유를 부르는 날이오",
@@ -208,6 +242,47 @@ export function labVisual(
             { name: "가까울수록 다툼", good: false },
           ],
         },
+      };
+    case "tarot_pair":
+      return {
+        shop: "tarot",
+        spread: "three",
+        category: "연애",
+        cards: [
+          { position: "하나 님의 마음", id: 17, name: "별", reversed: false },
+          { position: "준호 님의 마음", id: 18, name: "달", reversed: true },
+          { position: "두 사람의 앞날", id: 19, name: "태양", reversed: false },
+        ],
+      };
+    case "sinjeom_pair":
+      return {
+        shop: "dolyeong",
+        category: null,
+        flag: { color: "노랑", grade: "대길" },
+        mode: "sinjeom",
+        rice: { count: 7, grade: "대길" },
+      };
+    case "dream_pair":
+      return {
+        shop: "dream",
+        pair: [
+          {
+            nickname: "하나",
+            dream: "맑은 냇가에서 커다란 물고기를 두 손으로 잡았어요.",
+            symbols: [
+              { id: "water", name: "물" },
+              { id: "fish", name: "물고기" },
+            ],
+          },
+          {
+            nickname: "준호",
+            dream: "하늘을 훨훨 날다가 높은 산 위에 내려앉았어요.",
+            symbols: [
+              { id: "flying", name: "날기" },
+              { id: "mountain", name: "산" },
+            ],
+          },
+        ],
       };
     case "obanggi":
       return {

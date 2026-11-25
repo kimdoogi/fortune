@@ -7,6 +7,7 @@
 import type { ProfileView, ShopId } from "@fortune/shared-types";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { sfx } from "../../../audio/sound";
+import { leavePair, pairState, sendPair, travel } from "../../../net/pairSession";
 import type { NpcAction, Stage } from "../../../scene/stage";
 import { Icon, Plaque, SoundButton } from "../../app/kit";
 import { hasWebGL2, loadStage } from "../../app/preload";
@@ -14,8 +15,8 @@ import { goBack, navigate } from "../../app/router";
 import { SHOP_INFO } from "../../app/shops";
 import { callsLeft, lookOf } from "../../app/state";
 import { ShopScreen } from "../../shop/ShopScreen";
-import { shareInvite } from "../../shop/gunghap";
-import { usePairRoom } from "./pair";
+import { shareInvite } from "../../shop/pair";
+import { usePairStage } from "./pair";
 import "./street.css";
 
 const FADE_MS = 600;
@@ -31,7 +32,7 @@ export function StreetScreen(props: {
   shop: ShopId;
   inside: boolean;
   profile: ProfileView;
-  /** 궁합 둘만의 방 (F16): 상대가 보이고 같이 들어간다 */
+  /** 같이 보기 (F16): 상대가 보이고 같이 들어간다. 연결은 pairSession */
   pair?: { code: string };
 }) {
   const { shop } = props;
@@ -122,7 +123,8 @@ export function StreetScreen(props: {
             if (want.current) {
               want.current = false;
               setEnterFailed(true);
-              goBack({ name: "street", shop });
+              if (code) navigate({ name: "pair", code, shop }, { replace: true });
+              else goBack({ name: "street", shop });
             }
           }
         } else {
@@ -140,26 +142,24 @@ export function StreetScreen(props: {
   const enter = () => {
     if (busy.current) return;
     setEnterFailed(false);
-    navigate(code ? { name: "pair-in", code } : { name: "inside", shop });
+    navigate({ name: "inside", shop });
   };
-  const exit = () => goBack(code ? { name: "pair", code } : { name: "street", shop });
-  const room = usePairRoom({
-    code,
-    stage,
-    ready: status === "ready",
-    walkRef,
-    // 둘 중 누가 "같이 들어가기"를 눌러도 둘 다 들어간다 (F16)
-    onGoInside: () => {
-      if (!want.current) enter();
-    },
-  });
+  const exit = () => goBack({ name: "street", shop });
+  const ps = code ? pairState.value : null;
+  const host = ps?.role === "host";
+  const room = usePairStage({ active: !!code, stage, ready: status === "ready", walkRef });
   const [sentNote, setSentNote] = useState("");
   const resend = async () => {
     if (!code) return;
     const how = await shareInvite(`${location.origin}/?g=${code}`, props.profile.nickname);
     setSentNote(how === "copied" ? "링크를 복사했어요" : "");
   };
-  const toMap = () => goBack({ name: "map" });
+  // 같이 보기: 방장의 "지도"는 둘 다 같이 보는 지도로, 손님의 "나가기"는 같이 보기를 끝낸다 (F16)
+  const toMap = () => {
+    if (!code) goBack({ name: "map" });
+    else if (host) travel("map");
+    else leavePair();
+  };
   const npc = (a: NpcAction) => stage.current?.npc(a);
 
   const inside = shown === "inside";
@@ -215,9 +215,9 @@ export function StreetScreen(props: {
           <div class="hud-top">
             <button type="button" class="btn-map" onClick={toMap}>
               <Icon.back />
-              지도
+              {code && !host ? "나가기" : "지도"}
             </button>
-            <div class="plaque">{code ? "궁합 골목" : `${name} 거리`}</div>
+            <div class="plaque">{code ? `${name} · 같이` : `${name} 거리`}</div>
             <SoundButton />
           </div>
 
@@ -230,13 +230,14 @@ export function StreetScreen(props: {
               )}
               {code ? (
                 <PairHud
-                  partner={room.partner?.nickname ?? null}
-                  left={room.partnerLeft}
-                  connecting={room.status !== "open"}
-                  closed={room.status === "closed"}
+                  shopName={name}
+                  partner={ps?.partner?.nickname ?? null}
+                  left={ps?.partnerLeft ?? null}
+                  connecting={ps?.status !== "open"}
+                  closed={ps?.status === "closed"}
                   meNear={room.meNear}
                   partnerNear={room.partnerNear}
-                  onTogether={() => room.send({ t: "go_inside" })}
+                  onTogether={() => sendPair({ t: "go_inside" })}
                   onResend={resend}
                   note={sentNote}
                 />
@@ -265,18 +266,18 @@ export function StreetScreen(props: {
             shop={shop}
             profile={props.profile}
             npc={npc}
-            onExit={exit}
+            onExit={code ? toMap : exit}
             onCallsLeft={(n) => {
               callsLeft.value = n;
             }}
             pair={
-              code
+              code && ps
                 ? {
                     code,
-                    myId: room.myId,
-                    partnerName: room.partner?.nickname ?? null,
-                    send: (m) => room.send(m),
-                    event: room.event,
+                    myId: ps.myId,
+                    host,
+                    partnerName: ps.partner?.nickname ?? ps.partnerLeft,
+                    event: ps.event,
                   }
                 : undefined
             }
@@ -295,8 +296,9 @@ export function StreetScreen(props: {
   );
 }
 
-/** 궁합 골목 아래쪽 안내 (F16) */
+/** 같이 보기 골목 아래쪽 안내 (F16) */
 function PairHud(props: {
+  shopName: string;
   partner: string | null;
   left: string | null;
   connecting: boolean;
@@ -340,7 +342,7 @@ function PairHud(props: {
       <span class="dot" />
       {props.meNear
         ? `${props.partner} 님을 기다리는 중… 문 앞으로 오면 같이 들어가요`
-        : `${props.partner} 님과 사주집 문 앞으로 가요 · 문을 누르면 바로 가요`}
+        : `${props.partner} 님과 ${props.shopName} 문 앞으로 가요 · 문을 누르면 바로 가요`}
     </div>
   );
 }

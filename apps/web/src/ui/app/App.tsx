@@ -4,6 +4,7 @@
  */
 import type { JSX } from "preact";
 import { useEffect } from "preact/hooks";
+import { startPair, stopPair } from "../../net/pairSession";
 import { MapScreen } from "../screens/map/MapScreen";
 import { MeScreen } from "../screens/me/MeScreen";
 import { ProfileFlow } from "../screens/profile/ProfileFlow";
@@ -63,23 +64,34 @@ function Routes() {
       return <History id={r.id} />;
     case "daily":
       return <Daily />;
-    // 궁합 (F16): 초대 받기 → 둘만의 사주집 거리
+    // 같이 보기 (F16): 초대 받기 → 같이 보는 지도 → 방장이 고른 골목 → 점집 안
     case "join":
       return <Join code={r.code} />;
     case "pair":
     case "pair-in":
+      if (!r.shop) return <MapScreen key={`pair:${r.code}`} pair={{ code: r.code }} />;
       return (
         <Street
-          key={`pair:${r.code}`}
-          shop="saju"
+          key={`pair:${r.code}:${r.shop}`}
+          shop={r.shop}
           inside={r.name === "pair-in"}
           profile={p}
           pair={{ code: r.code }}
         />
       );
     default:
-      return <MapScreen />;
+      return <MapScreen key="map" />;
   }
+}
+
+/** 같이 보기 주소에 있는 동안만 둘만의 방에 붙어 있는다 (F16, D-090) */
+function usePairLifecycle() {
+  const r = route.value;
+  const code = phase.value === "ready" && (r.name === "pair" || r.name === "pair-in") ? r.code : "";
+  useEffect(() => {
+    if (code) startPair(code);
+    else stopPair();
+  }, [code]);
 }
 
 export function App() {
@@ -87,6 +99,7 @@ export function App() {
     initHistory();
     void boot();
   }, []);
+  usePairLifecycle();
 
   let body: JSX.Element;
   switch (phase.value) {
@@ -102,7 +115,7 @@ export function App() {
           mode="new"
           onDone={() => {
             phase.value = "ready";
-            // 궁합 초대 링크로 처음 온 사람은 프로필을 만든 뒤 초대 화면으로 (F16)
+            // 같이 보기 초대 링크로 처음 온 사람은 프로필을 만든 뒤 초대 화면으로 (F16)
             const r = route.value;
             navigate(r.name === "join" ? r : { name: "map" }, { replace: true });
           }}

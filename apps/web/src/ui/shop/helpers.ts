@@ -24,6 +24,17 @@ export function josaA(name: string): string {
   return code >= 0 && code <= 11171 && code % 28 !== 0 ? "아" : "야";
 }
 
+const hasBatchim = (name: string) => {
+  const code = ([...name].at(-1) ?? "").charCodeAt(0) - 0xac00;
+  return code >= 0 && code <= 11171 && code % 28 !== 0;
+};
+
+/** 받침 있으면 "이랑", 없으면 "랑" */
+export const josaRang = (name: string) => (hasBatchim(name) ? "이랑" : "랑");
+
+/** 받침 있으면 "이", 없으면 "가" */
+export const josaGa = (name: string) => (hasBatchim(name) ? "이" : "가");
+
 /** "1995년 3월 12일 양력 · 오후 2시 30분" */
 export function birthLine(
   p: Pick<ProfileView, "birthDate" | "calendar" | "isLeapMonth" | "birthTime">,

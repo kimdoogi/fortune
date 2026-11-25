@@ -218,6 +218,9 @@
 |---|---|---|
 | `daily` | overall 250, tip 80 | 오늘 하루의 흐름과 작은 행동 하나. 코드가 준 점수 등급과 말투를 맞춘다 (v2, D-080) |
 | `saju_full` | (v3: 쉬운 말·요즘 추천, D-083) overall 300, thisYear 260, months 450, money 170, work 170, love 170, daewoon 180, personality 180, elements 150, yongsin 150 | **현실적으로** (v2, D-079): 올해(연말이면 내년까지) 생길 일을 이직·계약·이사·연애·시험·돈 같은 실제 일로 말한다. `months`는 코드가 고른 좋은 달·조심할 달만 한 줄에 한 달씩 "N월 — 무엇이 생기고 어떻게 하라". 성격·오행·용신은 짧게 |
+| `tarot_pair` | hearts 300, future 250, advice 180 | 두 사람(입력 `partner`)을 "두 분"으로. 자리 이름에 있는 사람의 마음을 카드로 풀고, 두 마음이 만나는 지점과 앞날로. 관계에 맞춰 (v1, D-090) |
+| `sinjeom_pair` | gongsu 200 (4줄) | 아기도령이 두 사람에게: 쌀점 결과 → 둘 사이 요즘 장면 → 결론 → 둘이 같이 할 일 (v1, D-090) |
+| `dream_pair` | dreams 300, meaning 320, advice 180 | 몽실 할매가 두 사람 꿈을 각각 짧게 되짚고, 두 꿈의 상징이 둘에게 함께 하는 말로 잇는다 (v1, D-090) |
 | `gunghap` | overall 260, chemistry 200, strengths 180, friction 200, tips 180 | 두 사람(입력 `partner`)을 함께 부른다("두 분"). 관계(연인·썸·친구·가족·동료)에 맞춰 말하고, 부딪히는 점도 솔직하게. facts의 요인만 쓴다 (v1, D-089) |
 | `tarot_one` | card 200, message 130 | 카드 그림 묘사 → 뜻 → 오늘의 한마디 |
 | `tarot_three` | past 220, present 250, future 250, advice 180 | 세 장을 하나의 이야기로 잇는다. 미래는 언제쯤 어떻게 올지 시원하게 |

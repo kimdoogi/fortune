@@ -30,7 +30,7 @@ const RICE_LABEL: Record<FlagGrade, string> = {
 const GRAIN_IDS = ["g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10"];
 
 /** 놋 쟁반에 떨어진 쌀알 (쌀점, D-087). 자리는 해바라기 배치로 고정 */
-function RiceTray(props: { rice: Rice }) {
+export function RiceTray(props: { rice: Rice }) {
   const { count, grade } = props.rice;
   return (
     <div class="sh-rice" role="img" aria-label={`쌀알 ${count}개, ${RICE_LABEL[grade]}`}>

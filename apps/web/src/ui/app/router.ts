@@ -13,17 +13,18 @@ export type Route =
   | { name: "inside"; shop: ShopId }
   | { name: "history"; id?: string }
   | { name: "daily" }
-  /** 궁합 초대 받기 (F16): 링크 ?g=<code>로 들어오면 여기로 */
+  /** 같이 보기 초대 받기 (F16): 링크 ?g=<code>로 들어오면 여기로 */
   | { name: "join"; code: string }
-  /** 궁합 둘만의 사주집 거리 / 점집 안 (F16) */
-  | { name: "pair"; code: string }
-  | { name: "pair-in"; code: string };
+  /** 같이 보기 (F16, D-090): shop이 없으면 같이 보는 지도, 있으면 그 점집 골목 */
+  | { name: "pair"; code: string; shop?: ShopId }
+  /** 같이 보기: 점집 안 */
+  | { name: "pair-in"; code: string; shop: ShopId };
 
 export const SHOP_IDS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
 const isShop = (s: string | undefined): s is ShopId => SHOP_IDS.includes(s as ShopId);
 
 export function parse(hash: string): Route {
-  const [name, arg] = hash.replace(/^#\/?/, "").split("/");
+  const [name, arg, arg2] = hash.replace(/^#\/?/, "").split("/");
   switch (name) {
     case "profile":
       return { name: "profile" };
@@ -35,8 +36,13 @@ export function parse(hash: string): Route {
       return arg ? { name: "history", id: decodeURIComponent(arg) } : { name: "history" };
     case "join":
     case "pair":
-    case "pair-in":
-      return arg && /^[a-z0-9]{10}$/.test(arg) ? { name, code: arg } : { name: "map" };
+    case "pair-in": {
+      if (!arg || !/^[a-z0-9]{10}$/.test(arg)) return { name: "map" };
+      if (name === "join") return { name, code: arg };
+      // 예전 주소 #/pair-in/<code> (D-089)는 사주집 안
+      if (name === "pair-in") return { name, code: arg, shop: isShop(arg2) ? arg2 : "saju" };
+      return isShop(arg2) ? { name, code: arg, shop: arg2 } : { name, code: arg };
+    }
     case "street":
     case "inside":
       return isShop(arg) ? { name, shop: arg } : { name: "map" };
@@ -53,9 +59,10 @@ export function toHash(r: Route): string {
     case "history":
       return r.id ? `#/history/${encodeURIComponent(r.id)}` : "#/history";
     case "join":
+      return `#/${r.name}/${r.code}`;
     case "pair":
     case "pair-in":
-      return `#/${r.name}/${r.code}`;
+      return r.shop ? `#/${r.name}/${r.code}/${r.shop}` : `#/${r.name}/${r.code}`;
     default:
       return `#/${r.name}`;
   }
@@ -90,8 +97,8 @@ export function goBack(fallback: Route) {
 export function initHistory() {
   let r = parse(location.hash);
   if (r.name === "inside") r = { name: "street", shop: r.shop };
-  if (r.name === "pair-in") r = { name: "pair", code: r.code };
-  // 궁합 초대 링크 (?g=<code>, F16): 주소에서 지우고 초대 화면으로
+  if (r.name === "pair-in") r = { name: "pair", code: r.code, shop: r.shop };
+  // 같이 보기 초대 링크 (?g=<code>, F16): 주소에서 지우고 초대 화면으로
   const params = new URLSearchParams(location.search);
   const g = params.get("g");
   if (g && /^[a-z0-9]{10}$/.test(g)) {

@@ -1412,3 +1412,21 @@ button.rd-sec-title:active {
   border-color: rgba(184, 64, 46, 0.45);
   background: rgba(243, 160, 142, 0.18);
 }
+
+/* 두 사람 꿈풀이 (F16, D-090) */
+.rd-dream-pair {
+  gap: 16px;
+}
+
+.rd-dream-one {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rd-dream-who {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #9a7a5c;
+}

@@ -160,11 +160,30 @@ export interface GunghapInviteView {
   relation: GunghapRelation | null;
 }
 
-/** POST /api/gunghap/invites/:code/reading 요청 */
-export interface GunghapReadingRequest {
+/** 같이 보기: 점집마다 같이 보는 점 (F16, D-090) */
+export const PAIR_PRODUCT: Record<ShopId, ProductId> = {
+  saju: "gunghap",
+  tarot: "tarot_pair",
+  dolyeong: "sinjeom_pair",
+  dream: "dream_pair",
+};
+
+/** POST /api/pair/:code/readings 요청 (궁합·관계 타로·둘의 신점) */
+export interface PairReadingRequest {
+  product: "gunghap" | "tarot_pair" | "sinjeom_pair";
   relation: GunghapRelation;
   requestId: string;
 }
+/** 예전 이름 (D-089) */
+export type GunghapReadingRequest = Omit<PairReadingRequest, "product">;
+
+/** POST /api/pair/:code/dream 응답: 아직 상대 꿈을 기다리면 waiting, 둘 다 냈으면 결과 */
+export type PairDreamResponse =
+  | { kind: "waiting"; symbols: { id: string; name: string }[]; todayCallsLeft: number }
+  /** 둘 다 냈고 상대 요청이 풀이를 만드는 중: 방의 result_ready를 기다린다 */
+  | { kind: "making"; symbols: { id: string; name: string }[] }
+  | { kind: "result"; result: ReadingResult }
+  | { kind: "blocked"; reason: CheckBlockReason; message: string; todayCallsLeft: number };
 
 /** 결과 화면에 같이 그릴 "당시 입력" (F10: 다시 보기에도 그대로) */
 export type ReadingVisual =
@@ -181,7 +200,12 @@ export type ReadingVisual =
       /** 신점 쌀점: 손바닥에 잡힌 쌀알 수와 등급 (D-087). 예전 결과에는 없다 */
       rice?: { count: number; grade: FlagGrade };
     }
-  | { shop: "dream"; dream: string; symbols: { id: string; name: string }[] };
+  | { shop: "dream"; dream: string; symbols: { id: string; name: string }[] }
+  /** 두 사람 꿈풀이 (D-090) */
+  | {
+      shop: "dream";
+      pair: { nickname: string; dream: string; symbols: { id: string; name: string }[] }[];
+    };
 
 /** POST /api/readings, GET /api/readings/:id 응답 */
 export interface ReadingResult {
@@ -291,12 +315,15 @@ export const PRODUCT_NAMES: Record<ProductId, string> = {
   obanggi: "오방기",
   sinjeom: "신점",
   gunghap: "궁합",
+  tarot_pair: "관계 타로",
+  sinjeom_pair: "둘의 신점",
+  dream_pair: "두 사람 꿈풀이",
   dream: "꿈해몽",
 };
 
 /** 점집별로 볼 수 있는 점 (F04 표) */
 export const SHOP_PRODUCTS: Record<ShopId, ProductId[]> = {
-  saju: ["daily", "saju_full", "gunghap"],
+  saju: ["daily", "saju_full"],
   tarot: ["tarot_one", "tarot_three"],
   dolyeong: ["sinjeom"],
   dream: ["dream"],
@@ -313,6 +340,8 @@ export const SECTION_TITLES: Record<string, string> = {
   daewoon: "10년 흐름",
   thisYear: "올해",
   chemistry: "성격 궁합",
+  hearts: "두 사람의 마음",
+  dreams: "두 사람의 꿈",
   strengths: "잘 맞는 점",
   friction: "부딪히는 점",
   tips: "둘이 같이 할 일",

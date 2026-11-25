@@ -1,15 +1,14 @@
 /**
- * 궁합 초대 받기 (F16, D-089). 링크 `?g=<code>`로 들어오면 여기로 온다.
- * 초대한 사람 닉네임과 동의 안내 → "같이 들어가기" → 둘만의 사주집 거리로.
- * 내가 만든 초대이거나 이미 참여한 초대면 바로 거리로 간다.
+ * 같이 보기 초대 받기 (F16, D-089·D-090). 링크 `?g=<code>`로 들어오면 여기로 온다.
+ * 초대한 사람 닉네임과 동의 안내 → "같이 들어가기" → 같이 보는 지도로.
+ * 내가 만든 초대이거나 이미 참여한 초대면 바로 같이 보는 지도로 간다.
  */
 import type { GunghapInviteView } from "@fortune/shared-types";
 import { useEffect, useState } from "preact/hooks";
 import { ApiFailure, api } from "../../../api/client";
-import { NightSky, Plaque } from "../../app/kit";
+import { Icon, NightSky, Plaque } from "../../app/kit";
 import { navigate } from "../../app/router";
-import { Portrait } from "../../app/shops";
-import { GUNGHAP_CONSENT } from "../../shop/gunghap";
+import { PAIR_CONSENT } from "../../shop/pair";
 
 export function JoinScreen(props: { code: string }) {
   const [view, setView] = useState<GunghapInviteView | null>(null);
@@ -56,7 +55,9 @@ export function JoinScreen(props: { code: string }) {
     <div class="screen center splash">
       <NightSky />
       <div class="card join-card">
-        <Portrait shop="saju" size={72} />
+        <span class="invite-icon" aria-hidden="true">
+          <Icon.pair />
+        </span>
         {error ? (
           <>
             <p class="join-text">{error}</p>
@@ -75,13 +76,13 @@ export function JoinScreen(props: { code: string }) {
           </>
         ) : (
           <>
-            <Plaque>궁합 초대</Plaque>
+            <Plaque>같이 보기 초대</Plaque>
             <p class="join-text">
-              <b>{view.hostNickname}</b> 님이 사주집에서
+              <b>{view.hostNickname}</b> 님이 점집 거리에서
               <br />
-              같이 궁합을 보자고 불렀어요.
+              같이 점을 보자고 불렀어요.
             </p>
-            <p class="join-consent">{GUNGHAP_CONSENT}</p>
+            <p class="join-consent">{PAIR_CONSENT}</p>
             <button type="button" class="btn-primary" disabled={busy} onClick={join}>
               {busy ? "들어가는 중…" : "동의하고 같이 들어가기"}
             </button>

@@ -10,8 +10,11 @@ export type ProductId =
   | "obanggi"
   /** 아기도령 신점 대화 (F07, D-073) */
   | "sinjeom"
-  /** 궁합 (F16, D-089): 초대 링크로 둘이 같이 */
+  /** 같이 보기 (F16): 궁합 D-089, 관계 타로·둘의 신점·두 사람 꿈풀이 D-090 */
   | "gunghap"
+  | "tarot_pair"
+  | "sinjeom_pair"
+  | "dream_pair"
   | "dream";
 
 /** 오류 응답 (docs/09 §3) */
@@ -147,9 +150,10 @@ export type ClientMessage =
   | { t: "chat"; id: string }
   | { t: "enter_shop"; shop: ShopId }
   | { t: "exit_shop"; shop: ShopId }
-  /** 궁합 둘만의 방 (F16): 같이 들어가기, 관계 고르기 */
+  /** 같이 보기 둘만의 방 (F16): 같이 들어가기, 방장의 장소 이동(점집 또는 지도) */
   | { t: "go_inside" }
-  | { t: "pick"; relation: string };
+  | { t: "pick"; relation: string }
+  | { t: "travel"; place: ShopId | "map" };
 
 export interface PlayerState {
   id: string;
@@ -162,7 +166,13 @@ export interface PlayerState {
 }
 
 export type ServerMessage =
-  | { t: "snapshot"; you: string; players: PlayerState[] }
+  | {
+      t: "snapshot";
+      you: string;
+      players: PlayerState[];
+      /** 같이 보기: 방장이 마지막으로 간 곳 (D-090) */
+      place?: ShopId | "map";
+    }
   | { t: "joined"; player: PlayerState }
   | { t: "left"; id: string }
   | { t: "moved"; id: string; x: number; z: number }
@@ -170,10 +180,12 @@ export type ServerMessage =
   | { t: "chatted"; id: string; line: string }
   | { t: "hidden"; id: string }
   | { t: "shown"; id: string }
-  /** 궁합 둘만의 방 (F16) */
+  /** 같이 보기 둘만의 방 (F16) */
   | { t: "went_inside"; id: string }
-  | { t: "picked"; id: string; relation: string }
-  | { t: "result_ready" }
-  | { t: "result_failed"; message: string };
+  | { t: "traveled"; place: ShopId | "map" }
+  | { t: "picked"; id: string; relation: string; product?: ProductId }
+  | { t: "submitted"; id: string; product: ProductId }
+  | { t: "result_ready"; product?: ProductId }
+  | { t: "result_failed"; message: string; product?: ProductId };
 export { type WsTokenPayload, signWsToken, verifyWsToken } from "./wsToken";
 export * from "./api";

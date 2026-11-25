@@ -4,15 +4,10 @@
  */
 import { getDaily } from "./daily";
 import type { Env } from "./env";
-import {
-  createGunghapReading,
-  createInvite,
-  getGunghapResult,
-  joinInvite,
-  viewInvite,
-} from "./gunghap/invites";
+import { createInvite, joinInvite, viewInvite } from "./gunghap/invites";
 import { HttpError, fail, json } from "./http";
 import { getMenu } from "./menu";
+import { createPairReading, getPairResult, submitPairDream } from "./pair/readings";
 import { getProfile, putProfile } from "./profile";
 import { checkDream } from "./readings/check";
 import { createReading } from "./readings/create";
@@ -55,16 +50,29 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
     if (method === "POST") return createReading(req, env, ctx, user);
     if (method === "GET") return listReadings(url, env, user);
   }
-  // 궁합 (F16)
-  if (path === "/api/gunghap/invites" && method === "POST") return createInvite(req, env, user);
-  const gi = /^\/api\/gunghap\/invites\/([a-z0-9]{10})(?:\/(join|reading|result))?$/.exec(path);
+  // 같이 보기 (F16). /api/gunghap/invites/... 는 D-089 때 경로 (같은 처리)
+  if ((path === "/api/pair/invites" || path === "/api/gunghap/invites") && method === "POST")
+    return createInvite(req, env, user);
+  const gi = /^\/api\/(?:pair|gunghap)\/invites\/([a-z0-9]{10})(?:\/(join|reading|result))?$/.exec(
+    path,
+  );
   if (gi?.[1]) {
     const code = gi[1];
     if (!gi[2] && method === "GET") return viewInvite(code, env, user);
     if (gi[2] === "join" && method === "POST") return joinInvite(code, req, env, user);
     if (gi[2] === "reading" && method === "POST")
-      return createGunghapReading(code, req, env, ctx, user);
-    if (gi[2] === "result" && method === "GET") return getGunghapResult(code, env, user);
+      return createPairReading(code, req, env, ctx, user);
+    if (gi[2] === "result" && method === "GET")
+      return getPairResult(code, url.searchParams.get("product"), env, user);
+  }
+  const pr = /^\/api\/pair\/([a-z0-9]{10})\/(readings|dream|result)$/.exec(path);
+  if (pr?.[1]) {
+    const code = pr[1];
+    if (pr[2] === "readings" && method === "POST")
+      return createPairReading(code, req, env, ctx, user);
+    if (pr[2] === "dream" && method === "POST") return submitPairDream(code, req, env, ctx, user);
+    if (pr[2] === "result" && method === "GET")
+      return getPairResult(code, url.searchParams.get("product"), env, user);
   }
   const fu = /^\/api\/readings\/([A-Za-z0-9-]{1,64})\/followups$/.exec(path);
   if (fu?.[1] && method === "POST") return createFollowup(fu[1], req, env, ctx, user);

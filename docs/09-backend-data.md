@@ -34,7 +34,8 @@
 ### 궁합 초대 (D-089, 마이그레이션 0003)
 | 테이블 | 필드 | 비고 |
 |---|---|---|
-| `gunghap_invites` | code(PK), host_id, guest_id, status(`open`·`joined`·`done`), relation, created_at, expires_at | 30분 안에 참여 없으면 만료, 참여 뒤 3시간. 결과는 두 사람 `readings`에 한 줄씩 (`seed_key = gunghap:<code>`) |
+| `gunghap_invites` | code(PK), host_id, guest_id, status(`open`·`joined`·`done`), relation, created_at, expires_at | 같이 보기 초대 (이름은 처음 궁합 때 그대로). 30분 안에 참여 없으면 만료, 참여 뒤 3시간. 결과는 두 사람 `readings`에 한 줄씩 (궁합 `gunghap:<code>`, 나머지 `pair:<code>:<product>`) |
+| `pair_dreams` (0004) | code, user_id, text, symbols_json, risk, created_at (PK code+user_id) | 두 사람 꿈풀이에서 각자 낸 꿈(검사 통과한 것). 풀이를 만들면 입력에 들어가고 그 초대의 꿈은 지운다 |
 
 ## 3. API 목록 (초안)
 | 메서드 | 경로 | 설명 | 인증 |
@@ -50,11 +51,13 @@
 | POST | `/api/readings/:id/followups` | 이어 묻기 (F15, 한 풀이에 3번) | ✅ |
 | POST | `/api/payments/...` | 결제 (출시 후, D-019) | — |
 | GET | `/api/daily` | 오늘의 운세 | ✅ |
-| POST | `/api/gunghap/invites` | 궁합 초대 만들기 [F16](features/F16-gunghap.md) | ✅ |
-| GET | `/api/gunghap/invites/:code` | 초대 보기 (초대한 사람 닉네임, 내 역할) | ✅ |
-| POST | `/api/gunghap/invites/:code/join` | 초대 참여 (동의) | ✅ |
-| POST | `/api/gunghap/invites/:code/reading` | 궁합 풀이 (관계 선택) | ✅ |
-| GET | `/api/gunghap/invites/:code/result` | 내 궁합 결과 | ✅ |
+| POST | `/api/pair/invites` | 같이 보기 초대 만들기 [F16](features/F16-gunghap.md) | ✅ |
+| GET | `/api/pair/invites/:code` | 초대 보기 (초대한 사람 닉네임, 내 역할) | ✅ |
+| POST | `/api/pair/invites/:code/join` | 초대 참여 (동의) | ✅ |
+| POST | `/api/pair/:code/readings` | 같이 보는 점 (궁합·관계 타로·둘의 신점, 관계 선택) | ✅ |
+| POST | `/api/pair/:code/dream` | 두 사람 꿈풀이: 내 꿈 내기 | ✅ |
+| GET | `/api/pair/:code/result?product=` | 내 결과 | ✅ |
+| — | `/api/gunghap/invites/...` | D-089 예전 경로 (같은 처리) | ✅ |
 | GET | `/api/ws-token?shop=` / `?room=pair:<code>` | 실시간 접속 토큰 | ✅ |
 | WS | `/ws/village/:channel`, `/ws/pair/:code` | 마을 멀티플레이 / 궁합 둘만의 방 | ✅ |
 

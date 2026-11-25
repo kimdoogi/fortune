@@ -119,7 +119,8 @@ sequenceDiagram
 ### 둘만의 방 (궁합, D-089)
 - ✅ `pair:<code>` = Durable Object 1개 (같은 `VillageChannel` 클래스, 정원 2). 토큰 채널이 `pair:<code>`이고, app Worker는 초대의 초대한 사람·손님에게만 토큰을 준다
 - ✅ 토큰에 외모(`성별:나이대`)를 넣어 상대 캐릭터를 그린다
-- ✅ 추가 메시지: 클라 → `go_inside`(같이 들어가기), `pick`(관계), 서버 → `went_inside`, `picked`, `result_ready`(app Worker가 DO RPC `notify()`로 보냄)
+- ✅ 추가 메시지: 클라 → `travel`(방장만: 점집 또는 지도, D-090), `go_inside`(같이 들어가기), 서버 → `traveled`, `went_inside`, `picked`·`submitted`·`result_ready`·`result_failed`(app Worker가 DO RPC `notify()`로 보냄). 토큰에 역할(`r: host|guest`)을 넣고 DO가 `travel`은 방장 것만 받는다. DO는 마지막 `travel`을 기억해 snapshot에 `place`로 준다
+- ✅ 같이 보는 동안(지도·골목·점집 안) 연결 하나를 유지한다 (화면이 바뀌어도 끊지 않는다)
 - ✅ 점집 안에서도 연결을 유지해 관계 고르기와 결과 알림을 주고받는다
 
 ### 개인 공간 (점집 내부)

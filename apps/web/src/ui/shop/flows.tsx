@@ -109,6 +109,9 @@ function useJob<T>(onFail: (err: unknown) => void) {
 
 // ── 사주 정밀 (F05) ──────────────────────────────────────
 
+/** 화면 말은 쉽게 (D-083) */
+const EL_WORD: Record<string, string> = { 목: "나무", 화: "불", 토: "흙", 금: "쇠", 수: "물" };
+
 export function SajuFlow(props: FlowProps): JSX.Element {
   const c = CHARACTERS.saju;
   const [step, setStep] = useState<"confirm" | "loading">(props.resume ? "loading" : "confirm");
@@ -139,8 +142,7 @@ export function SajuFlow(props: FlowProps): JSX.Element {
           <span class="sh-profile-name">{p.nickname}</span>
           <span>{birthLine(p)}</span>
           <span class="sh-profile-sub">
-            {p.dayMaster.stem}
-            {p.dayMaster.element} 일간 · {p.zodiac}띠
+            {EL_WORD[p.dayMaster.element] ?? p.dayMaster.element} 기운 · {p.zodiac}띠
           </span>
         </div>
         <Primary onClick={() => setStep("loading")}>사주판 펼치기</Primary>
@@ -611,17 +613,17 @@ export function DailyView(props: {
             <i />
             <i />
           </span>
-          <p>오늘의 일진을 살피는 중이오</p>
+          <p>오늘 기운을 살피는 중이오</p>
         </div>
       ) : (
         <>
           <div class="sh-daily-head">
             <span class="sh-daily-date">{dateLabel}</span>
             <div class="sh-daily-iljin">
-              <span>오늘의 일진</span>
+              <span>오늘의 기운</span>
               <b>{data.iljin}</b>
               <span class="sh-daily-sep" />
-              <span>나의 일간</span>
+              <span>나의 기운</span>
               <b>{data.dayMaster}</b>
             </div>
           </div>

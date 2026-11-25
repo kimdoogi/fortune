@@ -20,14 +20,14 @@ export function render() {
   const data = {
     common: { v: 7, text: read("common/v7.md") },
     persona: {
-      saju: { v: 2, text: read("saju/persona.v2.md") },
+      saju: { v: 3, text: read("saju/persona.v3.md") },
       tarot: { v: 1, text: read("tarot/persona.v1.md") },
       dolyeong: { v: 3, text: read("dolyeong/persona.v3.md") },
       dream: { v: 1, text: read("dream/persona.v1.md") },
     },
     product: {
-      daily: { v: 2, text: read("saju/daily.v2.md") },
-      saju_full: { v: 2, text: read("saju/saju_full.v2.md") },
+      daily: { v: 3, text: read("saju/daily.v3.md") },
+      saju_full: { v: 3, text: read("saju/saju_full.v3.md") },
       tarot_one: { v: 1, text: read("tarot/tarot_one.v1.md") },
       tarot_three: { v: 2, text: read("tarot/tarot_three.v2.md") },
       obanggi: { v: 1, text: read("dolyeong/obanggi.v1.md") },

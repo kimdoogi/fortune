@@ -55,7 +55,7 @@ export function DailyScreen() {
         {!data && !fail && (
           <div class="dy-wait">
             <Portrait shop="saju" size={76} />
-            <p class="dy-bubble">오늘의 일진을 살피는 중이오…</p>
+            <p class="dy-bubble">오늘 기운을 살피는 중이오…</p>
             <span class="dy-dots" aria-hidden="true">
               <i />
               <i />
@@ -80,14 +80,14 @@ export function DailyScreen() {
               <div class="dy-date">{longDate(data.date)}</div>
               <div class="dy-pair">
                 <div class="dy-cell">
-                  <span>오늘의 일진</span>
+                  <span>오늘의 기운</span>
                   <b>{data.iljin}</b>
                 </div>
                 <div class="dy-x" aria-hidden="true">
                   ✕
                 </div>
                 <div class="dy-cell">
-                  <span>{p ? `${p.nickname} 님의 일간` : "나의 일간"}</span>
+                  <span>{p ? `${p.nickname} 님의 기운` : "나의 기운"}</span>
                   <b>
                     {data.dayMaster}
                     {p?.dayMaster.stem === data.dayMaster && <small>{p.dayMaster.element}</small>}

@@ -42,6 +42,11 @@ describe("시스템 프롬프트 (04 §2)", () => {
     }
     expect(systemPrompt("tarot_one")).toContain("달님 언니");
     expect(systemPrompt("dream")).toContain("몽실 할매");
+    // 사주는 쉽게, 요즘 추천과 함께 (D-083)
+    for (const p of ["daily", "saju_full"] as const) {
+      expect(systemPrompt(p)).toContain("[쉽게 말하기]");
+      expect(systemPrompt(p)).toContain("[요즘 추천]");
+    }
     // 조심할 것은 넓게 (D-076)
     for (const p of PRODUCTS) expect(systemPrompt(p)).toContain("[조심할 것 말하기]");
     // 좋은 말만 하지 않고 쓴소리도 (D-081)
@@ -134,7 +139,7 @@ describe("이어 묻기 (F15, 04 §13)", () => {
     expect(followupSystemPrompt("tarot", "tarot_three")).toBe(
       followupSystemPrompt("tarot", "tarot_three"),
     );
-    expect(followupVersion("saju", "saju_full")).toBe("common@7+saju@2+followup@4");
+    expect(followupVersion("saju", "saju_full")).toBe("common@7+saju@3+followup@4");
     expect(FOLLOWUP_SCHEMA.required).toEqual(["risk", "answer"]);
     // 아기도령 신점은 대화 지시를 쓴다 (F07)
     expect(followupSystemPrompt("dolyeong", "sinjeom")).toContain(

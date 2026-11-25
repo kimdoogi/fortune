@@ -30,6 +30,14 @@ const PILLAR_ORDER = [
   ["year", "년주"],
 ] as const;
 
+/** 화면에 보이는 말은 쉬운 말로 (D-083) */
+const EL_WORD = { 목: "나무", 화: "불", 토: "흙", 금: "쇠", 수: "물" } as const;
+const STRENGTH_WORD: Record<SajuBoard["strength"], string> = {
+  신강: "기운이 센 편",
+  신약: "기운이 여린 편",
+  중화: "기운이 고른 편",
+};
+
 export function SajuBoardView(props: { board: SajuBoard }): JSX.Element {
   const { board } = props;
   const total = ELEMENTS.reduce((s, e) => s + (board.elements[e] ?? 0), 0) || 1;
@@ -64,11 +72,13 @@ export function SajuBoardView(props: { board: SajuBoard }): JSX.Element {
 
       <div class="rd-board-meta">
         <span class="rd-chip rd-chip-ink">
-          일간 <b>{dm.stem}</b>
-          {dm.element} · {dm.yinYang}
+          나 <b>{dm.stem}</b>
+          {EL_WORD[dm.element as keyof typeof EL_WORD] ?? dm.element}
         </span>
-        <span class="rd-chip">{board.strength}</span>
-        <span class="rd-chip">용신 {board.yongsin}</span>
+        <span class="rd-chip">{STRENGTH_WORD[board.strength]}</span>
+        <span class="rd-chip">
+          돕는 기운 {EL_WORD[board.yongsin as keyof typeof EL_WORD] ?? board.yongsin}
+        </span>
       </div>
 
       <div class="rd-elements" role="img" aria-label="오행 분포">
@@ -84,7 +94,7 @@ export function SajuBoardView(props: { board: SajuBoard }): JSX.Element {
                   title={`${Math.round((n / total) * 100)}%`}
                 />
               </div>
-              <span class="rd-el-name">{e}</span>
+              <span class="rd-el-name">{EL_WORD[e]}</span>
             </div>
           );
         })}

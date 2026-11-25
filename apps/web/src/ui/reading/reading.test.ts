@@ -59,8 +59,9 @@ describe("섹션 순서 (04 §4)", () => {
     expect(s[0]?.title).toBe("과거");
   });
 
-  it("사주 정밀은 9섹션", () => {
-    expect(SECTION_ORDER.saju_full).toHaveLength(9);
+  it("사주 정밀은 10섹션, 월별 운세가 올해 바로 뒤 (D-079)", () => {
+    expect(SECTION_ORDER.saju_full).toHaveLength(10);
+    expect(SECTION_ORDER.saju_full.slice(0, 3)).toEqual(["overall", "thisYear", "months"]);
   });
 });
 

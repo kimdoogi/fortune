@@ -3,6 +3,7 @@ import {
   analyzePillars,
   computeDaewoon,
   computePillars,
+  monthlyLuck,
   sewoonOfYear,
 } from "@fortune/fortune-engine";
 import { findBanned } from "@fortune/prompts";
@@ -38,8 +39,18 @@ describe("사주 facts", () => {
     const a = analyzePillars(natal.pillars);
     const d = computeDaewoon(natal, c.gender, "2026-11-25", c.time === null);
     const s = sewoonOfYear(2026, natal.pillars);
-    const parts = buildSajuFull(natal, a, d, s);
+    const months = monthlyLuck(natal.pillars, a.yongsin, "2026-11");
+    const next = sewoonOfYear(2027, natal.pillars);
+    const parts = buildSajuFull(natal, a, d, s, months, next);
     expectClean(parts.facts);
+    // 월별 운세 (D-079): 좋은 달·조심할 달 문장이 2~3개씩, 화면 띠는 12달
+    expect(parts.facts.filter((f) => f.startsWith("좋은 달 ")).length).toBeGreaterThanOrEqual(2);
+    expect(parts.facts.filter((f) => f.startsWith("조심할 달 ")).length).toBeGreaterThanOrEqual(2);
+    expect(parts.facts.some((f) => f.startsWith("내년 2027년 세운은 정미"))).toBe(true);
+    expect(parts.board.months).toHaveLength(12);
+    for (const f of parts.facts.filter((x) => x.startsWith("조심할 달 "))) {
+      expect(f).toContain("조심할 일: ");
+    }
     expect(parts.facts.some((f) => f.startsWith("행운의 색: "))).toBe(true);
     expect(parts.chart.hourUnknown).toBe(c.time === null);
     expect(parts.board.pillars.hour).toBe(natal.pillars.hour);
@@ -47,9 +58,12 @@ describe("사주 facts", () => {
   });
 
   it.each([...STEMS])("오늘의 운세 일간 %s", (stem) => {
-    const parts = buildDaily(stem, "병오");
+    const parts = buildDaily(stem, "병오", "2026-11-25");
     expectClean(parts.facts);
-    expect(parts.facts).toHaveLength(3);
+    expect(parts.facts).toHaveLength(5);
+    expect(parts.score).toBeGreaterThanOrEqual(40);
+    expect(parts.luckyNumbers).toHaveLength(2);
+    expect(parts.facts.some((f) => f.startsWith(`오늘 운세 점수: ${parts.score}점`))).toBe(true);
   });
 });
 

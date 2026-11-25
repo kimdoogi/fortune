@@ -16,6 +16,7 @@ import type { JSX } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { api, newRequestId } from "../../api/client";
 import { sfx } from "../../audio/sound";
+import { DailyScore } from "../reading/DailyScore";
 import { OutputView, ResultSheet } from "../reading/ResultView";
 import { TarotBack, TarotFace } from "../reading/tarotArt";
 import {
@@ -624,6 +625,7 @@ export function DailyView(props: {
               <b>{data.dayMaster}</b>
             </div>
           </div>
+          <DailyScore data={data} />
           <OutputView
             output={data.result}
             product="daily"

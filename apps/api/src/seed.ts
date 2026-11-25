@@ -6,8 +6,9 @@ import type { FlagColor, TarotCategory } from "@fortune/shared-types";
 import { sha256, sha256Hex } from "./crypto";
 
 // ── seed_key (readings.seed_key) ─────────────────────────
+/** v2: 월별 운세를 넣으며 예전 저장본 대신 새로 푼다 (D-079) */
 export const sajuSeedKey = (profileVersion: number, year: number) =>
-  `saju:${profileVersion}:${year}`;
+  `saju:v2:${profileVersion}:${year}`;
 export const tarotSeedKey = (date: string, product: string, category: TarotCategory) =>
   `tarot:${date}:${product}:${category}`;
 export const obanggiSeedKey = (date: string, category: string) => `obanggi:${date}:${category}`;

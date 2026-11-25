@@ -108,6 +108,8 @@ export interface SajuBoard {
   elements: Record<"목" | "화" | "토" | "금" | "수", number>;
   strength: "신강" | "신약" | "중화";
   yongsin: string;
+  /** 앞으로 12달 월운 등급 (D-079). 예전 풀이에는 없다 */
+  months?: { year: number; month: number; grade: "good" | "normal" | "caution" }[];
 }
 
 export interface TarotCardView {
@@ -224,6 +226,10 @@ export interface DailyResponse {
   iljin: string;
   /** 사용자의 일간 (예: "갑") */
   dayMaster: string;
+  /** 운세 점수 40~99와 등급, 행운의 숫자 (코드 계산, D-080) */
+  score: number;
+  scoreLabel: "아주 좋음" | "좋음" | "보통" | "조심";
+  luckyNumbers: number[];
   result: InterpretOutput;
   disclaimer: string;
 }
@@ -256,6 +262,7 @@ export const SECTION_TITLES: Record<string, string> = {
   yongsin: "용신",
   daewoon: "대운",
   thisYear: "올해",
+  months: "월별 운세",
   love: "연애",
   money: "재물",
   work: "일",

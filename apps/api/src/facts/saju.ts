@@ -5,13 +5,18 @@
 import {
   type ChartAnalysis,
   type Daewoon,
+  type DailyLabel,
   type LuckOfDate,
+  type MonthLuck,
   type PillarsResult,
   type Relation,
   type TenGod,
+  dailyScore,
   generatedBy,
+  luckyNumbers,
   stemInfo,
   tenGodsOfGanzhi,
+  withWa,
 } from "@fortune/fortune-engine";
 import type { SajuBoard } from "@fortune/shared-types";
 import { LUCKY_COLOR, SAJU } from "./data";
@@ -43,6 +48,32 @@ function relationFact(r: Relation, kind: "natal" | "luck"): string {
   return `${r.a}와 ${r.b}가 ${r.type}: ${m ? m[kind] : ""}`;
 }
 
+/** 월운 한 달의 사실 문장 (D-079): 등급 이유 + 십신별 생활 기회·조심 + 충이 닿는 자리 */
+export function monthFact(m: MonthLuck, thisYear: number): string {
+  const when = m.year === thisYear ? `${m.month}월` : `${m.year}년 ${m.month}월`;
+  const head = `${m.grade === "good" ? "좋은 달" : "조심할 달"} ${when}(월운 ${m.pillar}, ${m.tenGods.join("·")})`;
+  const why = m.reasons.length ? `${m.reasons.join(", ")}.` : "큰 힘이 들어오지도 빠지지도 않는다.";
+  const [g1, g2] = m.tenGods;
+  const pickFrom = (key: "chance" | "caution") => {
+    const a = SAJU.tenGods[g1]?.[key] ?? [];
+    const b = g2 !== g1 ? (SAJU.tenGods[g2]?.[key] ?? []) : [];
+    return [...a.slice(0, 2), ...b.slice(0, 1)];
+  };
+  const parts = [`${head}: ${why}`];
+  if (m.grade === "good") {
+    parts.push(`생길 수 있는 좋은 일: ${pickFrom("chance").join(", ")}.`);
+  } else {
+    parts.push(`조심할 일: ${pickFrom("caution").join(", ")}.`);
+    for (const r of m.relations) {
+      if (r.type !== "지지육충" && r.type !== "천간충") continue;
+      const where = r.b.split(" ")[0] ?? "";
+      const meaning = SAJU.clashPositions[where];
+      if (meaning) parts.push(`${withWa(where)} 충: ${meaning}`);
+    }
+  }
+  return parts.join(" ");
+}
+
 export function luckyColorOf(element: string): string {
   return LUCKY_COLOR[element] ?? "흰색";
 }
@@ -61,6 +92,8 @@ export function buildSajuFull(
   a: ChartAnalysis,
   daewoon: Daewoon,
   sewoon: LuckOfDate & { year: number },
+  months: MonthLuck[] = [],
+  nextSewoon: (LuckOfDate & { year: number }) | null = null,
 ): SajuFullParts {
   const p = natal.pillars;
   const hourUnknown = p.hour === null;
@@ -113,6 +146,22 @@ export function buildSajuFull(
     `올해 ${sewoon.year}년 세운은 ${sewoon.pillar}이다. ${tenGodLuckFact("올해의", sewoon.tenGods)}`,
   );
   for (const r of sewoon.relations) facts.push(relationFact(r, "luck"));
+  if (nextSewoon) {
+    facts.push(
+      `내년 ${nextSewoon.year}년 세운은 ${nextSewoon.pillar}이다 (입춘부터). ${tenGodLuckFact("내년의", nextSewoon.tenGods)}`,
+    );
+    for (const r of nextSewoon.relations) facts.push(relationFact(r, "luck"));
+  }
+
+  // 앞으로 12달 (D-079): 코드가 고른 좋은 달·조심할 달만 자세히
+  if (months.length > 0) {
+    const first = months[0] as MonthLuck;
+    const last = months[months.length - 1] as MonthLuck;
+    facts.push(
+      `월별 운세는 ${first.year}년 ${first.month}월부터 ${last.year}년 ${last.month}월까지 12달을 본다. 아래 좋은 달·조심할 달만 말하고 나머지 달은 보통이다.`,
+    );
+    for (const m of months) if (m.grade !== "normal") facts.push(monthFact(m, sewoon.year));
+  }
 
   const luckyColor = luckyColorOf(a.yongsin.yongsin);
   facts.push(`행운의 색: ${luckyColor}`);
@@ -146,6 +195,17 @@ export function buildSajuFull(
       tenGods: sewoon.tenGods,
       relations: sewoon.relations,
     },
+    nextSewoon: nextSewoon
+      ? { year: nextSewoon.year, pillar: nextSewoon.pillar, tenGods: nextSewoon.tenGods }
+      : null,
+    months: months.map((m) => ({
+      year: m.year,
+      month: m.month,
+      pillar: m.pillar,
+      tenGods: m.tenGods,
+      score: m.score,
+      grade: m.grade,
+    })),
     iljin: null,
   };
   const board: SajuBoard = {
@@ -155,6 +215,7 @@ export function buildSajuFull(
     elements: a.elements.counts,
     strength: a.strength.label,
     yongsin: a.yongsin.yongsin,
+    months: months.map((m) => ({ year: m.year, month: m.month, grade: m.grade })),
   };
   return {
     facts: facts.filter((f) => f.length > 0),
@@ -169,19 +230,26 @@ export interface DailyParts {
   facts: string[];
   luckyColor: string;
   tenGods: [TenGod, TenGod];
+  score: number;
+  scoreLabel: DailyLabel;
+  luckyNumbers: number[];
 }
 
 /**
  * 오늘의 운세 (F13): 일간 × 오늘 일진만으로 정한다 (개인 원국은 쓰지 않음, docs/04 §8).
  * 행운의 색은 용신을 알 수 없어 일간을 생하는 오행(인성)의 색으로 정한다.
  */
-export function buildDaily(stem: string, iljin: string): DailyParts {
+export function buildDaily(stem: string, iljin: string, date: string): DailyParts {
   const tenGods = tenGodsOfGanzhi(stem, iljin);
   const luckyColor = luckyColorOf(generatedBy(stemInfo(stem).element));
+  const { score, label } = dailyScore(stem, iljin, date);
+  const numbers = luckyNumbers(stem);
   const facts = [
     dayMasterFact(stem),
     `오늘 일진은 ${iljin}이다. ${tenGodLuckFact("오늘 일진의", tenGods)}`,
+    `오늘 운세 점수: ${score}점(${label}). 화면에 점수가 함께 나가니 말의 밝기를 점수 등급에 맞춘다.`,
+    `행운의 숫자: ${numbers.join(", ")}`,
     `행운의 색: ${luckyColor}`,
   ];
-  return { facts, luckyColor, tenGods };
+  return { facts, luckyColor, tenGods, score, scoreLabel: label, luckyNumbers: numbers };
 }

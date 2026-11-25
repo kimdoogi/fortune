@@ -10,14 +10,15 @@
 
 ## 사용자 흐름
 1. 지도(F01)의 "오늘의 운세" 버튼, 또는 사주집 안의 메뉴
-2. 오늘 날짜와 일진, 결과(`overall`, `tip`)가 한 글자씩 나온다
+2. 오늘 날짜와 일진, **운세 점수(40~99, 등급)와 행운의 숫자**, 결과(`overall`, `tip`)가 나온다 (D-080)
 3. 아래에 "사주집 가기", "공유하기"(F11)
 
 ## 입력
 - `GET /api/daily` (프로필의 일간을 서버가 씀)
 
 ## 출력
-- `{ date, iljin, dayMaster, result: { greeting, summary, sections: { overall, tip }, advice, luckyColor } }`
+- `{ date, iljin, dayMaster, score, scoreLabel, luckyNumbers, result: { greeting, summary, sections: { overall, tip }, advice, luckyColor } }`
+- `score`·`scoreLabel`·`luckyNumbers`는 코드가 계산한다 ([02 §5-6-2](../02-saju-rules.md#5-6-2-오늘의-운세-점수행운의-숫자-d-080)). LLM 결과(KV)와 따로 매번 계산해 붙인다
 
 ## 처리 규칙
 - 결과는 **일간(10개) × 오늘 일진**으로 정해진다. 사용자마다 따로 부르지 않는다

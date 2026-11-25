@@ -10,6 +10,7 @@ import { Icon, NightSky } from "../../app/kit";
 import { goBack, navigate } from "../../app/router";
 import { Portrait } from "../../app/shops";
 import { friendly, handleAuth, profile } from "../../app/state";
+import { DailyScore } from "../../reading/DailyScore";
 import { OutputView, ResultSheet } from "../../reading/ResultView";
 import "./daily.css";
 
@@ -98,6 +99,7 @@ export function DailyScreen() {
                 <span>사주집 · 청운 선생</span>
               </div>
             </header>
+            <DailyScore data={data} />
             <OutputView output={data.result} product="daily" animate onDone={() => setDone(true)} />
             <footer class={`rd-foot ${done ? "rd-foot-on" : ""} dy-foot`}>
               <p class="rd-disclaimer">{data.disclaimer}</p>

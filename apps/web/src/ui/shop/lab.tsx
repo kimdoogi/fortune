@@ -157,6 +157,9 @@ Object.assign(api, {
       date: "2026-11-25",
       iljin: "병오",
       dayMaster: "갑",
+      score: 82,
+      scoreLabel: "좋음" as const,
+      luckyNumbers: [1, 6],
       result: LAB_OUTPUT.daily,
       disclaimer: LAB_DISCLAIMER,
     };

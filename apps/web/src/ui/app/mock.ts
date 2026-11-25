@@ -120,6 +120,8 @@ const OUT: Record<ProductId, InterpretOutput> = {
       yongsin: "용신은 수요. 차분히 생각을 식히는 물의 기운이 그대를 돕는다는 뜻이오.",
       daewoon: "지금 지나는 대운은 배움과 인연이 함께 들어오는 흐름이오.",
       thisYear: "올해는 씨앗을 심는 해요. 결과보다 꾸준함을 보시오.",
+      months:
+        "◎ 12월 — [mock] 윗사람 추천으로 일이 커지오. 연말 모임에 빠지지 마시오.\n△ 2027년 2월 — [mock] 계약서 문구를 꼭 두 번 읽으시오.\n◎ 2027년 5월 — [mock] 자격증 공부가 결실을 보오.\n△ 2027년 6월 — [mock] 가까운 사람과 말다툼을 조심하시오.",
       love: "먼저 다가가는 따뜻함이 좋은 인연을 부르오.",
       money: "새는 돈을 막으면 쌓이는 해요. 작은 장부를 써 보시오.",
       work: "맡은 일을 끝까지 마무리하는 모습이 눈에 띄는 때요.",
@@ -190,6 +192,14 @@ const BOARD: ReadingVisual = {
     elements: { 목: 1, 화: 3, 토: 2, 금: 0, 수: 2 },
     strength: "신강",
     yongsin: "수",
+    months: [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((month, i) => ({
+      year: month >= 11 ? 2026 : 2027,
+      month,
+      grade: ([1, 6, 9].includes(i) ? "good" : [3, 7].includes(i) ? "caution" : "normal") as
+        | "good"
+        | "normal"
+        | "caution",
+    })),
   },
 };
 
@@ -418,6 +428,9 @@ export const mockApi: Api = {
       date: k,
       iljin: "병오",
       dayMaster: p.dayMaster.stem,
+      score: 82,
+      scoreLabel: "좋음",
+      luckyNumbers: [3, 8],
       result: OUT.daily,
       disclaimer: DISCLAIMER,
     };

@@ -6,16 +6,18 @@ import { type ProductId, SECTION_TITLES } from "@fortune/shared-types";
 /** 상품별 섹션 순서 (04 §4 표 그대로) */
 export const SECTION_ORDER: Record<ProductId, string[]> = {
   daily: ["overall", "tip"],
+  // 실생활 얘기를 앞에 (D-079)
   saju_full: [
     "overall",
+    "thisYear",
+    "months",
+    "money",
+    "work",
+    "love",
+    "daewoon",
     "personality",
     "elements",
     "yongsin",
-    "daewoon",
-    "thisYear",
-    "love",
-    "money",
-    "work",
   ],
   tarot_one: ["card", "message"],
   tarot_three: ["past", "present", "future", "advice"],

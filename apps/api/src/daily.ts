@@ -37,7 +37,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /** 일간별 공용 결과라 개인 정보(닉네임 등)를 넣지 않는다 */
 export function dailyInput(date: string, stem: string, todayIljin: string): InterpretInput {
-  const parts = buildDaily(stem, todayIljin);
+  const parts = buildDaily(stem, todayIljin, date);
   return {
     shop: "saju",
     product: "daily",
@@ -114,10 +114,15 @@ export async function getDaily(env: Env, ctx: ExecutionContext, user: User): Pro
   const date = todayKst();
   const todayIljin = iljin(date);
   const stored = await getOrCreate(env, ctx, date, stem, todayIljin);
+  // 점수·숫자는 코드 계산이라 KV에 두지 않고 매번 붙인다 (D-080)
+  const parts = buildDaily(stem, todayIljin, date);
   const out: DailyResponse = {
     date,
     iljin: todayIljin,
     dayMaster: stem,
+    score: parts.score,
+    scoreLabel: parts.scoreLabel,
+    luckyNumbers: parts.luckyNumbers,
     result: stored.output,
     disclaimer: DISCLAIMER,
   };

@@ -89,6 +89,49 @@ export function SajuBoardView(props: { board: SajuBoard }): JSX.Element {
           );
         })}
       </div>
+
+      {board.months && board.months.length > 0 && <MonthStrip months={board.months} />}
+    </div>
+  );
+}
+
+const GRADE_NAME = { good: "좋은 달", normal: "보통", caution: "조심할 달" } as const;
+
+/** 앞으로 12달 띠 (D-079): 좋은 달은 등불색, 조심할 달은 붉은 점 */
+function MonthStrip(props: { months: NonNullable<SajuBoard["months"]> }): JSX.Element {
+  const first = props.months[0];
+  const last = props.months[props.months.length - 1];
+  return (
+    <div class="rd-months">
+      <p class="rd-months-title">
+        앞으로 12달
+        {first && last && (
+          <small>
+            {first.year}.{first.month} ~ {last.year}.{last.month}
+          </small>
+        )}
+      </p>
+      <ol class="rd-months-row">
+        {props.months.map((m, i) => (
+          <li
+            key={`${m.year}-${m.month}`}
+            class={`rd-month rd-month-${m.grade}`}
+            style={{ "--i": i }}
+            aria-label={`${m.year}년 ${m.month}월 ${GRADE_NAME[m.grade]}`}
+          >
+            <span class="rd-month-dot" aria-hidden="true" />
+            <span class="rd-month-n">{m.month}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="rd-months-legend">
+        <span class="rd-month-good">
+          <span class="rd-month-dot" /> 좋은 달
+        </span>
+        <span class="rd-month-caution">
+          <span class="rd-month-dot" /> 조심할 달
+        </span>
+      </p>
     </div>
   );
 }

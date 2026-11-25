@@ -1,4 +1,4 @@
-import { analyzePillars, computeDaewoon, sewoonOfYear } from "@fortune/fortune-engine";
+import { analyzePillars, computeDaewoon, monthlyLuck, sewoonOfYear } from "@fortune/fortune-engine";
 /**
  * 상품별 seed_key 와 해석 입력 만들기 (docs/04 §3, docs/03, F05~F08).
  * 엔진 계산·카드·깃발 결정은 모두 여기(서버)에서 한다.
@@ -91,7 +91,11 @@ export async function planReading(req: ReadingRequest, ctx: PlanContext): Promis
             natal.pillars.hour === null,
           );
           const sewoon = sewoonOfYear(year, natal.pillars);
-          const parts = buildSajuFull(natal, analysis, daewoon, sewoon);
+          // 앞으로 12달 (D-079). 입춘을 넘으면 내년 세운도 같이
+          const months = monthlyLuck(natal.pillars, analysis.yongsin, ctx.today.slice(0, 7));
+          const crosses = months.some((m) => m.yearPillar !== sewoon.pillar);
+          const nextSewoon = crosses ? sewoonOfYear(year + 1, natal.pillars) : null;
+          const parts = buildSajuFull(natal, analysis, daewoon, sewoon, months, nextSewoon);
           return {
             input: {
               ...base(ctx, "saju", req.product, parts.facts),

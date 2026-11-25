@@ -7,7 +7,17 @@ import type { FlagColor, FlagGrade } from "@fortune/shared-types";
 
 export interface SajuMeanings {
   dayMaster: Record<string, { nature: string; keywords: string[]; summary: string }>;
-  tenGods: Record<string, { keywords: string[]; natal: string; luck: string }>;
+  tenGods: Record<
+    string,
+    {
+      keywords: string[];
+      natal: string;
+      luck: string;
+      /** 운으로 올 때 생활에서 생길 좋은 일·조심할 일 (월별 풀이, D-079) */
+      chance: string[];
+      caution: string[];
+    }
+  >;
   elements: Record<string, { excess: string; missing: string }>;
   strength: Record<string, string>;
   yongsin: Record<
@@ -15,6 +25,8 @@ export interface SajuMeanings {
     { colors: string[]; direction: string; activities: string[]; advice: string }
   >;
   relations: Record<string, { natal: string; luck: string }>;
+  /** 운이 원국의 이 자리와 충할 때의 뜻 (D-079) */
+  clashPositions: Record<string, string>;
 }
 
 export interface TarotMeaning {

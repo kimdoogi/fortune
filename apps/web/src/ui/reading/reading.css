@@ -524,6 +524,89 @@ button.rd-sec-title:active {
   background: rgba(255, 196, 107, 0.25);
 }
 
+/* 앞으로 12달 띠 (D-079) */
+.rd-months {
+  margin: 14px 2px 2px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(110, 68, 41, 0.22);
+}
+
+.rd-months-title {
+  margin: 0 0 6px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #8a6a4a;
+}
+
+.rd-months-title small {
+  margin-left: 6px;
+  letter-spacing: 0;
+  color: #a88a6a;
+}
+
+.rd-months-row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2px;
+}
+
+.rd-month {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  animation: rd-fade 0.3s ease both;
+  animation-delay: calc(var(--i) * 40ms);
+}
+
+.rd-month-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(110, 68, 41, 0.16);
+}
+
+.rd-month-good .rd-month-dot {
+  background: radial-gradient(circle at 35% 35%, #ffe2a8, #f0a03c);
+  box-shadow: 0 0 6px rgba(255, 184, 92, 0.8);
+}
+
+.rd-month-caution .rd-month-dot {
+  background: radial-gradient(circle at 35% 35%, #f3a08e, #b8402e);
+}
+
+.rd-month-n {
+  font-size: 11px;
+  color: #6b4e36;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.rd-month-good .rd-month-n,
+.rd-month-caution .rd-month-n {
+  font-weight: 700;
+}
+
+.rd-months-legend {
+  margin: 8px 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  font-size: 11.5px;
+  color: #8a6a4a;
+}
+
+.rd-months-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .rd-elements {
   display: flex;
   justify-content: space-around;
@@ -1073,4 +1156,128 @@ button.rd-sec-title:active {
   font-size: 13.5px;
   color: #8a6a4a;
   word-break: keep-all;
+}
+
+/* ── 오늘의 운세 점수·행운의 숫자 (F13, D-080) ── */
+.ds {
+  --tone: #e3962f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 4px auto 14px;
+  padding: 12px 16px;
+  max-width: 340px;
+  border-radius: 14px;
+  background: rgba(255, 248, 232, 0.7);
+  border: 1px solid rgba(110, 68, 41, 0.16);
+  animation: rd-fade 0.4s ease both;
+}
+
+.ds-best {
+  --tone: #d98a1c;
+}
+
+.ds-soso {
+  --tone: #9a7a5a;
+}
+
+.ds-care {
+  --tone: #b8503a;
+}
+
+.ds-ring {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  flex: none;
+}
+
+.ds-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ds-track,
+.ds-fill {
+  fill: none;
+  stroke-width: 7;
+}
+
+.ds-track {
+  stroke: rgba(110, 68, 41, 0.12);
+}
+
+.ds-fill {
+  stroke: var(--tone);
+  stroke-linecap: round;
+}
+
+.ds-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  padding-top: 26px;
+  color: #3a2a1e;
+}
+
+.ds-num b {
+  font-family: var(--font-title);
+  font-size: 27px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ds-num small {
+  margin-left: 1px;
+  font-size: 12px;
+  color: #8a6a4a;
+}
+
+.ds-side {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ds-label {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--tone);
+}
+
+.ds-cap {
+  font-size: 11.5px;
+  color: #8a6a4a;
+}
+
+.ds-lucky {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.ds-balls {
+  display: flex;
+  gap: 6px;
+}
+
+.ds-balls b {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff6dc, #f2d38a);
+  border: 1.5px solid rgba(110, 68, 41, 0.35);
+  color: #4a3222;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
 }

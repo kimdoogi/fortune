@@ -5,3 +5,4 @@ export { FIRST_LUNAR_YEAR, LAST_LUNAR_YEAR, lunarMonths, lunarToSolar } from "./
 export * from "./pillars";
 export { JEOL, TERM_NAMES, termUtcMs } from "./solarTerms";
 export { resolveSeoulLocal, seoulOffsetAt } from "./time";
+export * from "./fortune";

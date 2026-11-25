@@ -52,8 +52,22 @@ function expectExactKeys(obj: object, keys: string[]) {
 type Rec = Record<string, Record<string, unknown>>;
 
 describe("사주 해석 데이터 (data/meanings/saju.json)", () => {
-  it("최상위 키 6개", () => {
-    expectExactKeys(saju, ["dayMaster", "tenGods", "elements", "strength", "yongsin", "relations"]);
+  it("최상위 키 7개", () => {
+    expectExactKeys(saju, [
+      "dayMaster",
+      "tenGods",
+      "elements",
+      "strength",
+      "yongsin",
+      "relations",
+      "clashPositions",
+    ]);
+  });
+
+  it("충이 닿는 자리 8곳 (월별 풀이, D-079)", () => {
+    const cp = saju.clashPositions as Record<string, unknown>;
+    expectExactKeys(cp, ["연간", "연지", "월간", "월지", "일간", "일지", "시간", "시지"]);
+    for (const k of Object.keys(cp)) expect(isSentence(cp[k]), k).toBe(true);
   });
 
   it("일간 10개: nature, keywords 4~6개, summary 60자 이하", () => {
@@ -70,7 +84,7 @@ describe("사주 해석 데이터 (data/meanings/saju.json)", () => {
     }
   });
 
-  it("십신 10개: keywords 3~5개, natal, luck", () => {
+  it("십신 10개: keywords 3~5개, natal, luck, 생활 기회·조심 3개씩 (D-079)", () => {
     const tg = saju.tenGods as Rec;
     expectExactKeys(tg, TEN_GODS);
     for (const god of TEN_GODS) {
@@ -80,6 +94,8 @@ describe("사주 해석 데이터 (data/meanings/saju.json)", () => {
       expectStringArray(e.keywords, 3, 5);
       expect(isSentence(e.natal), `${god}.natal`).toBe(true);
       expect(isSentence(e.luck), `${god}.luck`).toBe(true);
+      expectStringArray(e.chance, 3, 3);
+      expectStringArray(e.caution, 3, 3);
     }
   });
 

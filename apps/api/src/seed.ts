@@ -2,7 +2,7 @@
  * 결과 고정 seed와 서버 난수 (docs/03 공통 결과 고정 규칙, F05~F08).
  * 난수는 sha256(userId + seed_key)로 시작하는 결정적 PRNG라 같은 조건이면 같은 카드·깃발이 나온다.
  */
-import type { FlagColor, TarotCategory } from "@fortune/shared-types";
+import type { FlagColor, FlagGrade, TarotCategory } from "@fortune/shared-types";
 import { sha256, sha256Hex } from "./crypto";
 
 // ── seed_key (readings.seed_key) ─────────────────────────
@@ -96,3 +96,52 @@ export const FLAG_COLORS: readonly FlagColor[] = ["빨강", "노랑", "파랑", 
 export function pickFlag(rng: Rng): FlagColor {
   return FLAG_COLORS[Math.floor(rng() * FLAG_COLORS.length)] as FlagColor;
 }
+
+// ── 쌀점 (F07, 03 아기도령, D-087) ──────────────────────
+/**
+ * 손바닥에 잡힌 쌀알 수 1~10의 가중치 (합 100). 홀수가 좋고 7이 가장 좋다
+ * (한국민족문화대백과 「쌀점」). 짝수(조심)는 합쳐 30%
+ */
+export const RICE_WEIGHTS: Record<number, number> = {
+  1: 13,
+  2: 6,
+  3: 14,
+  4: 6,
+  5: 13,
+  6: 6,
+  7: 16,
+  8: 6,
+  9: 14,
+  10: 6,
+};
+
+export function riceGrade(count: number): FlagGrade {
+  if (count === 7) return "대길";
+  if (count === 9 || count === 3) return "길";
+  if (count % 2 === 1) return "평";
+  return "주의";
+}
+
+export function throwRice(rng: Rng): { count: number; grade: FlagGrade } {
+  let r = rng() * 100;
+  for (let n = 1; n <= 10; n++) {
+    r -= RICE_WEIGHTS[n] ?? 0;
+    if (r < 0) return { count: n, grade: riceGrade(n) };
+  }
+  return { count: 7, grade: "대길" };
+}
+
+/** 쌀점 등급과 같은 등급의 오방기 색 (숨은 점괘) */
+export function flagForGrade(grade: FlagGrade, rng: Rng): FlagColor {
+  const same = FLAG_COLORS.filter((c) => FLAG_GRADE[c] === grade);
+  return (same[Math.floor(rng() * same.length)] ?? "노랑") as FlagColor;
+}
+
+/** obanggi.json의 등급 (테스트가 둘이 같은지 확인한다) */
+export const FLAG_GRADE: Record<FlagColor, FlagGrade> = {
+  빨강: "대길",
+  노랑: "길",
+  하양: "길",
+  초록: "평",
+  파랑: "주의",
+};

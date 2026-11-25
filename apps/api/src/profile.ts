@@ -50,7 +50,7 @@ export function ageBandOf(age: number): AgeBand | null {
 }
 
 /** 연지 → 띠 */
-const ZODIAC: Record<string, string> = {
+export const ZODIAC: Record<string, string> = {
   자: "쥐",
   축: "소",
   인: "호랑이",

@@ -132,6 +132,8 @@ export type ReadingVisual =
       /** 오방기는 뽑은 깃발, 신점은 숨은 점괘 */
       flag: { color: FlagColor; grade: FlagGrade };
       mode?: "sinjeom";
+      /** 신점 쌀점: 손바닥에 잡힌 쌀알 수와 등급 (D-087). 예전 결과에는 없다 */
+      rice?: { count: number; grade: FlagGrade };
     }
   | { shop: "dream"; dream: string; symbols: { id: string; name: string }[] };
 

@@ -1142,6 +1142,62 @@
   }
 }
 
+/* 쌀점: 놋 쟁반에 떨어진 쌀알 (D-087) */
+.sh-rice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sh-rice-tray {
+  position: relative;
+  width: 132px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 40%, #f2d38a 0%, #c9962e 62%, #8a5a1a 100%);
+  box-shadow: inset 0 -4px 8px rgba(80, 40, 0, 0.45), 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.sh-rice-grain {
+  position: absolute;
+  width: 7px;
+  height: 4px;
+  margin: -2px 0 0 -3.5px;
+  border-radius: 50%;
+  background: #fffaf0;
+  box-shadow: 0 1px 1px rgba(60, 30, 0, 0.45);
+  opacity: 0;
+  animation: sh-rice-drop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+
+@keyframes sh-rice-drop {
+  from {
+    opacity: 0;
+    translate: 0 -26px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.sh-rice-label {
+  margin: 0;
+  font-size: 14px;
+  color: #fff1c8;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.sh-rice-label b {
+  font-size: 18px;
+  color: #ffd889;
+}
+
+.sh-rice-care b {
+  color: #ff9b8a;
+}
+
 .sh-sj {
   display: flex;
   flex-direction: column;

@@ -17,16 +17,18 @@ import { buildDream } from "../facts/dream";
 import { buildObanggi, buildSinjeom } from "../facts/obanggi";
 import { buildSajuFull } from "../facts/saju";
 import { buildTarot } from "../facts/tarot";
-import { type Profile, natalOf } from "../profile";
+import { type Profile, ZODIAC, natalOf } from "../profile";
 import {
   drawTarot,
   dreamSeedKey,
+  flagForGrade,
   obanggiSeedKey,
   pickFlag,
   rngFor,
   sajuSeedKey,
   sinjeomSeedKey,
   tarotSeedKey,
+  throwRice,
 } from "../seed";
 
 /** 꿈 검사 결과 (checks 행) */
@@ -138,15 +140,25 @@ export async function planReading(req: ReadingRequest, ctx: PlanContext): Promis
           product: "sinjeom",
           seedKey: key,
           build: async () => {
-            const color = pickFlag(await rngFor(ctx.userId, key));
-            const parts = buildSinjeom(color);
+            // 쌀점 → 같은 등급의 숨은 깃발 (D-087)
+            const rng = await rngFor(ctx.userId, key);
+            const rice = throwRice(rng);
+            const color = flagForGrade(rice.grade, rng);
+            const zodiac = ZODIAC[natalOf(ctx.profile).pillars.year.charAt(1)] ?? "";
+            const parts = buildSinjeom(color, rice, zodiac);
             const input: InterpretInput = {
               ...base(ctx, "dolyeong", "sinjeom", parts.facts),
               flag: parts.flag,
             };
             return {
               input,
-              visual: { shop: "dolyeong", category: null, flag: parts.flag, mode: "sinjeom" },
+              visual: {
+                shop: "dolyeong",
+                category: null,
+                flag: parts.flag,
+                mode: "sinjeom",
+                rice: parts.rice,
+              },
             };
           },
         };

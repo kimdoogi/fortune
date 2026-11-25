@@ -60,7 +60,7 @@ describe("시스템 프롬프트 (04 §2)", () => {
   });
 
   it("프롬프트 버전이 저장용 문자열로 나온다", () => {
-    expect(promptVersion("obanggi")).toBe("common@7+dolyeong@3+obanggi@1");
+    expect(promptVersion("obanggi")).toBe("common@7+dolyeong@4+obanggi@1");
   });
 
   it("대체 문장·위기 안내에 금지 표현이 없다", () => {
@@ -145,7 +145,7 @@ describe("이어 묻기 (F15, 04 §13)", () => {
     expect(followupSystemPrompt("dolyeong", "sinjeom")).toContain(
       "[이번 대화: 아기도령 신점 대화]",
     );
-    expect(followupVersion("dolyeong", "sinjeom")).toBe("common@7+dolyeong@3+talk@4");
+    expect(followupVersion("dolyeong", "sinjeom")).toBe("common@7+dolyeong@4+talk@5");
     expect(systemPrompt("sinjeom")).toContain("[이번 점: 신점");
   });
 

@@ -33,11 +33,27 @@ const GEO = {
   torso: new THREE.CapsuleGeometry(0.17, 0.16, 4, 12),
   collar: new THREE.TorusGeometry(0.13, 0.026, 5, 12),
   goreum: new THREE.BoxGeometry(0.05, 0.17, 0.015),
-  /** 원피스 치마 (D-086): 무릎 위까지, 다리가 보인다 */
-  dress: new THREE.ConeGeometry(0.28, 0.3, 16),
+  /**
+   * 통 원피스 (D-086·D-087): 어깨부터 치맛단까지 한 덩어리로 돌려 깎는다. 상하체가 나뉘지 않는다.
+   * 치맛단(아래)은 무릎 위라 다리가 보인다
+   */
+  onePiece: new THREE.LatheGeometry(
+    [
+      [0.285, 0.12],
+      [0.262, 0.17],
+      [0.225, 0.25],
+      [0.188, 0.32],
+      [0.172, 0.38],
+      [0.176, 0.45],
+      [0.172, 0.51],
+      [0.148, 0.56],
+      [0.1, 0.6],
+      [0.0, 0.615],
+    ].map(([r, y]) => new THREE.Vector2(r, y)),
+    16,
+  ),
   /** 원피스 흰 동그란 깃 한 쪽 */
   roundCollar: new THREE.SphereGeometry(0.075, 8, 4),
-  belt: new THREE.TorusGeometry(0.158, 0.018, 3, 12),
   bowLoop: new THREE.SphereGeometry(0.045, 6, 4),
   sleeve: new THREE.CapsuleGeometry(0.058, 0.14, 3, 8),
   hand: new THREE.SphereGeometry(0.048, 6, 5),
@@ -74,7 +90,7 @@ interface Palette {
   /** 남성: 바지 / 여성: 원피스 (D-086) */
   bottom: string;
   hair: string;
-  /** 남성: 고름 / 여성: 허리 리본 */
+  /** 남성: 고름 / 여성: 목 리본 */
   accent: string;
   shoe: string;
   /** 여성 다리 (살색 또는 스타킹) */
@@ -83,7 +99,7 @@ interface Palette {
 
 /** 성별 × 나이대 기본 아바타 8종 (05 §2, 08 §1) */
 const PALETTE: Record<Gender, Record<AgeBand, Palette>> = {
-  // 여성은 모든 나이대가 원피스 (D-086): bottom = 원피스, accent = 허리 리본
+  // 여성은 모든 나이대가 통 원피스 (D-086·D-087): bottom = 원피스, accent = 목 리본
   female: {
     "10대": {
       top: "#ff9db8",
@@ -203,21 +219,17 @@ export class Chibi {
     }
 
     if (female) {
-      // 원피스 (D-086): 한 색 몸통 + 무릎 위 치마 + 흰 동그란 깃 + 허리 리본
-      this.body.add(mesh(GEO.torso, bottom, 0, 0.37, 0));
-      this.body.add(mesh(GEO.dress, bottom, 0, 0.27, 0));
+      // 통 원피스 (D-086·D-087): 한 덩어리 + 흰 동그란 깃 + 목 리본
+      this.body.add(mesh(GEO.onePiece, bottom));
       for (const side of [-1, 1]) {
         const c = mesh(GEO.roundCollar, MAT.collar, side * 0.065, 0.525, 0.1);
         c.scale.set(1, 0.32, 0.85);
         c.rotation.set(-0.35, 0, side * -0.25);
         this.body.add(c);
       }
-      const belt = mesh(GEO.belt, accent, 0, 0.36, 0);
-      belt.rotation.x = Math.PI / 2;
-      this.body.add(belt);
       for (const side of [-1, 1]) {
-        const loop = mesh(GEO.bowLoop, accent, side * 0.04, 0.36, 0.165);
-        loop.scale.set(1, 0.6, 0.45);
+        const loop = mesh(GEO.bowLoop, accent, side * 0.035, 0.49, 0.16);
+        loop.scale.set(0.8, 0.5, 0.4);
         loop.rotation.z = side * 0.4;
         this.body.add(loop);
       }

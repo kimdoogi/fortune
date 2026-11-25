@@ -90,7 +90,7 @@ export const LAB_OUTPUT: Record<ProductId, InterpretOutput> = {
     summary: "요즘 친구 사이 고민",
     sections: {
       gongsu:
-        "딸랑딸랑! 잠깐… 보인다 보여!\n너 요즘 친구한테 서운한 거 꾹 참고 있지?!\n근데 오늘 노란 기운이 보여. 곧 풀린대!\n맞지? 맞지?",
+        "일곱 알이다! 할아버지가 제일 좋은 수래!\n너 요즘 친구한테 서운한 거 꾹 참았지?!\n다음 주에 먼저 연락 와. 금방 풀린대!\n오늘 먼저 웃으면서 인사해. 말은 짧게!",
     },
     advice: "오늘 먼저 웃으면서 인사해 봐!",
   },
@@ -175,6 +175,7 @@ export function labVisual(
         category: null,
         flag: { color: "노랑", grade: "길" },
         mode: "sinjeom",
+        rice: { count: 7, grade: "대길" },
       };
     case "obanggi":
       return {

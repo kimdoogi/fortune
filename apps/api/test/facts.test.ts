@@ -9,7 +9,7 @@ import {
 import { findBanned } from "@fortune/prompts";
 import type { DolyeongCategory, TarotCategory } from "@fortune/shared-types";
 import { describe, expect, it } from "vitest";
-import { DREAM, DREAM_SYMBOL_IDS, TAROT } from "../src/facts/data";
+import { DREAM, DREAM_SYMBOL_IDS, OBANGGI, TAROT } from "../src/facts/data";
 import { buildDream, knownSymbolIds } from "../src/facts/dream";
 import { buildObanggi } from "../src/facts/obanggi";
 import { buildDaily, buildSajuFull } from "../src/facts/saju";
@@ -119,12 +119,42 @@ describe("기록 커서", () => {
   });
 });
 
-describe("신점 숨은 점괘 (F07, D-073)", () => {
-  it("깃발 뜻이 facts에 들어가고 카테고리 줄은 없다", async () => {
+describe("신점 쌀점과 숨은 점괘 (F07, D-087)", () => {
+  it("띠·쌀점·깃발 뜻이 facts에 들어가고 카테고리 줄은 없다", async () => {
     const { buildSinjeom } = await import("../src/facts/obanggi");
-    const p = buildSinjeom("노랑");
-    expect(p.facts.join(" ")).toContain("숨은 점괘");
-    expect(p.facts).toHaveLength(2);
-    expect(p.flag.color).toBe("노랑");
+    const p = buildSinjeom("노랑", { count: 9, grade: "길" }, "호랑이");
+    expect(p.facts).toHaveLength(3);
+    expect(p.facts[0]).toContain("호랑이띠");
+    expect(p.facts[1]).toContain("쌀알 9개");
+    expect(p.facts[2]).toContain("노랑 기운");
+    expect(p.rice).toEqual({ count: 9, grade: "길" });
+    expectClean(p.facts);
+  });
+
+  it("쌀알 수는 1~10, 등급은 홀수 좋음·7 최고·짝수 조심, 깃발은 같은 등급", async () => {
+    const { throwRice, riceGrade, flagForGrade, FLAG_GRADE, RICE_WEIGHTS, rngFor } = await import(
+      "../src/seed"
+    );
+    expect(Object.values(RICE_WEIGHTS).reduce((a, b) => a + b, 0)).toBe(100);
+    expect(riceGrade(7)).toBe("대길");
+    expect(riceGrade(9)).toBe("길");
+    expect(riceGrade(3)).toBe("길");
+    expect(riceGrade(5)).toBe("평");
+    expect(riceGrade(1)).toBe("평");
+    for (const n of [2, 4, 6, 8, 10]) expect(riceGrade(n)).toBe("주의");
+    // obanggi.json 등급과 같다
+    for (const [color, grade] of Object.entries(FLAG_GRADE)) {
+      expect(OBANGGI[color as keyof typeof OBANGGI].grade).toBe(grade);
+    }
+    const rng = await rngFor("user", "sinjeom:2026-11-25");
+    const seen = new Set<number>();
+    for (let i = 0; i < 400; i++) {
+      const r = throwRice(rng);
+      expect(r.count).toBeGreaterThanOrEqual(1);
+      expect(r.count).toBeLessThanOrEqual(10);
+      seen.add(r.count);
+      expect(FLAG_GRADE[flagForGrade(r.grade, rng)]).toBe(r.grade);
+    }
+    expect(seen.size).toBe(10);
   });
 });

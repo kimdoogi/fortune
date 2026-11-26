@@ -5,14 +5,14 @@
  * - 골목 화면(Stage)은 subscribePair로 상대 위치를 받는다
  * 화면 이동은 replace로 한다: 같이 보는 동안 뒤로 가기 기록이 쌓이지 않고, 뒤로 가면 평소 지도로 나간다.
  */
-import type { ClientMessage, ServerMessage, ShopId } from "@fortune/shared-types";
+import type { ClientMessage, PairPlace, ServerMessage } from "@fortune/shared-types";
 import { signal } from "@preact/signals";
 import { api } from "../api/client";
 import { navigate, route } from "../ui/app/router";
 import { type Partner, parseLook } from "../ui/screens/street/look";
 import { PairRoom, type RoomStatus } from "./pairRoom";
 
-export type Place = ShopId | "map";
+export type Place = PairPlace;
 
 export interface PairState {
   code: string;
@@ -125,7 +125,8 @@ function onMessage(m: ServerMessage) {
     case "went_inside": {
       const s = pairState.value;
       const r = route.value;
-      if (s && r.name === "pair" && r.code === s.code && r.shop)
+      // 당산나무에는 들어갈 곳이 없다
+      if (s && r.name === "pair" && r.code === s.code && r.shop && r.shop !== "tree")
         navigate({ name: "pair-in", code: s.code, shop: r.shop }, { replace: true });
       break;
     }
@@ -135,6 +136,7 @@ function onMessage(m: ServerMessage) {
     case "result_failed":
     case "asking":
     case "asked":
+    case "wished":
       seq += 1;
       patch({ event: { seq, msg: m } });
       break;

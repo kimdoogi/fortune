@@ -63,7 +63,10 @@ const SAJU_TREES: TreeSpot[] = [
   { x: 5.8, z: -12.4, pink: true },
 ];
 
-export const STREET_ENVS: Record<ShopId, StreetEnv> = {
+/** 거리 장면을 만들 수 있는 곳: 점집 넷 + 당산나무 (F18) */
+export type PlaceId = ShopId | "tree";
+
+export const STREET_ENVS: Record<PlaceId, StreetEnv> = {
   // 사주집: 밤의 한옥 골목 (D-065, 바꾸지 않는다)
   saju: {
     name: "사주집",
@@ -274,5 +277,52 @@ export const STREET_ENVS: Record<ShopId, StreetEnv> = {
     },
     fireflies: { count: 90, colors: ["#fff3a8", "#b8f0ff", "#ffd0ec"], size: 0.3, flicker: 0.55 },
     mist: { color: "#f6eeff", opacity: 0.14, heights: [0.3], speed: 0.05, patchy: true },
+  },
+
+  // 당산나무 (F18, D-099): 마을 어귀. 흙길, 돌 등롱, 덤불, 둥근 나무, 이웃 없음. 따뜻한 달빛
+  tree: {
+    name: "당산나무",
+    sky: { horizon: "#33284f" },
+    halo: { size: 17, color: "#ffe2b0" },
+    fog: { color: "#2c2446", near: 15, far: 42 },
+    light: {
+      sky: "#a8a4dc",
+      ground: "#3a2c22",
+      hemi: 1.3,
+      moon: "#ffe6c4",
+      moonI: 0.8,
+      warm: "#ffc890",
+      warmI: 0.6,
+    },
+    ground: {
+      grass: ["#2c4529", "#55753d"],
+      path: "#8a7255",
+      pathHalf: 1.5,
+      yard: "#8f7a5e",
+      yardHalf: 4.6,
+    },
+    path: "dirt",
+    lamp: "stone",
+    lampSpots: pairs([5.0, 1.2, -2.6], 2.2),
+    border: "bushes",
+    borderRoof: "#3c4250",
+    trees: "round",
+    treeSpots: [
+      { x: -6.4, z: -4.2 },
+      { x: 6.6, z: -2.8 },
+      { x: -6.8, z: 1.4 },
+      { x: 6.4, z: 3.2, pink: true },
+      { x: -6.0, z: 5.8 },
+      { x: 6.8, z: 6.4 },
+    ],
+    neighbors: "none",
+    hills: ["#28224a", "#1f1a3a"],
+    grass: {
+      tuft: "#4c763a",
+      tufts: 760,
+      flowers: ["#f4f1ea", "#ffd66b", "#f3a3c0"],
+      flowerCount: 80,
+    },
+    fireflies: { count: 30, colors: ["#fff3b0", "#e6ff9a"], size: 0.34, flicker: 0.5 },
   },
 };

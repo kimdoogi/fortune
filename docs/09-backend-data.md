@@ -36,6 +36,8 @@
 |---|---|---|
 | `gunghap_invites` | code(PK), host_id, guest_id, status(`open`·`joined`·`done`), relation, created_at, expires_at | 같이 보기 초대 (이름은 처음 궁합 때 그대로). 30분 안에 참여 없으면 만료, 참여 뒤 3시간. 결과는 두 사람 `readings`에 한 줄씩 (궁합 `gunghap:<code>`, 나머지 `pair:<code>:<product>`) |
 | `pair_dreams` (0004) | code, user_id, text, symbols_json, risk, created_at (PK code+user_id) | 두 사람 꿈풀이에서 각자 낸 꿈(검사 통과한 것). 풀이를 만들면 입력에 들어가고 그 초대의 꿈은 지운다 |
+| `wishes` (0007) | id, user_id, with_user_id, with_nickname, text, color, day, created_at, outcome, outcome_at | 당산나무 소원 (F18). 글은 본인과 같이 묶은 사람만 본다. 사람마다 하루 한 번 (user_id+day) |
+| `wish_stones` (0007) | user_id, day (PK) | 돌 올리기 하루 한 번. 그날 합계만 보여 준다 |
 
 ## 3. API 목록 (초안)
 | 메서드 | 경로 | 설명 | 인증 |
@@ -57,6 +59,10 @@
 | POST | `/api/pair/:code/readings` | 같이 보는 점 (궁합·관계 타로·둘의 신점, 관계 선택) | ✅ |
 | POST | `/api/pair/:code/dream` | 두 사람 꿈풀이: 내 꿈 내기 | ✅ |
 | GET | `/api/pair/:code/result?product=` | 내 결과 | ✅ |
+| GET | `/api/wishes` | 당산나무: 오늘 소원·돌, 나무에 걸 천, 내 소원, 돌아볼 소원 (F18) | ✅ |
+| POST | `/api/wishes` | 소원 묶기 `{ text, color, requestId, pairCode? }` | ✅ |
+| POST | `/api/wishes/stone` | 돌 올리기 | ✅ |
+| POST | `/api/wishes/:id/outcome` | 돌아보기 `{ outcome: yes|no }` | ✅ |
 | — | `/api/gunghap/invites/...` | D-089 예전 경로 (같은 처리) | ✅ |
 | GET | `/api/ws-token?shop=` / `?room=pair:<code>` | 실시간 접속 토큰 | ✅ |
 | WS | `/ws/village/:channel`, `/ws/pair/:code` | 마을 멀티플레이 / 궁합 둘만의 방 | ✅ |

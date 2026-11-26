@@ -2,6 +2,7 @@ import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import { buildStreet } from "./street";
+import type { PlaceId } from "./street-env";
 
 const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
 
@@ -22,7 +23,8 @@ function measure(root: THREE.Object3D) {
 }
 
 describe("점집 거리 (07 §3·§4: 드로우콜 100·삼각형 15만·생성 500ms 이하)", () => {
-  for (const shop of SHOPS) {
+  // 당산나무(F18)도 같은 한도
+  for (const shop of [...SHOPS, "tree"] as PlaceId[]) {
     it(`${shop}: 한도 안에서 만들어지고 문까지 걸어갈 수 있다`, () => {
       const t0 = performance.now();
       const street = buildStreet(shop);
@@ -69,4 +71,25 @@ describe("문으로 걸어 들어가기 (D-094·D-095)", () => {
       street.dispose();
     });
   }
+});
+
+describe("당산나무 (F18)", () => {
+  it("천을 걸면 한도 안에서 그려지고, 돌을 올릴 수 있다", () => {
+    const street = buildStreet("tree");
+    const tree = street.wishTree;
+    expect(tree).not.toBeNull();
+    const cloths = Array.from({ length: 200 }, (_, i) => ({
+      color: ["빨강", "노랑", "파랑", "하양", "초록"][i % 5] as string,
+      mine: i === 0,
+      gold: i === 1,
+    }));
+    tree?.setCloths(cloths, true);
+    tree?.dropStone();
+    street.update(0.2);
+    street.update(2.5);
+    const m = measure(street.group);
+    expect(m.calls).toBeLessThanOrEqual(80);
+    expect(m.tris).toBeLessThanOrEqual(147_000);
+    street.dispose();
+  });
 });

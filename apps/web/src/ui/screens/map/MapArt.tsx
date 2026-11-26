@@ -1157,6 +1157,73 @@ function DreamTeaHouse() {
   );
 }
 
+/** 당산나무 (F18): 둥근 수관, 오색 천, 금줄, 옆의 돌탑 */
+function WishTreeArt() {
+  const cloth = ["#e0473a", "#f2c94c", "#3f7fd9", "#f4f1ea", "#4caf6a"];
+  const r = rng(77);
+  const strips = Array.from({ length: 26 }, (_, i) => {
+    const a = r() * Math.PI;
+    const rad = 26 + r() * 30;
+    return {
+      x: Math.cos(a) * rad * (r() < 0.5 ? -1 : 1),
+      y: -64 + Math.sin(a) * 10 + r() * 14,
+      c: cloth[i % cloth.length] as string,
+      d: (r() * 3).toFixed(2),
+    };
+  });
+  return (
+    <g>
+      <ellipse cx="0" cy="2" rx="64" ry="12" fill="#2a2234" opacity=".55" />
+      {/* 돌 단 */}
+      <ellipse cx="0" cy="-2" rx="44" ry="9" fill="#6f6a62" />
+      <ellipse cx="0" cy="-5" rx="42" ry="7" fill="#8d877c" />
+      {/* 줄기 */}
+      <path d="M-10 -6 C-12 -30 -8 -48 -4 -62 L6 -62 C10 -46 12 -28 12 -6z" fill="#4a3526" />
+      <path
+        d="M-4 -60 C-20 -70 -34 -72 -44 -70 M6 -60 C22 -72 36 -74 46 -70"
+        stroke="#4a3526"
+        stroke-width="5"
+        fill="none"
+        stroke-linecap="round"
+      />
+      {/* 금줄 */}
+      <path d="M-11 -30 Q1 -24 12 -30" stroke="#c9a86a" stroke-width="2.4" fill="none" />
+      {[-6, 0, 6].map((x) => (
+        <rect key={x} x={x - 1.5} y="-29" width="3" height="7" fill="#f4f1ea" />
+      ))}
+      {/* 수관 */}
+      <ellipse cx="0" cy="-92" rx="58" ry="34" fill="#2f5a33" />
+      <ellipse cx="-30" cy="-80" rx="32" ry="22" fill="#3b6c3c" />
+      <ellipse cx="30" cy="-82" rx="32" ry="22" fill="#3b6c3c" />
+      <ellipse cx="0" cy="-108" rx="38" ry="22" fill="#46783f" />
+      {/* 오색 천 */}
+      {strips.map((s, i) => (
+        <rect
+          // biome-ignore lint/suspicious/noArrayIndexKey: 고정된 장식 목록
+          key={i}
+          class="map-cloth"
+          x={s.x}
+          y={s.y}
+          width="3.2"
+          height="13"
+          rx="1"
+          fill={s.c}
+          style={{ animationDelay: `${s.d}s` }}
+        />
+      ))}
+      {/* 돌탑 */}
+      <g transform="translate(48 -2)">
+        <ellipse cx="0" cy="0" rx="13" ry="5" fill="#6f6a62" />
+        <ellipse cx="0" cy="-7" rx="10" ry="4.5" fill="#8d877c" />
+        <ellipse cx="0" cy="-13" rx="7.5" ry="3.8" fill="#7d776d" />
+        <ellipse cx="0" cy="-18.5" rx="5" ry="3" fill="#9a9488" />
+        <ellipse cx="0" cy="-22.5" rx="3" ry="2" fill="#8d877c" />
+      </g>
+      <circle cx="-30" cy="-6" r="10" fill="url(#m-glow)" opacity=".8" />
+    </g>
+  );
+}
+
 /** 점집별 외관 (08 §1 점집별 외관, D-075) */
 function ShopDecor(props: { shop: ShopId }) {
   switch (props.shop) {
@@ -1197,7 +1264,13 @@ function FarVillage() {
   );
 }
 
-export function MapArt(props: { selected: ShopId | null; onSelect: (s: ShopId) => void }) {
+/** 지도에서 고를 수 있는 곳: 점집 넷 + 당산나무 (F18) */
+export type MapSpot = ShopId | "tree";
+
+/** 당산나무 자리: 길 끝, 사주집과 타로집 사이 언덕 (멀어서 작게) */
+const TREE_SPOT = { x: 210, y: 206, s: 0.62 };
+
+export function MapArt(props: { selected: MapSpot | null; onSelect: (s: MapSpot) => void }) {
   type Item = { y: number; el: JSX.Element };
   const items: Item[] = [];
 
@@ -1261,6 +1334,53 @@ export function MapArt(props: { selected: ShopId | null; onSelect: (s: ShopId) =
             </g>
             {/* 누르기 쉬운 넓은 영역 */}
             <rect x="-80" y="-112" width="160" height="152" fill="transparent" />
+          </g>
+        </g>
+      ),
+    });
+  }
+  {
+    const on = props.selected === "tree";
+    const dim = props.selected !== null && !on;
+    items.push({
+      y: TREE_SPOT.y,
+      el: (
+        <g
+          key="tree"
+          class={`shop ${on ? "on" : ""} ${dim ? "dim" : ""}`}
+          // biome-ignore lint/a11y/useSemanticElements: SVG 안에는 <button>을 둘 수 없다
+          role="button"
+          tabIndex={0}
+          aria-label="당산나무, 소원 빌기"
+          aria-pressed={on}
+          onClick={() => props.onSelect("tree")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              props.onSelect("tree");
+            }
+          }}
+          transform={`translate(${TREE_SPOT.x} ${TREE_SPOT.y})`}
+        >
+          <g class="shop-art" style={{ transform: `scale(${TREE_SPOT.s})` }}>
+            {on && <ellipse class="ring" cx="0" cy="2" rx="70" ry="14" />}
+            <WishTreeArt />
+            <g class="map-plaque" transform="translate(0 12)">
+              <rect
+                x="-40"
+                y="0"
+                width="80"
+                height="24"
+                rx="3"
+                fill="url(#m-wood)"
+                stroke="#f2d38a"
+                stroke-width="1.5"
+              />
+              <text x="0" y="17" text-anchor="middle" class="map-label">
+                당산나무
+              </text>
+            </g>
+            <rect x="-70" y="-140" width="140" height="176" fill="transparent" />
           </g>
         </g>
       ),

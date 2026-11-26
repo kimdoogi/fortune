@@ -369,6 +369,19 @@ export const mockApi: Api = {
   createInvite: async () => NO_PAIR(),
   invite: async () => NO_PAIR(),
   joinInvite: async () => NO_PAIR(),
+  // 당산나무 (F18): 실제 서버에서만
+  wishes: async () => {
+    throw fail("NOT_FOUND", "[mock] 당산나무는 실제 서버(wrangler dev)에서만 돼요", 404);
+  },
+  wish: async () => {
+    throw fail("NOT_FOUND", "[mock] 당산나무는 실제 서버(wrangler dev)에서만 돼요", 404);
+  },
+  wishStone: async () => {
+    throw fail("NOT_FOUND", "[mock] 당산나무는 실제 서버(wrangler dev)에서만 돼요", 404);
+  },
+  wishOutcome: async () => {
+    throw fail("NOT_FOUND", "[mock] 당산나무는 실제 서버(wrangler dev)에서만 돼요", 404);
+  },
   pairReading: async () => NO_PAIR(),
   pairDream: async () => NO_PAIR(),
   pairResult: async () => NO_PAIR(),

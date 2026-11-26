@@ -1,6 +1,8 @@
 /** API·LLM 입출력 타입. web·api·reading이 같이 쓴다 (docs/13 §3) */
 
 export type ShopId = "saju" | "tarot" | "dolyeong" | "dream";
+/** 같이 보기에서 둘이 갈 수 있는 곳: 점집, 당산나무(F18), 지도 */
+export type PairPlace = ShopId | "tree" | "map";
 export type ProductId =
   | "daily"
   | "saju_full"
@@ -155,7 +157,7 @@ export type ClientMessage =
   /** 같이 보기 둘만의 방 (F16): 같이 들어가기, 방장의 장소 이동(점집 또는 지도) */
   | { t: "go_inside" }
   | { t: "pick"; relation: string }
-  | { t: "travel"; place: ShopId | "map" };
+  | { t: "travel"; place: PairPlace };
 
 export interface PlayerState {
   id: string;
@@ -173,7 +175,7 @@ export type ServerMessage =
       you: string;
       players: PlayerState[];
       /** 같이 보기: 방장이 마지막으로 간 곳 (D-090) */
-      place?: ShopId | "map";
+      place?: PairPlace;
     }
   | { t: "joined"; player: PlayerState }
   | { t: "left"; id: string }
@@ -184,14 +186,18 @@ export type ServerMessage =
   | { t: "shown"; id: string }
   /** 같이 보기 둘만의 방 (F16) */
   | { t: "went_inside"; id: string }
-  | { t: "traveled"; place: ShopId | "map" }
+  | { t: "traveled"; place: PairPlace }
   | { t: "picked"; id: string; relation: string; product?: ProductId }
   | { t: "submitted"; id: string; product: ProductId }
   | { t: "result_ready"; product?: ProductId }
   | { t: "result_failed"; message: string; product?: ProductId }
   /** 같이 본 풀이의 이어 묻기 (D-091): 묻는 중 / 답이 나왔다(ok) 또는 실패 */
   | { t: "asking"; id: string; product: ProductId }
-  | { t: "asked"; id: string; product: ProductId; ok: boolean };
+  | { t: "asked"; id: string; product: ProductId; ok: boolean }
+  /** 당산나무 (F18): 같이 묶은 소원이 걸렸다 */
+  | { t: "wished"; id: string; wish: WishView };
 export { type WsTokenPayload, signWsToken, verifyWsToken } from "./wsToken";
 export * from "./api";
 export * from "./avatar";
+export * from "./wish";
+import type { WishView } from "./wish";

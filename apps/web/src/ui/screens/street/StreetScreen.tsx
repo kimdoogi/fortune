@@ -16,6 +16,7 @@ import { SHOP_INFO } from "../../app/shops";
 import { callsLeft, lookOf } from "../../app/state";
 import { ShopScreen } from "../../shop/ShopScreen";
 import { shareInvite } from "../../shop/pair";
+import { TreeLayer } from "../tree/TreeLayer";
 import { usePairStage } from "./pair";
 import "./street.css";
 
@@ -29,7 +30,8 @@ type Status = "loading" | "ready" | "nogl" | "failed";
 type Stats = { fps: number; calls: number; triangles: number };
 
 export function StreetScreen(props: {
-  shop: ShopId;
+  /** 점집 넷 또는 당산나무 (F18: 실내 없음) */
+  shop: ShopId | "tree";
   inside: boolean;
   profile: ProfileView;
   /** 같이 보기 (F16): 상대가 보이고 같이 들어간다. 연결은 pairSession */
@@ -53,7 +55,8 @@ export function StreetScreen(props: {
   /** 화면에 보이는 쪽 */
   const [shown, setShown] = useState<"street" | "inside">("street");
   const [enterFailed, setEnterFailed] = useState(false);
-  const name = SHOP_INFO[shop].name;
+  const isTree = shop === "tree";
+  const name = shop === "tree" ? "당산나무" : SHOP_INFO[shop].name;
 
   // Stage 만들기 (거리 → 지도로 나가면 dispose). attempt는 "다시 시도"
   // biome-ignore lint/correctness/useExhaustiveDependencies: 점집·외모는 이 화면이 떠 있는 동안 바뀌지 않는다 (key=shop)
@@ -130,7 +133,7 @@ export function StreetScreen(props: {
               want.current = false;
               setEnterFailed(true);
               if (code) navigate({ name: "pair", code, shop }, { replace: true });
-              else goBack({ name: "street", shop });
+              else goBack(shop === "tree" ? { name: "tree" } : { name: "street", shop });
             }
           }
         } else {
@@ -146,7 +149,7 @@ export function StreetScreen(props: {
   }
 
   const enter = () => {
-    if (busy.current) return;
+    if (busy.current || shop === "tree") return;
     setEnterFailed(false);
     navigate({ name: "inside", shop });
   };
@@ -224,11 +227,23 @@ export function StreetScreen(props: {
               <Icon.back />
               {code && !host ? "나가기" : "지도"}
             </button>
-            <div class="plaque">{code ? `${name} · 같이` : `${name} 거리`}</div>
+            <div class="plaque">{code ? `${name} · 같이` : isTree ? name : `${name} 거리`}</div>
             <SoundButton />
           </div>
 
-          {status === "ready" && (
+          {status === "ready" && isTree && (
+            <TreeLayer
+              stage={stage}
+              ready={status === "ready"}
+              near={code ? room.meNear : near}
+              pair={
+                code && ps
+                  ? { code, myId: ps.myId, partner: ps.partner?.nickname ?? null }
+                  : undefined
+              }
+            />
+          )}
+          {status === "ready" && !isTree && (
             <div class="hud-bottom">
               {enterFailed && (
                 <div class="enter-failed" role="alert">
@@ -267,7 +282,7 @@ export function StreetScreen(props: {
         </>
       )}
 
-      {inside && (
+      {inside && shop !== "tree" && (
         <div class="inside-layer">
           <ShopScreen
             shop={shop}

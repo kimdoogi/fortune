@@ -4,17 +4,17 @@
  * 정적 배경은 지오메트리를 합치고, 반복 물체는 InstancedMesh로 그린다 (07 §4).
  * 조명은 바닥 버텍스 컬러(빛 웅덩이)와 가산 혼합 점(빛무리)으로 구워 넣는다.
  */
-import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { buildBuilding } from "./buildings";
+import type { WishTree } from "./buildings/tree";
 import type { SignStyle } from "./buildings/types";
 import { type DoorAnim, buildDoorAnim } from "./door-anim";
 import { rng } from "./geo";
 import { type GlowSpot, glowMaterial, glowPoints } from "./glow";
 import { NavGrid, type Point } from "./nav";
 import { buildSky } from "./sky";
-import { STREET_ENVS, type StreetLighting } from "./street-env";
+import { type PlaceId, STREET_ENVS, type StreetLighting } from "./street-env";
 import { addMist } from "./street-fx";
 import { buildGround, buildPath } from "./street-ground";
 import {
@@ -40,6 +40,8 @@ export interface Street {
   door: DoorAnim;
   /** 문 안쪽 한 걸음 (여기까지 걸어 들어가며 사라진다) */
   doorInside: Point;
+  /** 당산나무만: 오색 천·돌탑 (F18) */
+  wishTree: WishTree | null;
   /** 그 자리 발밑 높이: 문 앞 계단·기단을 밟고 올라간다 (평소 길은 0) */
   groundAt(z: number): number;
   ground: THREE.Mesh;
@@ -125,7 +127,7 @@ function signTexture(text: string, style: SignStyle): THREE.CanvasTexture | null
   return tex;
 }
 
-export function buildStreet(shop: ShopId): Street {
+export function buildStreet(shop: PlaceId): Street {
   const env = STREET_ENVS[shop];
   const group = new THREE.Group();
   const disposables: { dispose(): void }[] = [];
@@ -330,6 +332,7 @@ export function buildStreet(shop: ShopId): Street {
     doorTargets: [doorHit, sign],
     door,
     doorInside: { x: 0, z: building.doorway.z - 0.5 },
+    wishTree: building.wishTree ?? null,
     groundAt(z) {
       let y = 0;
       // 발끝이 단 앞면을 넘으면 그 단 위 (캐릭터 발 반지름만큼 앞에서)

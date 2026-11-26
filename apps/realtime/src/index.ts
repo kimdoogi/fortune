@@ -5,7 +5,7 @@ import { DurableObject } from "cloudflare:workers";
  * app Worker가 RPC `notify()`로 결과 알림을 보낸다. 걷는 속도 검사와 신고는 M3에서 채운다.
  * 같이 보기 (D-090): 방장만 `travel`로 둘이 갈 곳(점집 또는 지도)을 정하고, 방은 마지막 곳을 기억한다.
  */
-import type { ClientMessage, PlayerState, ServerMessage, ShopId } from "@fortune/shared-types";
+import type { ClientMessage, PairPlace, PlayerState, ServerMessage } from "@fortune/shared-types";
 import { verifyWsToken } from "@fortune/shared-types";
 
 interface Env {
@@ -26,7 +26,8 @@ const MIN_INTERVAL_MS: Record<ClientMessage["t"], number> = {
   travel: 800,
 };
 
-const PLACES: readonly (ShopId | "map")[] = ["map", "saju", "tarot", "dolyeong", "dream"];
+// 같이 보기로 갈 수 있는 곳: 지도, 점집 넷, 당산나무 (F18)
+const PLACES: readonly PairPlace[] = ["map", "saju", "tarot", "dolyeong", "dream", "tree"];
 
 interface Attachment extends PlayerState {
   last: Partial<Record<ClientMessage["t"], number>>;
@@ -85,7 +86,7 @@ export class VillageChannel extends DurableObject<Env> {
     const others = this.players()
       .filter((p) => p.id !== me.id && p.id)
       .map(({ last: _l, host: _h, ...p }) => p);
-    const place = room ? await this.ctx.storage.get<ShopId | "map">("place") : undefined;
+    const place = room ? await this.ctx.storage.get<PairPlace>("place") : undefined;
     server.send(
       JSON.stringify({
         t: "snapshot",

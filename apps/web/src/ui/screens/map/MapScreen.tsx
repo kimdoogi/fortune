@@ -15,10 +15,20 @@ import { callsLeft, profile } from "../../app/state";
 import { PRODUCT_BLURB } from "../../shop/characters";
 import { shareInvite } from "../../shop/pair";
 import { InviteSheet } from "./InviteSheet";
-import { MapArt } from "./MapArt";
+import { MapArt, type MapSpot } from "./MapArt";
 import "./map.css";
 
 let prefetched = false;
+
+/** 당산나무 안내 카드 (F18) */
+const TREE_INFO = {
+  name: "당산나무",
+  master: "마을 어귀 큰 나무",
+  intro: "소원을 적은 천을 가지에 묶고, 돌 하나 올려 보세요.",
+  tint: "#c9e6b8",
+  roof: "#4a6b3a",
+};
+const TREE_THINGS = ["소원 빌기 (하루 한 번, 오색 천)", "돌탑에 돌 올리기", "지난 소원 돌아보기"];
 
 export function MapScreen(props: { pair?: { code: string } } = {}) {
   const code = props.pair?.code;
@@ -27,7 +37,7 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
   const partner = ps?.partner?.nickname ?? null;
   const [inviting, setInviting] = useState(false);
   const [sentNote, setSentNote] = useState("");
-  const [sel, setSel] = useState<ShopId | null>(null);
+  const [sel, setSel] = useState<MapSpot | null>(null);
   const [closing, setClosing] = useState(false);
   const [notice, setNotice] = useState<"" | "nogl" | "loadfail">("");
   const [loading, setLoading] = useState(false);
@@ -55,7 +65,7 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
     }, 220);
   };
 
-  async function go(shop: ShopId) {
+  async function go(shop: MapSpot) {
     if (!hasWebGL2()) return setNotice("nogl");
     setLoading(true);
     setNotice("");
@@ -64,7 +74,7 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
       await Promise.all([loadStreet(), loadStage()]);
       // 같이 보기: 방장이 고르면 방이 둘 다 그 골목으로 보낸다 (pairSession)
       if (code) travel(shop);
-      else navigate({ name: "street", shop });
+      else navigate(shop === "tree" ? { name: "tree" } : { name: "street", shop });
     } catch {
       setNotice("loadfail");
     } finally {
@@ -72,7 +82,7 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
     }
   }
 
-  const info = sel ? SHOP_INFO[sel] : null;
+  const info = sel ? (sel === "tree" ? TREE_INFO : SHOP_INFO[sel]) : null;
   const resend = async () => {
     if (!code) return;
     const how = await shareInvite(`${location.origin}/?g=${code}`, profile.value?.nickname ?? "");
@@ -174,23 +184,45 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
               <Icon.close />
             </button>
             <div class="sheet-head">
-              <Portrait shop={sel} size={72} />
+              {sel === "tree" ? (
+                <span class="invite-icon tree-icon" aria-hidden="true">
+                  <Icon.tree />
+                </span>
+              ) : (
+                <Portrait shop={sel} size={72} />
+              )}
               <div>
                 <div class="sheet-shop">{info.name}</div>
                 <h2 class="sheet-name">{info.master}</h2>
               </div>
             </div>
             <p class="sheet-intro">“{info.intro}”</p>
-            <div class="sheet-label">{code ? "둘이 같이 보는 점" : "볼 수 있는 점"}</div>
-            <ul class="sheet-products">
-              {(code ? [PAIR_PRODUCT[sel]] : SHOP_PRODUCTS[sel]).map((p) => (
-                <li key={p}>
-                  <span class="dia" aria-hidden="true" />
-                  {PRODUCT_NAMES[p]}
-                  {code && <span class="sheet-blurb"> · {PRODUCT_BLURB[p]}</span>}
-                </li>
-              ))}
-            </ul>
+            {sel === "tree" ? (
+              <>
+                <div class="sheet-label">할 수 있는 것</div>
+                <ul class="sheet-products">
+                  {TREE_THINGS.map((t) => (
+                    <li key={t}>
+                      <span class="dia" aria-hidden="true" />
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <>
+                <div class="sheet-label">{code ? "둘이 같이 보는 점" : "볼 수 있는 점"}</div>
+                <ul class="sheet-products">
+                  {(code ? [PAIR_PRODUCT[sel]] : SHOP_PRODUCTS[sel]).map((p) => (
+                    <li key={p}>
+                      <span class="dia" aria-hidden="true" />
+                      {PRODUCT_NAMES[p]}
+                      {code && <span class="sheet-blurb"> · {PRODUCT_BLURB[p]}</span>}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
             {notice === "nogl" && (
               <p class="sheet-notice">
                 이 기기에서는 마을에 들어갈 수 없어요. 오늘의 운세와 점 기록은 계속 볼 수 있어요.
@@ -203,7 +235,7 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
             )}
             {code && !host ? (
               <p class="sheet-wait">
-                점집은 {partner ?? "같이 온 분"} 님이 골라요. 고르면 같이 이동해요.
+                갈 곳은 {partner ?? "같이 온 분"} 님이 골라요. 고르면 같이 이동해요.
               </p>
             ) : (
               <button
@@ -214,7 +246,9 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
               >
                 <Icon.door />
                 {loading
-                  ? "골목으로 가는 중…"
+                  ? sel === "tree"
+                    ? "나무 앞으로 가는 중…"
+                    : "골목으로 가는 중…"
                   : notice === "loadfail"
                     ? "다시 시도"
                     : code

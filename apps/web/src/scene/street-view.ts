@@ -2,11 +2,12 @@
  * 거리 모드: 거리 장면, 카메라, 탭 이동, 문 앞 판정 (F03, 06 §3).
  * 렌더러와 화면 크기·디버그 정보는 Stage(stage.ts)가 가진다. 점집 안에 있는 동안은 멈춰 있다 (F04).
  */
-import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
+import type { WishCloth } from "./buildings/tree";
 import { Chibi, type ChibiLook } from "./chibi";
 import type { Point } from "./nav";
 import { type Street, type StreetLighting, buildStreet } from "./street";
+import type { PlaceId } from "./street-env";
 
 export const WALK_SPEED = 3.0; // m/s (F03, D-092: 2.0은 답답하다는 말이 있어 1.5배)
 const DOOR_REACH = 0.6;
@@ -115,7 +116,7 @@ export class StreetView {
   private entering: { t: number; walking: boolean; done: () => void } | null = null;
 
   constructor(
-    shop: ShopId,
+    shop: PlaceId,
     look: ChibiLook,
     private readonly events: StreetEvents,
   ) {
@@ -200,6 +201,16 @@ export class StreetView {
         { x: inside.x + side, z: inside.z },
       ];
     }
+  }
+
+  /** 당산나무: 걸 천 목록 (F18) */
+  setWishes(cloths: WishCloth[], flashFirst = false) {
+    this.street.wishTree?.setCloths(cloths, flashFirst);
+  }
+
+  /** 당산나무: 돌탑에 돌 하나 */
+  dropStone() {
+    this.street.wishTree?.dropStone();
   }
 
   /** 점집에서 나오면 문 앞에 서서 거리 쪽을 본다 (06 §4, F04). 열린 문은 뒤에서 닫힌다 */

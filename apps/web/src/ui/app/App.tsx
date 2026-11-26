@@ -73,6 +73,9 @@ function Routes() {
       return <History id={r.id} />;
     case "daily":
       return <Daily />;
+    // 당산나무 (F18): 실내 없는 거리 장면
+    case "tree":
+      return <Street key="tree" shop="tree" inside={false} profile={p} />;
     // 같이 보기 (F16): 초대 받기 → 같이 보는 지도 → 방장이 고른 골목 → 점집 안
     case "join":
       return <Join code={r.code} />;

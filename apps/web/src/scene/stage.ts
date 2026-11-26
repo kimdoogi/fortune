@@ -5,9 +5,11 @@
  */
 import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
+import type { WishCloth } from "./buildings/tree";
 import type { ChibiLook } from "./chibi";
 import { type Interior, buildInterior } from "./interior";
 import type { NpcAction } from "./npc";
+import type { PlaceId } from "./street-env";
 import { PAIR_DOOR_REACH, StreetView } from "./street-view";
 
 export type { NpcAction } from "./npc";
@@ -24,7 +26,8 @@ export interface StageEvents {
 }
 
 export interface StageOptions {
-  shop: ShopId;
+  /** 점집 넷 또는 당산나무 (F18: 실내 없음) */
+  shop: PlaceId;
   look: ChibiLook;
 }
 
@@ -118,13 +121,13 @@ export class Stage {
 
   /** 문 앞에서 쉬는 틈에 내부를 미리 만든다 (F04 2초 이내 목표) */
   private schedulePrebuild() {
-    if (this.prebuilt || this.prebuildJob || this._inside) return;
+    if (this.prebuilt || this.prebuildJob || this._inside || this.opts.shop === "tree") return;
     const run = () => {
       this.prebuildJob = 0;
       if (this.disposed || this._inside || this.prebuilt) return;
       try {
         const t0 = performance.now();
-        this.prebuilt = buildInterior(this.opts.shop, this.opts.look, this.partner);
+        this.prebuilt = buildInterior(this.shopId(), this.opts.look, this.partner);
         this.lastBuildMs = performance.now() - t0;
       } catch {
         this.prebuilt = null; // 들어갈 때 다시 시도한다
@@ -147,6 +150,22 @@ export class Stage {
     this.prebuilt = null;
   }
 
+  /** 실내가 있는 점집 (당산나무에는 실내가 없다) */
+  private shopId(): ShopId {
+    if (this.opts.shop === "tree") throw new Error("no interior for the wish tree");
+    return this.opts.shop;
+  }
+
+  /** 당산나무: 걸 천 목록 (F18) */
+  setWishes(cloths: WishCloth[], flashFirst = false) {
+    this.street?.setWishes(cloths, flashFirst);
+  }
+
+  /** 당산나무: 돌탑에 돌 하나 (F18) */
+  dropStone() {
+    this.street?.dropStone();
+  }
+
   /** 점집 안으로: 내부 장면을 (처음 한 번) 만들고 점술가 앞 시점으로 바꾼다. 실패하면 reject */
   async enterShop(): Promise<void> {
     if (this.disposed) throw new Error("stage disposed");
@@ -160,7 +179,7 @@ export class Stage {
     try {
       const t0 = performance.now();
       if (!room) {
-        room = buildInterior(this.opts.shop, this.opts.look, this.partner);
+        room = buildInterior(this.shopId(), this.opts.look, this.partner);
         this.lastBuildMs = performance.now() - t0;
       }
       room.resize(this.width, this.height, this.renderer.getPixelRatio());

@@ -40,6 +40,7 @@ flowchart LR
 | [F09](F09-free-question.md) | 자유질문 | S4-2, S4-3 | M4 | ✅ |
 | [F16](F16-gunghap.md) | 같이 보기 (지도에서 초대, 점집마다 같이 보는 점) | S1·S3·S4 | M3 | ✅ |
 | [F17](F17-avatar-style.md) | 캐릭터 꾸미기 (종족·머리·옷·장식) | S2·내 캐릭터 | M1 | ✅ |
+| [F18](F18-wish-tree.md) | 당산나무 (소원 빌기·돌 올리기) | 지도·당산나무 | M3 | ✅ |
 | [F10](F10-history.md) | 결과 저장 / 다시 보기 | S5 | M2 | ✅ |
 | [F11](F11-share.md) | 결과 공유 카드 | S5 | M4 | ✅ |
 | [F12](F12-coins.md) | 복채 지급 / 사용 | 공통 | M6 | ⏸ MVP 제외 (D-057) |

@@ -15,10 +15,12 @@ export type Route =
   | { name: "inside"; shop: ShopId }
   | { name: "history"; id?: string }
   | { name: "daily" }
+  /** 당산나무 (F18) */
+  | { name: "tree" }
   /** 같이 보기 초대 받기 (F16): 링크 ?g=<code>로 들어오면 여기로 */
   | { name: "join"; code: string }
   /** 같이 보기 (F16, D-090): shop이 없으면 같이 보는 지도, 있으면 그 점집 골목 */
-  | { name: "pair"; code: string; shop?: ShopId }
+  | { name: "pair"; code: string; shop?: ShopId | "tree" }
   /** 같이 보기: 점집 안 */
   | { name: "pair-in"; code: string; shop: ShopId };
 
@@ -36,6 +38,8 @@ export function parse(hash: string): Route {
       return { name: "style" };
     case "daily":
       return { name: "daily" };
+    case "tree":
+      return { name: "tree" };
     case "history":
       return arg ? { name: "history", id: decodeURIComponent(arg) } : { name: "history" };
     case "join":
@@ -45,6 +49,7 @@ export function parse(hash: string): Route {
       if (name === "join") return { name, code: arg };
       // 예전 주소 #/pair-in/<code> (D-089)는 사주집 안
       if (name === "pair-in") return { name, code: arg, shop: isShop(arg2) ? arg2 : "saju" };
+      if (arg2 === "tree") return { name, code: arg, shop: "tree" };
       return isShop(arg2) ? { name, code: arg, shop: arg2 } : { name, code: arg };
     }
     case "street":

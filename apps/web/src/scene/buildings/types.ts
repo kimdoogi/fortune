@@ -5,6 +5,7 @@
 import type * as THREE from "three";
 import type { Doorway } from "../door-anim";
 import type { GlowSpot } from "../glow";
+import type { WishTree } from "./tree";
 
 /** 현판 색 (바탕 그라데이션, 테두리, 글씨) */
 export interface SignStyle {
@@ -36,6 +37,8 @@ export interface Building {
   blockers: [number, number, number][];
   /** 풀을 심지 않을 사각형 (마당 등) */
   clearRects: [number, number, number, number][];
+  /** 당산나무만: 오색 천·돌탑 손잡이 (F18) */
+  wishTree?: WishTree;
   /** 바닥에 구울 빛 웅덩이 (문 앞 불빛 등) */
   pools: { x: number; z: number; r: number; k: number; color: string }[];
 }

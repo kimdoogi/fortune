@@ -14,6 +14,7 @@ import { createReading } from "./readings/create";
 import { createFollowup } from "./readings/followups";
 import { deleteReading, getReading, listReadings } from "./readings/history";
 import { deleteSession, postSession, requireUser } from "./session";
+import { addStone, createWish, getWishes, setOutcome } from "./wishes";
 import { forwardVillage, wsToken } from "./ws";
 
 export type { Env };
@@ -75,6 +76,14 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
     if (pr[2] === "result" && method === "GET")
       return getPairResult(code, url.searchParams.get("product"), env, user);
   }
+  // 당산나무 소원 (F18)
+  if (path === "/api/wishes") {
+    if (method === "GET") return getWishes(env, user);
+    if (method === "POST") return createWish(req, env, user);
+  }
+  if (path === "/api/wishes/stone" && method === "POST") return addStone(env, user);
+  const wo = /^\/api\/wishes\/([A-Za-z0-9-]{1,64})\/outcome$/.exec(path);
+  if (wo?.[1] && method === "POST") return setOutcome(wo[1], req, env, user);
   const fu = /^\/api\/readings\/([A-Za-z0-9-]{1,64})\/followups$/.exec(path);
   if (fu?.[1] && method === "POST") return createFollowup(fu[1], req, env, ctx, user);
   const one = /^\/api\/readings\/([A-Za-z0-9-]{1,64})$/.exec(path);

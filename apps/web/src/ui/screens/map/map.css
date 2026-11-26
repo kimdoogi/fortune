@@ -752,3 +752,30 @@
   background: #eef6e6;
   color: #3f6b2c;
 }
+
+/* 당산나무 오색 천 (F18): 바람에 살랑 */
+.map-cloth {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: map-cloth 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes map-cloth {
+  from {
+    transform: rotate(-9deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-cloth {
+    animation: none;
+  }
+}
+
+.tree-icon {
+  background: linear-gradient(180deg, #d8f0c4, #8cc07a);
+  color: #2f5a33;
+}

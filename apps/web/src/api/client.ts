@@ -24,6 +24,9 @@ import type {
   SessionResponse,
   ShopId,
   StyleInput,
+  WishBoard,
+  WishRequest,
+  WishResponse,
 } from "@fortune/shared-types";
 
 export class ApiFailure extends Error {
@@ -85,6 +88,12 @@ export const api = {
   get: (id: string) => call<ReadingResult>("GET", `/api/readings/${encodeURIComponent(id)}`),
   remove: (id: string) => call<void>("DELETE", `/api/readings/${encodeURIComponent(id)}`),
   daily: () => call<DailyResponse>("GET", "/api/daily"),
+  // ── 당산나무 (F18) ──
+  wishes: () => call<WishBoard>("GET", "/api/wishes"),
+  wish: (req: WishRequest) => call<WishResponse>("POST", "/api/wishes", req),
+  wishStone: () => call<{ added: boolean; stonesToday: number }>("POST", "/api/wishes/stone", {}),
+  wishOutcome: (id: string, outcome: "yes" | "no") =>
+    call<WishBoard>("POST", `/api/wishes/${encodeURIComponent(id)}/outcome`, { outcome }),
   /** F15: 풀이에 이어 묻기 (한 풀이에 3번) */
   followup: (id: string, req: FollowupRequest) =>
     call<FollowupResponse>("POST", `/api/readings/${encodeURIComponent(id)}/followups`, req),

@@ -152,10 +152,17 @@ export async function deleteUserData(env: Env, userId: string): Promise<void> {
     "checks",
     "request_log",
     "daily_usage",
+    "pair_dreams",
+    "wishes",
+    "wish_stones",
     "profiles",
   ];
   await env.DB.batch([
     ...tables.map((t) => env.DB.prepare(`DELETE FROM ${t} WHERE user_id = ?`).bind(userId)),
+    // 남이 나와 같이 묶은 소원에서는 내 흔적만 지운다 (F18)
+    env.DB.prepare(
+      "UPDATE wishes SET with_user_id = NULL, with_nickname = NULL WHERE with_user_id = ?",
+    ).bind(userId),
     env.DB.prepare("DELETE FROM users WHERE id = ?").bind(userId),
   ]);
 }

@@ -168,6 +168,63 @@ export function SajuFlow(props: FlowProps): JSX.Element {
   );
 }
 
+// ── 족집게집 나는 어떤 사람 (F19) ─────────────────────────
+
+/** 묻는 것 없이 사주만으로 (사용자 선택, D-100). 확인 → 돋보기로 들여다보는 연출 */
+export function NatureFlow(props: FlowProps): JSX.Element {
+  const c = CHARACTERS.jokjipge;
+  const [step, setStep] = useState<"confirm" | "loading">(props.resume ? "loading" : "confirm");
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 단계가 바뀔 때만 실행한다 (콜백은 렌더마다 새로 만들어짐)
+  useEffect(() => {
+    if (step === "confirm") {
+      props.say("자네가 어떤 사람인지 내가 콕콕 집어 보겠네. 맞으면 맞다고 해 주게.");
+      return;
+    }
+    props.npc("present");
+    props.say(c.loading, true);
+    let alive = true;
+    atLeast(
+      api.read({ shop: "jokjipge", product: "nature", requestId: newRequestId() }),
+      2400,
+    ).then(
+      (r) => alive && props.onResult(r),
+      (e) => alive && props.onFail(e, {}),
+    );
+    return () => {
+      alive = false;
+    };
+  }, [step]);
+
+  if (step === "confirm") {
+    const p = props.profile;
+    return (
+      <div class="sh-block">
+        <div class="sh-profile">
+          <span class="sh-profile-name">{p.nickname}</span>
+          <span>{birthLine(p)}</span>
+          <span class="sh-profile-sub">
+            {EL_WORD[p.dayMaster.element] ?? p.dayMaster.element} 기운 · {p.zodiac}띠
+          </span>
+        </div>
+        <Primary onClick={() => setStep("loading")}>돋보기로 들여다보기</Primary>
+      </div>
+    );
+  }
+  return (
+    <div class="sh-block">
+      <div class="sh-lens" aria-hidden="true">
+        <span class="sh-lens-glass">
+          <i />
+          <i />
+          <i />
+        </span>
+        <span class="sh-lens-handle" />
+      </div>
+    </div>
+  );
+}
+
 // ── 타로 (F06) ───────────────────────────────────────────
 
 const TAROT_CATS: TarotCategory[] = ["연애", "재물", "직장", "오늘"];

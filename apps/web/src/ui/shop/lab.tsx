@@ -30,7 +30,7 @@ import { LAB_DISCLAIMER, LAB_OUTPUT, LAB_PROFILE, labVisual } from "./labData";
 import "../styles.css";
 
 const q = new URLSearchParams(location.search);
-const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
+const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream", "jokjipge"];
 const shop = SHOPS.find((s) => s === q.get("shop")) ?? "saju";
 const view = q.get("view") ?? "shop";
 const err = q.get("err");

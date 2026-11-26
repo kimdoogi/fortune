@@ -45,6 +45,14 @@ export const CHARACTERS: Record<ShopId, Character> = {
     loading: "차 우러나는 동안 할매가 꿈을 곰곰이 짚어 볼게.",
     again: "또 꿈 꾸면 할매한테 와서 얘기해.",
   },
+  // 족집게집 (F19, D-100): 하게체
+  jokjipge: {
+    name: "족집게 도사",
+    shopName: "족집게집",
+    fallback: "허허, 돋보기에 김이 서려 잘 안 보이네. 조금 있다 다시 오게.",
+    loading: "가만있어 보게… 돋보기로 자네 기운을 하나씩 집어 보는 중이네.",
+    again: "더 궁금한 게 있거든 편히 말하게.",
+  },
 };
 
 /** 점 목록 항목 아래 한 줄 설명 */
@@ -60,4 +68,5 @@ export const PRODUCT_BLURB: Record<string, string> = {
   tarot_three: "과거 · 현재 · 미래를 잇는 이야기",
   obanggi: "다섯 색 깃발 중 하나를 뽑아요",
   dream: "간밤의 꿈을 할매에게 들려줘요",
+  nature: "타고난 기질로 콕 집어 맞히는 내 성격",
 };

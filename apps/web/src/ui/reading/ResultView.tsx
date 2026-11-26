@@ -6,12 +6,16 @@
  */
 import {
   type InterpretOutput,
+  type MarksResponse,
+  type NatureMark,
+  type NatureSection,
   PRODUCT_NAMES,
   type ProductId,
   type ReadingResult,
 } from "@fortune/shared-types";
 import type { ComponentChildren, JSX } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import { api } from "../../api/client";
 import { RiceTray } from "../shop/sinjeom";
 import { Followups } from "./Followups";
 import { colorSwatch, orderedSections } from "./format";
@@ -22,6 +26,7 @@ import {
   FlagArt,
   GradeSeal,
   GunghapBoardView,
+  NatureBoardView,
   SajuBoardView,
   TarotSpreadView,
 } from "./visuals";
@@ -57,12 +62,49 @@ const Chevron = () => (
   </svg>
 );
 
+type Marks = MarksResponse["marks"];
+
+/** 족집게집 섹션 아래 맞아요/아니에요 (F19). 표시만 남긴다 */
+function MarkButtons(props: {
+  value: NatureMark | undefined;
+  onMark: (m: NatureMark | null) => void;
+}) {
+  const pick = (m: NatureMark) => props.onMark(props.value === m ? null : m);
+  return (
+    <fieldset class="rd-mark" aria-label="맞는지 표시">
+      <button
+        type="button"
+        class={
+          props.value === "yes" ? "rd-mark-btn rd-mark-yes rd-mark-on" : "rd-mark-btn rd-mark-yes"
+        }
+        aria-pressed={props.value === "yes"}
+        onClick={() => pick("yes")}
+      >
+        맞아요
+      </button>
+      <button
+        type="button"
+        class={
+          props.value === "no" ? "rd-mark-btn rd-mark-no rd-mark-on" : "rd-mark-btn rd-mark-no"
+        }
+        aria-pressed={props.value === "no"}
+        onClick={() => pick("no")}
+      >
+        아니에요
+      </button>
+    </fieldset>
+  );
+}
+
 export function OutputView(props: {
   output: InterpretOutput;
   product: ProductId;
   animate: boolean;
   /** 글자가 다 나오면 한 번 부른다 */
   onDone?: () => void;
+  /** 족집게집 맞아요/아니에요 (F19). 있으면 섹션마다 버튼을 그린다 */
+  marks?: Marks;
+  onMark?: (section: NatureSection, mark: NatureMark | null) => void;
 }): JSX.Element {
   const { output, product } = props;
   const sections = useMemo(() => orderedSections(product, output.sections), [product, output]);
@@ -168,6 +210,12 @@ export function OutputView(props: {
                 <Typed chars={tl.chars[i] ?? []} n={count(i)} active={active(i)} />
               </p>
             )}
+            {!isClosed && props.marks && props.onMark && started(i + 1) && (
+              <MarkButtons
+                value={props.marks[s.key as NatureSection]}
+                onMark={(m) => props.onMark?.(s.key as NatureSection, m)}
+              />
+            )}
           </section>
         );
       })}
@@ -272,6 +320,8 @@ function VisualHeader(props: { result: ReadingResult }) {
           </div>
         </div>
       );
+    case "jokjipge":
+      return <NatureBoardView board={v.nature} />;
     case "dream":
       // 두 사람 꿈풀이 (D-090): 두 꿈을 나란히
       if ("pair" in v)
@@ -305,6 +355,25 @@ export function ResultView(props: {
   const { result } = props;
   const [footer, setFooter] = useState(!props.animate);
   const [crisis, setCrisis] = useState(false);
+  const [marks, setMarks] = useState<Marks | undefined>(result.marks);
+  // 누르는 즉시 표시하고, 저장이 실패하면 되돌린다 (F19)
+  const onMark = (section: NatureSection, mark: NatureMark | null) => {
+    const before = marks ?? {};
+    const next = { ...before };
+    if (mark) next[section] = mark;
+    else delete next[section];
+    setMarks(next);
+    result.marks = next;
+    api.mark(result.id, { section, mark }).then(
+      (r) => {
+        result.marks = r.marks;
+      },
+      () => {
+        setMarks(before);
+        result.marks = before;
+      },
+    );
+  };
   if (crisis) return <CrisisScreen onClose={() => setCrisis(false)} />;
   const v = result.visual;
   const cat = (v.shop === "tarot" || v.shop === "dolyeong") && v.category ? ` · ${v.category}` : "";
@@ -322,6 +391,7 @@ export function ResultView(props: {
         product={result.product}
         animate={props.animate}
         onDone={() => setFooter(true)}
+        {...(marks ? { marks, onMark } : {})}
       />
       {footer && result.followups !== undefined && (
         <Followups

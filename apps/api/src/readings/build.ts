@@ -14,6 +14,7 @@ import type {
   ShopId,
 } from "@fortune/shared-types";
 import { buildDream } from "../facts/dream";
+import { buildNature } from "../facts/nature";
 import { buildObanggi, buildSinjeom } from "../facts/obanggi";
 import { buildSajuFull } from "../facts/saju";
 import { buildTarot } from "../facts/tarot";
@@ -22,6 +23,7 @@ import {
   drawTarot,
   dreamSeedKey,
   flagForGrade,
+  natureSeedKey,
   obanggiSeedKey,
   pickFlag,
   rngFor,
@@ -70,6 +72,8 @@ export function vocativeFor(shop: ShopId, nickname: string): string {
       return fillTemplate("{닉네임}아", nickname);
     case "dream":
       return "아가";
+    case "jokjipge":
+      return "자네";
   }
 }
 
@@ -195,6 +199,22 @@ export async function planReading(req: ReadingRequest, ctx: PlanContext): Promis
           };
           if (req.category === "건강") input.caution = true; // F07
           return { input, visual: { shop: "dolyeong", category: req.category, flag: parts.flag } };
+        },
+      };
+    }
+    case "jokjipge": {
+      // 나는 어떤 사람 (F19): 원국만, 연도 없는 저장 키
+      return {
+        shop: "jokjipge",
+        product: "nature",
+        seedKey: natureSeedKey(ctx.profile.profileVersion),
+        build: async () => {
+          const natal = natalOf(ctx.profile);
+          const parts = buildNature(natal, analyzePillars(natal.pillars));
+          return {
+            input: { ...base(ctx, "jokjipge", "nature", parts.facts), chart: parts.chart },
+            visual: { shop: "jokjipge", nature: parts.board },
+          };
         },
       };
     }

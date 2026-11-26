@@ -32,6 +32,8 @@ export const SECTION_TARGETS: Record<ProductId, Record<string, number>> = {
   obanggi: { flag: 250, message: 380, advice: 220 },
   sinjeom: { gongsu: 170 },
   dream: { symbols: 300, meaning: 350, advice: 200 },
+  // 족집게집 나는 어떤 사람 (F19). 이 순서로 보인다
+  nature: { surface: 160, inner: 170, people: 160, atWork: 160, inLove: 160, stress: 160 },
 };
 
 export const PRODUCT_SHOP: Record<ProductId, ShopId> = {
@@ -46,6 +48,7 @@ export const PRODUCT_SHOP: Record<ProductId, ShopId> = {
   obanggi: "dolyeong",
   sinjeom: "dolyeong",
   dream: "dream",
+  nature: "jokjipge",
 };
 
 /** 호출 설정 (04 §2). effort는 평가(§12) 뒤 확정 */
@@ -68,6 +71,7 @@ export const FALLBACKS: Record<ShopId, string> = {
   tarot: "어머, 카드가 오늘은 수줍어하네요. 조금 있다가 다시 펼쳐 볼까요?",
   dolyeong: "으앙, 방울 소리가 안 들려! 이따 다시 와!",
   dream: "아이고, 할매가 깜빡 졸았구먼. 이따 다시 얘기해 줘.",
+  jokjipge: "허허, 돋보기에 김이 서려 잘 안 보이네. 조금 있다 다시 오게.",
 };
 
 /** 위기 안내 (04a, LLM을 거치지 않는다) */
@@ -339,6 +343,7 @@ export const FOLLOWUP_BLOCKED: Record<ShopId, string> = {
   tarot: "음… 그 이야기는 카드에게 묻기 어려워요. 풀이에 대해 다른 걸 물어봐 줄래요?",
   dolyeong: "그건 아기도령이 말 못 해! 다른 거 물어봐!",
   dream: "아이고, 그 얘기는 할매가 못 들어 주겄어. 꿈 얘기로 다시 물어봐.",
+  jokjipge: "그건 이 돋보기로 볼 일이 아니네. 자네 얘기로 다시 물어보게.",
 };
 
 export type FollowupRisk = (typeof CLASSIFY_RISKS)[number];

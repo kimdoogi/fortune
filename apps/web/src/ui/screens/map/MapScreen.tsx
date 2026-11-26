@@ -3,6 +3,7 @@
  * 점집을 누르면 아래에서 정보 카드가 올라온다: 점술가 얼굴·이름·한 줄 소개·볼 수 있는 점 → "가기".
  * 늘 보이는 버튼: 내 캐릭터, 오늘의 운세(F13), 같이 보기(F16), 점 기록(F10). 가격·잔액은 어디에도 없다 (D-057).
  * 같이 보는 지도 (F16, D-090): 방장이 점집을 고르면 둘 다 그 골목으로 간다. 손님은 기다린다.
+ * 족집게집(F19)은 혼자 들어가는 곳이라 같이 보는 지도에서는 흐리게 두고, 누르면 안내만 띄운다.
  */
 import { PAIR_PRODUCT, PRODUCT_NAMES, SHOP_PRODUCTS, type ShopId } from "@fortune/shared-types";
 import { useEffect, useState } from "preact/hooks";
@@ -41,6 +42,7 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
   const [closing, setClosing] = useState(false);
   const [notice, setNotice] = useState<"" | "nogl" | "loadfail">("");
   const [loading, setLoading] = useState(false);
+  const [soloNote, setSoloNote] = useState(false);
 
   useEffect(() => {
     if (!prefetched && hasWebGL2()) {
@@ -65,6 +67,24 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
     }, 220);
   };
 
+  useEffect(() => {
+    if (!soloNote) return;
+    const id = setTimeout(() => setSoloNote(false), 2600);
+    return () => clearTimeout(id);
+  }, [soloNote]);
+
+  /** 지도에서 한 곳을 눌렀을 때. 같이 보기 중 족집게집은 고를 수 없다 (F19) */
+  const pick = (s: MapSpot) => {
+    if (code && s === "jokjipge") {
+      if (sel) close();
+      setSoloNote(true);
+      return;
+    }
+    setSoloNote(false);
+    if (s === sel) close();
+    else setSel(s);
+  };
+
   async function go(shop: MapSpot) {
     if (!hasWebGL2()) return setNotice("nogl");
     setLoading(true);
@@ -72,9 +92,10 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
     try {
       // 3D 코드가 다 받아졌는지 확인하고 간다 (실패하면 다시 시도 버튼, F01 예외)
       await Promise.all([loadStreet(), loadStage()]);
-      // 같이 보기: 방장이 고르면 방이 둘 다 그 골목으로 보낸다 (pairSession)
-      if (code) travel(shop);
-      else navigate(shop === "tree" ? { name: "tree" } : { name: "street", shop });
+      // 같이 보기: 방장이 고르면 방이 둘 다 그 골목으로 보낸다 (pairSession). 족집게집은 혼자만
+      if (code) {
+        if (shop !== "jokjipge") travel(shop);
+      } else navigate(shop === "tree" ? { name: "tree" } : { name: "street", shop });
     } catch {
       setNotice("loadfail");
     } finally {
@@ -91,7 +112,7 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
 
   return (
     <div class="screen map">
-      <MapArt selected={sel} onSelect={(s) => (s === sel ? close() : setSel(s))} />
+      <MapArt selected={sel} onSelect={pick} locked={code ? ["jokjipge"] : undefined} />
 
       <div class="map-top">
         <Plaque>{code ? "같이 보기" : "점집 거리"}</Plaque>
@@ -162,6 +183,8 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
         </nav>
       )}
 
+      {soloNote && <output class="map-toast">족집게집은 혼자 들어가는 곳이에요</output>}
+
       {inviting && !sel && (
         <InviteSheet nickname={profile.value?.nickname ?? ""} onClose={() => setInviting(false)} />
       )}
@@ -213,13 +236,15 @@ export function MapScreen(props: { pair?: { code: string } } = {}) {
               <>
                 <div class="sheet-label">{code ? "둘이 같이 보는 점" : "볼 수 있는 점"}</div>
                 <ul class="sheet-products">
-                  {(code ? [PAIR_PRODUCT[sel]] : SHOP_PRODUCTS[sel]).map((p) => (
-                    <li key={p}>
-                      <span class="dia" aria-hidden="true" />
-                      {PRODUCT_NAMES[p]}
-                      {code && <span class="sheet-blurb"> · {PRODUCT_BLURB[p]}</span>}
-                    </li>
-                  ))}
+                  {(code && sel !== "jokjipge" ? [PAIR_PRODUCT[sel]] : SHOP_PRODUCTS[sel]).map(
+                    (p) => (
+                      <li key={p}>
+                        <span class="dia" aria-hidden="true" />
+                        {PRODUCT_NAMES[p]}
+                        {code && <span class="sheet-blurb"> · {PRODUCT_BLURB[p]}</span>}
+                      </li>
+                    ),
+                  )}
                 </ul>
               </>
             )}

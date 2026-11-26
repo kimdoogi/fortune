@@ -9,6 +9,7 @@ import {
   type MenuResponse,
   PAIR_PRODUCT,
   PRODUCT_NAMES,
+  type PairShopId,
   type ProductId,
   type ProfileView,
   type ReadingResult,
@@ -28,6 +29,7 @@ import {
   DolyeongFlow,
   DreamFlow,
   type FlowProps,
+  NatureFlow,
   type Resume,
   SajuFlow,
   TarotFlow,
@@ -38,24 +40,25 @@ import { SinjeomFlow } from "./sinjeom";
 import "./shop.css";
 
 /** 같이 보기: 풀이를 다 본 뒤 다음 곳 안내 (점집 말투, 04a) */
-const PAIR_NEXT: Record<ShopId, { host: (p: string) => string; guest: (p: string) => string }> = {
-  saju: {
-    host: (p) => `다른 점집도 ${p} 님과 같이 가 보시오. 지도에서 고르면 둘이 함께 가오.`,
-    guest: (p) => `${p} 님이 다음 점집을 고르면 같이 가게 되오. 잠시 기다리시오.`,
-  },
-  tarot: {
-    host: (p) => `다른 점집도 ${p} 님과 같이 들러 보세요. 지도에서 고르시면 두 분이 함께 가요.`,
-    guest: (p) => `${p} 님이 다음 점집을 고르시면 같이 가요. 조금만 기다려 주세요.`,
-  },
-  dolyeong: {
-    host: (p) => `다른 데도 ${p}${josaRang(p)} 같이 가 봐! 지도에서 고르면 같이 가!`,
-    guest: (p) => `${p}${josaGa(p)} 다음 데 고르면 같이 가! 조금만 기다려!`,
-  },
-  dream: {
-    host: (p) => `다른 집도 ${p}${josaRang(p)} 같이 가 봐. 지도에서 고르면 같이 가.`,
-    guest: (p) => `${p}${josaGa(p)} 다음 집 고르면 같이 가. 조금만 기다려.`,
-  },
-};
+const PAIR_NEXT: Record<PairShopId, { host: (p: string) => string; guest: (p: string) => string }> =
+  {
+    saju: {
+      host: (p) => `다른 점집도 ${p} 님과 같이 가 보시오. 지도에서 고르면 둘이 함께 가오.`,
+      guest: (p) => `${p} 님이 다음 점집을 고르면 같이 가게 되오. 잠시 기다리시오.`,
+    },
+    tarot: {
+      host: (p) => `다른 점집도 ${p} 님과 같이 들러 보세요. 지도에서 고르시면 두 분이 함께 가요.`,
+      guest: (p) => `${p} 님이 다음 점집을 고르시면 같이 가요. 조금만 기다려 주세요.`,
+    },
+    dolyeong: {
+      host: (p) => `다른 데도 ${p}${josaRang(p)} 같이 가 봐! 지도에서 고르면 같이 가!`,
+      guest: (p) => `${p}${josaGa(p)} 다음 데 고르면 같이 가! 조금만 기다려!`,
+    },
+    dream: {
+      host: (p) => `다른 집도 ${p}${josaRang(p)} 같이 가 봐. 지도에서 고르면 같이 가.`,
+      guest: (p) => `${p}${josaGa(p)} 다음 집 고르면 같이 가. 조금만 기다려.`,
+    },
+  };
 
 export type NpcAction = "idle" | "greet" | "talk" | "present" | "celebrate";
 
@@ -111,7 +114,7 @@ export function ShopScreen(props: {
   const c = CHARACTERS[shop];
   const nick = profile.nickname;
   const [view, setView] = useState<View>(
-    props.pair ? { k: "flow", product: PAIR_PRODUCT[shop], n: 1 } : { k: "menu" },
+    props.pair ? { k: "flow", product: PAIR_PRODUCT[shop as PairShopId], n: 1 } : { k: "menu" },
   );
   const [line, setLine] = useState(() => {
     const xs = greetings[shop].enter;
@@ -159,8 +162,9 @@ export function ShopScreen(props: {
         const partner = props.pair.partnerName ?? "같이 온 분";
         setView({ k: "pairDone", result: view.result });
         props.npc("idle");
-        say(props.pair.host ? PAIR_NEXT[shop].host(partner) : PAIR_NEXT[shop].guest(partner));
-      } else start(PAIR_PRODUCT[shop]);
+        const next = PAIR_NEXT[shop as PairShopId];
+        say(props.pair.host ? next.host(partner) : next.guest(partner));
+      } else start(PAIR_PRODUCT[shop as PairShopId]);
       return;
     }
     setView({ k: "menu" });
@@ -239,6 +243,8 @@ export function ShopScreen(props: {
         return <SinjeomFlow key={key} {...fp} />;
       case "dream":
         return <DreamFlow key={key} {...fp} />;
+      case "nature":
+        return <NatureFlow key={key} {...fp} />;
       case "gunghap":
       case "tarot_pair":
       case "sinjeom_pair":

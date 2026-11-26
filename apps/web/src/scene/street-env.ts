@@ -1,6 +1,6 @@
 /**
  * 점집별 거리 분위기 설정 (08 §1 점집별 외관, D-075). 건물 모양은 buildings/에 있다.
- * 사주집은 D-065의 밤 한옥 골목 그대로, 나머지 셋은 하늘·안개·불빛·울타리·나무·길이 모두 다르다.
+ * 사주집은 D-065의 밤 한옥 골목 그대로, 나머지는 하늘·안개·불빛·울타리·나무·길이 모두 다르다.
  */
 import type { ShopId } from "@fortune/shared-types";
 import type { Point } from "./nav";
@@ -63,7 +63,7 @@ const SAJU_TREES: TreeSpot[] = [
   { x: 5.8, z: -12.4, pink: true },
 ];
 
-/** 거리 장면을 만들 수 있는 곳: 점집 넷 + 당산나무 (F18) */
+/** 거리 장면을 만들 수 있는 곳: 점집 다섯 + 당산나무 (F18) */
 export type PlaceId = ShopId | "tree";
 
 export const STREET_ENVS: Record<PlaceId, StreetEnv> = {
@@ -277,6 +277,63 @@ export const STREET_ENVS: Record<PlaceId, StreetEnv> = {
     },
     fireflies: { count: 90, colors: ["#fff3a8", "#b8f0ff", "#ffd0ec"], size: 0.3, flicker: 0.55 },
     mist: { color: "#f6eeff", opacity: 0.14, heights: [0.3], speed: 0.05, patchy: true },
+  },
+
+  // 족집게집 (F19, D-100): 장터 골목. 붉은 벽돌 담, 길을 지그재그로 가로지르는 백열 전구 줄,
+  // 비 갠 듯 젖은 시멘트 바닥과 물웅덩이, 남보라 밤하늘. 나무 대신 장터 가게 지붕이 담 너머로 보인다
+  jokjipge: {
+    name: "족집게집",
+    sky: {
+      top: "#10133a",
+      horizon: "#3a2c68",
+      band: "#7a4a7a",
+      bandStrength: 0.3,
+      stars: 150,
+      starBrightness: 0.8,
+      moon: { x: -11, y: 12, z: -62, radius: 1.8, color: "#fff0d0", crescent: 0.35 },
+    },
+    halo: { size: 12, color: "#b8a8f0" },
+    fog: { color: "#2a2452", near: 15, far: 40 },
+    light: {
+      sky: "#9c94dc",
+      ground: "#3a2a26",
+      hemi: 1.2,
+      moon: "#b8c0ff",
+      moonI: 0.55,
+      warm: "#ffb070",
+      warmI: 0.8,
+    },
+    ground: {
+      grass: ["#2c2a30", "#3e3a3c"],
+      path: "#4a4442",
+      pathHalf: 1.7,
+      yard: "#55493f",
+      yardHalf: 4.6,
+    },
+    path: "wet",
+    lamp: "bulbs",
+    lampSpots: [
+      { x: -2.5, z: 5.4 },
+      { x: 2.5, z: 3.0 },
+      { x: -2.5, z: 0.6 },
+      { x: 2.5, z: -1.8 },
+      { x: -2.5, z: -4.2 },
+    ],
+    border: "brick",
+    borderRoof: "#3c4250",
+    trees: "round",
+    treeSpots: [
+      { x: -6.8, z: -6.4 },
+      { x: 6.9, z: 4.8 },
+    ],
+    neighbors: "market",
+    hills: ["#262050", "#1d1940"],
+    hillHeight: 0.7,
+    grass: { tuft: "#4a5a3a", tufts: 220, flowers: ["#e8dcc0", "#f2c46a"], flowerCount: 30 },
+    // 전구 둘레를 맴도는 날벌레 불빛
+    fireflies: { count: 14, colors: ["#ffd08a", "#ffe6b8"], size: 0.22, flicker: 0.4 },
+    // 비 갠 뒤 낮게 깔린 물안개
+    mist: { color: "#7a6aa8", opacity: 0.14, heights: [0.12], speed: 0.06, patchy: true },
   },
 
   // 당산나무 (F18, D-099): 마을 어귀. 흙길, 돌 등롱, 덤불, 둥근 나무, 이웃 없음. 따뜻한 달빛

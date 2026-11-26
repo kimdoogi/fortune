@@ -60,7 +60,7 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
 ### 3-1. 공통
 ```json
 {
-  "shop": "saju | tarot | dolyeong | dream",
+  "shop": "saju | tarot | dolyeong | dream | jokjipge",
   "product": "상품 ID (§4)",
   "today": "2026-11-24",
   "user": { "nickname": "별빛", "gender": "female", "ageBand": "20대", "vocative": "별빛아" },
@@ -70,7 +70,7 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
 }
 ```
 - 이름 대신 **닉네임**을 보낸다. 생년월일·출생 시각 원본은 보내지 않는다 (계산된 간지만 보냄)
-- `vocative`(부르는 말)는 **점집마다 코드가 정한다** (D-088): 사주집 "그대", 타로집 "{닉네임} 님", 아기도령 "{닉네임}아/야"(받침에 맞게), 꿈해몽 "아가". 캐릭터는 이 말을 글자 그대로 쓴다. 예전에는 모든 점집에 아/야를 보내 타로에서 "지또야"처럼 반말 호칭이 섞였다
+- `vocative`(부르는 말)는 **점집마다 코드가 정한다** (D-088): 사주집 "그대", 타로집 "{닉네임} 님", 아기도령 "{닉네임}아/야"(받침에 맞게), 꿈해몽 "아가", 족집게집 "자네" (D-100). 캐릭터는 이 말을 글자 그대로 쓴다. 예전에는 모든 점집에 아/야를 보내 타로에서 "지또야"처럼 반말 호칭이 섞였다
 - `ageBand`와 `gender`는 풀이를 그 사람이 겪을 법한 고민에 엮는 데 쓴다 (04a 나이대·성별 맞춤, D-069). 오늘의 운세처럼 여러 사람이 같이 보는 결과는 `"전체"`를 보내 나이대·성별 이야기를 하지 않게 한다
 - `themes`는 코드가 넓은 생활 주제 풀(23개, 돈 주제는 뺌)에서 매번 무작위로 고른 두 개다 (D-096). 풀이는 그중 하나 이상을 이번 점의 뜻에 엮어, 나이대 관심사로만 흐르지 않게 한다. 오늘의 운세(여러 사람이 같이 보는 결과)에는 넣지 않는다
 - `facts`는 코드가 [해석 데이터 표](02-saju-rules.md#7-해석-데이터-테이블)·카드 의미표·오방기 의미표·꿈 사전에서 채운다. **LLM은 facts에 없는 의미를 지어내지 않는다**
@@ -129,6 +129,24 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
 ```
 `symbols`는 분류 호출(§6)이 고른 ID를 코드가 꿈 사전과 대조해 의미를 붙인 것이다.
 
+### 3-6. 족집게집 (`shop: "jokjipge"`, D-100)
+```json
+{
+  "chart": {
+    "pillars": { "year": "병자", "month": "경인", "day": "갑오", "hour": null },
+    "hourUnknown": true,
+    "dayMaster": { "stem": "갑", "element": "목", "yinYang": "양" },
+    "elements": { "counts": { "목": 3, "화": 2, "토": 0, "금": 0, "수": 1 }, "missing": ["토", "금"], "excess": ["목"] },
+    "tenGods": { "yearStem": "식신", "yearBranch": "정인", "monthStem": "편관", "monthBranch": "비견", "dayBranch": "상관", "hourStem": null, "hourBranch": null },
+    "strength": { "label": "신강", "ratio": 0.63 },
+    "groups": { "strong": "식상", "absent": ["재성"] }
+  }
+}
+```
+- 사주(§3-2)의 원국만 쓴다. 대운·세운·월운은 넣지 않는다 (기질 풀이라서)
+- `groups`는 코드가 원국 십신 자리를 다섯 무리로 센 결과 ([F19](features/F19-jokjipge.md#처리-규칙)). `strong`이 없으면 null
+- `facts`는 일간 성향 + 일간별 생활 장면 여섯 칸 + 많은/없는 기운 버릇 + 오행 과다·부족 + 신강·신약 + 원국 합충 (해석 표 `nature.json`, `saju.json`)
+
 ## 4. 상품과 결과 길이 (D-043, 보통)
 
 | 상품 ID | 점집 | 요금 | 섹션 (순서대로) | 전체 길이 | 잠금 (MVP) |
@@ -144,6 +162,7 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
 | `obanggi` (목록에서 뺌, D-073) | 아기도령 | 무료 | `flag`, `message`, `advice` | 800~1,000자 | 없음 |
 | `sinjeom` | 아기도령 | 무료 | `gongsu` (공수, 2~4줄) + 이어서 대화 5번 (§13) | 공수 150자, 대화 한 번 80자 | 없음 |
 | `dream` | 꿈해몽 | 무료 | `symbols`, `meaning`, `advice` | 800~1,000자 | 없음 |
+| `nature` | 족집게집 | 무료 | `surface`, `inner`, `people`, `atWork`, `inLove`, `stress` (나는 어떤 사람, D-100) | 1,000자 안팎 | 없음 |
 
 - 자유질문은 `tarot_three`, `obanggi`에 붙일 수 있다. 붙이면 `question`이 채워지고 섹션 내용이 질문에 맞춰진다. 길이는 같다
 - 섹션별 목표 글자 수는 [04a](04a-persona-prompts.md#상품별-지시)의 상품별 지시에 적는다

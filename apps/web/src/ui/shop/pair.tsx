@@ -7,6 +7,7 @@ import {
   type FlagGrade,
   GUNGHAP_RELATIONS,
   type GunghapRelation,
+  type PairShopId,
   type ReadingResult,
   type ServerMessage,
   type ShopId,
@@ -78,7 +79,7 @@ type ChoiceProduct = "gunghap" | "tarot_pair" | "sinjeom_pair";
 
 /** 점집별 말 (04a 말투) */
 const LINES: Record<
-  Exclude<ShopId, "dream">,
+  Exclude<PairShopId, "dream">,
   {
     greet: string;
     ask: (me: string, partner: string) => string;
@@ -107,7 +108,7 @@ const LINES: Record<
   },
 };
 
-const PRODUCT_SHOP: Record<ChoiceProduct, Exclude<ShopId, "dream">> = {
+const PRODUCT_SHOP: Record<ChoiceProduct, Exclude<PairShopId, "dream">> = {
   gunghap: "saju",
   tarot_pair: "tarot",
   sinjeom_pair: "dolyeong",

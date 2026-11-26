@@ -7,9 +7,11 @@ import type {
   FlagGrade,
   GunghapBoard,
   GunghapPerson,
+  NatureBoard,
   SajuBoard,
   TarotCardView,
 } from "@fortune/shared-types";
+import { NATURE_GROUP_NAMES } from "@fortune/shared-types";
 import type { JSX } from "preact";
 import { useId } from "preact/hooks";
 import { ELEMENTS, ELEMENT_COLOR, type GlyphInfo, pillarInfo } from "./format";
@@ -45,10 +47,35 @@ const STRENGTH_WORD: Record<SajuBoard["strength"], string> = {
   중화: "기운이 고른 편",
 };
 
+/** 오행 막대 (사주판·기질 판) */
+function ElementBars(props: { elements: SajuBoard["elements"] }) {
+  const { elements } = props;
+  const total = ELEMENTS.reduce((s, e) => s + (elements[e] ?? 0), 0) || 1;
+  const max = Math.max(1, ...ELEMENTS.map((e) => elements[e] ?? 0));
+  return (
+    <div class="rd-elements" role="img" aria-label="오행 분포">
+      {ELEMENTS.map((e, i) => {
+        const n = elements[e] ?? 0;
+        return (
+          <div class="rd-el" key={e} style={{ "--el": ELEMENT_COLOR[e], "--i": i }}>
+            <span class="rd-el-n">{n}</span>
+            <div class="rd-el-track">
+              <div
+                class="rd-el-bar"
+                style={{ height: `${Math.max(n === 0 ? 0 : 12, (n / max) * 100)}%` }}
+                title={`${Math.round((n / total) * 100)}%`}
+              />
+            </div>
+            <span class="rd-el-name">{EL_WORD[e]}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function SajuBoardView(props: { board: SajuBoard }): JSX.Element {
   const { board } = props;
-  const total = ELEMENTS.reduce((s, e) => s + (board.elements[e] ?? 0), 0) || 1;
-  const max = Math.max(1, ...ELEMENTS.map((e) => board.elements[e] ?? 0));
   const dm = board.dayMaster;
   return (
     <div class="rd-board">
@@ -88,26 +115,42 @@ export function SajuBoardView(props: { board: SajuBoard }): JSX.Element {
         </span>
       </div>
 
-      <div class="rd-elements" role="img" aria-label="오행 분포">
-        {ELEMENTS.map((e, i) => {
-          const n = board.elements[e] ?? 0;
-          return (
-            <div class="rd-el" key={e} style={{ "--el": ELEMENT_COLOR[e], "--i": i }}>
-              <span class="rd-el-n">{n}</span>
-              <div class="rd-el-track">
-                <div
-                  class="rd-el-bar"
-                  style={{ height: `${Math.max(n === 0 ? 0 : 12, (n / max) * 100)}%` }}
-                  title={`${Math.round((n / total) * 100)}%`}
-                />
-              </div>
-              <span class="rd-el-name">{EL_WORD[e]}</span>
-            </div>
-          );
-        })}
-      </div>
+      <ElementBars elements={board.elements} />
 
       {board.months && board.months.length > 0 && <MonthStrip months={board.months} />}
+    </div>
+  );
+}
+
+// ── 기질 판 (F19 족집게집) ─────────────────────────────
+/** 나의 기운 + 많은 기운·없는 기운 + 오행 막대 */
+export function NatureBoardView(props: { board: NatureBoard }): JSX.Element {
+  const { board } = props;
+  const dm = board.dayMaster;
+  const color = ELEMENT_COLOR[dm.element as keyof typeof ELEMENT_COLOR] ?? "#8a6a4a";
+  return (
+    <div class="rd-board rd-nature">
+      <div class="rd-nature-me">
+        <span class="rd-nature-lens" style={{ "--el": color }}>
+          <b>{dm.stem}</b>
+        </span>
+        <span class="rd-nature-me-cap">
+          나의 기운 <b>{EL_WORD[dm.element as keyof typeof EL_WORD] ?? dm.element}</b>
+          <small>{dm.yinYang === "양" ? "드러나는 쪽" : "스며드는 쪽"}</small>
+        </span>
+      </div>
+      <div class="rd-board-meta">
+        {board.strong && (
+          <span class="rd-chip rd-chip-ink">많은 기운 {NATURE_GROUP_NAMES[board.strong]}</span>
+        )}
+        {board.absent.map((g) => (
+          <span class="rd-chip" key={g}>
+            없는 기운 {NATURE_GROUP_NAMES[g]}
+          </span>
+        ))}
+      </div>
+      <ElementBars elements={board.elements} />
+      {board.hourUnknown && <p class="rd-board-note">시간을 모르면 세 기둥으로 보네</p>}
     </div>
   );
 }

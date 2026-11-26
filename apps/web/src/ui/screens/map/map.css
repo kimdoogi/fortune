@@ -31,6 +31,16 @@
   filter: brightness(0.62) saturate(0.8);
 }
 
+/* 같이 보기 중 고를 수 없는 곳 (족집게집, F19) */
+.map-art .shop.locked .shop-art {
+  filter: brightness(0.45) saturate(0.35);
+  opacity: 0.75;
+}
+
+.map-art .shop.locked:active .shop-art {
+  filter: brightness(0.5) saturate(0.35);
+}
+
 .map-art .shop:focus-visible .map-plaque rect:first-child {
   stroke: #fff1c8;
   stroke-width: 2.5;
@@ -778,4 +788,40 @@
 .tree-icon {
   background: linear-gradient(180deg, #d8f0c4, #8cc07a);
   color: #2f5a33;
+}
+
+/* 짧은 안내 (같이 보기 중 족집게집을 눌렀을 때) */
+.map-toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--safe-bottom) + 104px);
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(20, 16, 44, 0.88);
+  border: 1px solid rgba(242, 211, 138, 0.45);
+  color: #f6e6c0;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  animation: map-toast 2.6s ease both;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes map-toast {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  10%,
+  85% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 0);
+  }
 }

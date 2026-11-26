@@ -28,6 +28,7 @@ export const SECTION_ORDER: Record<ProductId, string[]> = {
   obanggi: ["flag", "message", "advice"],
   sinjeom: ["gongsu"],
   dream: ["symbols", "meaning", "advice"],
+  nature: ["surface", "inner", "people", "atWork", "inLove", "stress"],
 };
 
 export interface SectionView {

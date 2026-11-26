@@ -11,10 +11,12 @@ import type { DolyeongCategory, TarotCategory } from "@fortune/shared-types";
 import { describe, expect, it } from "vitest";
 import { DREAM, DREAM_SYMBOL_IDS, OBANGGI, TAROT } from "../src/facts/data";
 import { buildDream, knownSymbolIds } from "../src/facts/dream";
+import { buildNature, natureGroups } from "../src/facts/nature";
 import { buildObanggi } from "../src/facts/obanggi";
 import { buildDaily, buildSajuFull } from "../src/facts/saju";
 import { buildTarot } from "../src/facts/tarot";
 import { decodeCursor, encodeCursor } from "../src/readings/history";
+import { applyMark } from "../src/readings/marks";
 import { FLAG_COLORS } from "../src/seed";
 
 function expectClean(facts: string[]) {
@@ -198,5 +200,57 @@ describe("궁합 facts (F16, D-089)", () => {
   it("초대 코드는 헷갈리는 글자 없는 10자", async () => {
     const { newInviteCode } = await import("../src/gunghap/invites");
     for (let i = 0; i < 50; i++) expect(newInviteCode()).toMatch(/^[2-9a-hjkmnp-z]{10}$/);
+  });
+});
+
+describe("족집게집 facts (F19)", () => {
+  const cases = [
+    { calendar: "solar", date: "1996-02-14", time: "07:30" },
+    { calendar: "solar", date: "1984-02-04", time: null },
+    { calendar: "lunar", date: "1970-08-15", time: "23:40" },
+  ] as const;
+
+  it.each(cases)("$date $time: 장면 여섯 칸과 무리", (c) => {
+    const natal = computePillars({ calendar: c.calendar, date: c.date, time: c.time });
+    const a = analyzePillars(natal.pillars);
+    const parts = buildNature(natal, a);
+    expectClean(parts.facts);
+    expect(parts.facts.filter((f) => f.startsWith("생활 장면 — "))).toHaveLength(6);
+    expect(parts.board.dayMaster).toEqual(a.dayMaster);
+    expect(parts.board.hourUnknown).toBe(c.time === null);
+    // 대운·세운은 넣지 않는다
+    expect(parts.facts.join(" ")).not.toMatch(/대운|세운은|월운/);
+  });
+
+  it("십신 무리: 많은 무리는 2자리 이상, 같으면 월지 먼저, 없는 무리 전부", () => {
+    const base = analyzePillars(
+      computePillars({ calendar: "solar", date: "1996-02-14", time: null }).pillars,
+    );
+    const tenGods = {
+      yearStem: "식신",
+      yearBranch: "편재",
+      monthStem: "상관",
+      monthBranch: "정재",
+      dayBranch: "비견",
+      hourStem: null,
+      hourBranch: null,
+    } as const;
+    const g = natureGroups({ ...base, tenGods });
+    expect(g.counts).toEqual({ 비겁: 1, 식상: 2, 재성: 2, 관성: 0, 인성: 0 });
+    expect(g.strong).toBe("재성");
+    expect(g.absent).toEqual(["관성", "인성"]);
+    const flat = natureGroups({
+      ...base,
+      tenGods: { ...tenGods, monthStem: "편관", monthBranch: "정인" },
+    });
+    expect(flat.strong).toBeNull();
+  });
+
+  it("맞아요/아니에요 표시는 바꾸고 지울 수 있다", () => {
+    let m = applyMark({}, { section: "surface", mark: "yes" });
+    m = applyMark(m, { section: "inner", mark: "no" });
+    m = applyMark(m, { section: "surface", mark: "no" });
+    expect(m).toEqual({ surface: "no", inner: "no" });
+    expect(applyMark(m, { section: "inner", mark: null })).toEqual({ surface: "no" });
   });
 });

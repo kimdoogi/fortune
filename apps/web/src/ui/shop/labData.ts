@@ -24,6 +24,38 @@ export const LAB_PROFILE: ProfileView = {
   flags: { ambiguousTime: false, solarTermDay: false },
 };
 
+/** 족집게집 나는 어떤 사람 예시 (F19). lab·mock이 같이 쓴다. 실제 문장은 배포 서버에서 본다 */
+export const NATURE_SAMPLE: InterpretOutput = {
+  greeting: "어서 오게. 자네 얼굴부터 돋보기로 보세.",
+  summary: "겉은 태평, 속은 다 재고 있는 사람",
+  sections: {
+    surface:
+      "처음 보는 자리에선 자네가 제일 느긋해 보이네. 웃으며 고개만 끄덕이니 다들 순한 사람인 줄 알지. 실은 그 자리에서 누가 무슨 말을 했는지 다 기억하고 있구먼. 첫인상 덕을 보지만 속을 안 보여 줘서 친해지는 데 오래 걸리네.",
+    inner:
+      "혼자 있을 땐 오늘 한 말을 몇 번이고 되감아 보는 사람이네. 괜히 그 말을 했나 싶어 잠을 설친 날이 꽤 되지? 생각이 깊은 건 자네 힘이지만, 지나간 장면에 붙잡혀 다음 할 일을 미루게 되네. 자기 전에 오늘 잘한 일 하나만 적어 두게.",
+    people:
+      "모임에선 먼저 나서지 않아도 결국 자네가 일정을 짜고 있구먼. 챙겨 주는 맛에 사는 사람이라 고맙다는 말 한마디에 다 풀리지. 대신 그 말이 없으면 속으로 장부를 적어 두네. 서운한 건 그날 가볍게 말하게.",
+    atWork:
+      "일을 맡으면 끝을 봐야 잠이 오는 사람이네. 남이 대충 한 걸 보면 몰래 다시 손보고 있지? 꼼꼼함은 믿음을 사지만 혼자 다 떠안다 마감 전날 지쳐 버리네. 이번 주엔 한 가지를 남에게 통째로 맡겨 보게.",
+    inLove:
+      "좋아하는 사람 앞에선 말보다 행동이 먼저 나가는 사람이네. 상대가 지나가듯 한 말을 기억해 뒀다가 챙겨 주지. 그런데 정작 내 마음은 말을 안 해서 상대가 헷갈려하네. 고마운 건 그 자리에서 말로 하게.",
+    stress:
+      "화가 나면 말이 줄고 얼굴이 굳는 사람이네. 겉으론 괜찮다 하면서 집에 가는 길에 혼자 다 쏟아 내지. 참는 힘은 크지만 쌓이면 엉뚱한 데서 터지네. 답답한 날엔 땀 날 만큼 걷고 오게.",
+  },
+  advice: "맞으면 맞다고, 아니면 아니라고 시원하게 눌러 주게.",
+};
+
+export const NATURE_BOARD: ReadingVisual = {
+  shop: "jokjipge",
+  nature: {
+    dayMaster: { stem: "기", element: "토", yinYang: "음" },
+    elements: { 목: 1, 화: 2, 토: 3, 금: 1, 수: 0 },
+    strong: "인성",
+    absent: ["재성"],
+    hourUnknown: false,
+  },
+};
+
 export const LAB_OUTPUT: Record<ProductId, InterpretOutput> = {
   gunghap: {
     greeting: "두 분, 나란히 앉으니 보기 좋구려.",
@@ -169,6 +201,7 @@ export const LAB_OUTPUT: Record<ProductId, InterpretOutput> = {
     },
     advice: "꿈은 꿈이고, 오늘은 아가가 하고 싶은 일 하나만 해 봐.",
   },
+  nature: NATURE_SAMPLE,
 };
 
 export function labVisual(
@@ -291,6 +324,8 @@ export function labVisual(
         category: (opts.category as "직장") ?? "직장",
         flag: { color: "노랑", grade: "길" },
       };
+    case "nature":
+      return NATURE_BOARD;
     case "dream":
       return {
         shop: "dream",

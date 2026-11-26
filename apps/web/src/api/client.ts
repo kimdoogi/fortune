@@ -12,6 +12,8 @@ import type {
   FollowupResponse,
   GunghapInviteCreated,
   GunghapInviteView,
+  MarkRequest,
+  MarksResponse,
   MenuResponse,
   PairDreamResponse,
   PairReadingRequest,
@@ -95,6 +97,9 @@ export const api = {
   wishOutcome: (id: string, outcome: "yes" | "no") =>
     call<WishBoard>("POST", `/api/wishes/${encodeURIComponent(id)}/outcome`, { outcome }),
   /** F15: 풀이에 이어 묻기 (한 풀이에 3번) */
+  /** 족집게집 맞아요/아니에요 표시 (F19) */
+  mark: (id: string, req: MarkRequest) =>
+    call<MarksResponse>("PUT", `/api/readings/${encodeURIComponent(id)}/marks`, req),
   followup: (id: string, req: FollowupRequest) =>
     call<FollowupResponse>("POST", `/api/readings/${encodeURIComponent(id)}/followups`, req),
   // ── 같이 보기 (F16) ──

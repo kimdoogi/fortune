@@ -55,6 +55,8 @@ export const ReadingRequestSchema = z.union([
     checkId: z.string().min(1).max(64),
     requestId,
   }),
+  // 족집게집 나는 어떤 사람 (F19)
+  z.object({ shop: z.literal("jokjipge"), product: z.literal("nature"), requestId }),
 ]);
 
 export async function createReading(
@@ -153,6 +155,7 @@ export async function createReading(
       todayCallsLeft: left,
       followups: [],
       followupsLeft: followupMax(plan.product),
+      ...(plan.product === "nature" ? { marks: {} } : {}),
     };
     return json(out);
   })();

@@ -4,6 +4,8 @@
  * 타로집: 보라 휘장과 밤하늘 막, 매달린 금별, 촛대, 빛나는 수정구, 카드.
  * 아기도령: 붉은 제단과 일월오봉도, 오방기, 방울 줄, 청사초롱, 색동 방석, 장구·바람개비.
  * 꿈해몽: 장판 방, 보름달이 보이는 둥근 창, 자개장 위 이불 더미, 달항아리, 다기와 김, 구름.
+ * 족집게집: 다락 있는 점방 — 서랍 많은 약장, 걸어 둔 돋보기·안경, 관상 족자, 책 더미, 백열 전구 하나,
+ *   상 위에 큰 돋보기·족집게·손거울·주판.
  */
 import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
@@ -27,7 +29,13 @@ import {
 } from "./furniture";
 import { at, beam, colored, gradient, hash } from "./geo";
 import { glowMaterial, glowPoints } from "./glow";
-import { SAJU_ATLAS, musindoTexture, sajuTexture } from "./paintings";
+import {
+  JOKJIPGE_ATLAS,
+  SAJU_ATLAS,
+  jokjipgeTexture,
+  musindoTexture,
+  sajuTexture,
+} from "./paintings";
 
 export interface Palette {
   wall: string;
@@ -1239,4 +1247,359 @@ const dream: Decor = {
   },
 };
 
-export const DECOR: Record<ShopId, Decor> = { saju, tarot, dolyeong, dream };
+// ───────────────────────── 족집게집 ─────────────────────────
+/** 방 오른쪽 벽 x (interior.ts ROOM.maxX와 같다) */
+const ROOM_MAX_X = 2.3;
+const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
+
+/** 돋보기: 황동 테 + 렌즈 + 나무 손잡이. 렌즈 가운데가 (x, y, z), 손잡이는 a 방향 (xy 평면에서 세운 것) */
+function magnifier(kit: Kit, x: number, y: number, z: number, r: number, a: number) {
+  kit.parts.push(colored(at(new THREE.TorusGeometry(r, r * 0.12, 6, 24), x, y, z), C.brass));
+  kit.lit.push(colored(at(new THREE.CircleGeometry(r * 0.94, 20), x, y, z + 0.002), "#dfe8e4"));
+  kit.lit.push(
+    colored(
+      at(new THREE.CircleGeometry(r * 0.25, 10), x - r * 0.35, y + r * 0.35, z + 0.004),
+      "#ffffff",
+    ),
+  );
+  const h0 = v3(x + Math.cos(a) * r * 1.08, y + Math.sin(a) * r * 1.08, z);
+  const h1 = v3(x + Math.cos(a) * r * 1.35, y + Math.sin(a) * r * 1.35, z);
+  const h2 = v3(x + Math.cos(a) * r * 2.6, y + Math.sin(a) * r * 2.6, z);
+  kit.parts.push(colored(beam(h0, h1, r * 0.2, r * 0.2), C.brass));
+  kit.parts.push(colored(beam(h1, h2, r * 0.28, r * 0.28), "#5a3420"));
+}
+
+/** 안경: 둥근 테 둘 + 코다리 + 다리 (벽에 걸린 모습) */
+function spectacles(kit: Kit, x: number, y: number, z: number, s: number, color: string) {
+  for (const sx of [-1, 1]) {
+    kit.parts.push(
+      colored(
+        at(new THREE.TorusGeometry(0.045 * s, 0.006 * s, 4, 16), x + sx * 0.055 * s, y, z),
+        color,
+      ),
+    );
+    kit.lit.push(
+      colored(
+        at(new THREE.CircleGeometry(0.04 * s, 12), x + sx * 0.055 * s, y, z - 0.002),
+        "#c8d6dc",
+      ),
+    );
+    kit.parts.push(
+      colored(
+        beam(
+          v3(x + sx * 0.1 * s, y + 0.01 * s, z),
+          v3(x + sx * 0.13 * s, y - 0.08 * s, z - 0.01),
+          0.006 * s,
+          0.006 * s,
+        ),
+        color,
+      ),
+    );
+  }
+  kit.parts.push(
+    colored(
+      at(new THREE.TorusGeometry(0.012 * s, 0.005 * s, 3, 6, Math.PI), x, y + 0.005 * s, z),
+      color,
+    ),
+  );
+}
+
+const jokjipge: Decor = {
+  palette: {
+    wall: "#e8d6ae",
+    wallLow: "#c4a676",
+    wood: "#6a4428",
+    woodDark: "#3e2616",
+    floor: "#8e6238",
+    floor2: "#6e4a2a",
+    floorKind: "plank",
+    ceiling: "#2a1c12",
+    sky: "#867868",
+    ground: "#3a2a20",
+    bg: "#18100c",
+    hemiSky: "#ffe0b8",
+    hemiGround: "#4a3426",
+    key: "#ffc080",
+    rim: "#9aa6e0",
+    moonPaper: "#7480bc",
+    moonLight: "#8a96f0",
+    dust: 26,
+    dustColor: "#ffd8a0",
+  },
+  build(kit) {
+    // 남색 테두리 돗자리
+    rug(kit, 0, -0.05, 2.5, 2.3, (u, v) => {
+      const c = borderBands(u, v, "#cdb478", "#2e4470", "#4a3222");
+      if (c.getHex() === new THREE.Color("#cdb478").getHex() && Math.floor(u * 70) % 2 === 0)
+        c.multiplyScalar(0.92);
+      return c;
+    });
+    seats(kit, ["#2c3a6a", "#1e2850"], ["#8a4a2a", "#62321c"], "#5a3a24");
+    if (hasDom) kit.paintedMap = jokjipgeTexture();
+
+    // 뒷벽 가운데: 작은 서랍 수십 칸짜리 약장 (서랍마다 놋 손잡이와 이름표)
+    {
+      const w = 1.9;
+      const h = 1.42;
+      const d = 0.36;
+      const z = BACK + d / 2 + 0.02;
+      const front = z + d / 2;
+      kit.parts.push(box(w, h, d, 0, 0.06, z, "#4e2e1a"));
+      kit.parts.push(box(w + 0.06, 0.06, d + 0.04, 0, 0, z, C.woodDeep));
+      kit.parts.push(box(w + 0.08, 0.05, d + 0.06, 0, 0.06 + h, z, C.woodDeep));
+      const cols = 9;
+      const rows = 6;
+      const dw = (w - 0.08) / cols;
+      const dh = (h - 0.1) / rows;
+      for (let r = 0; r < rows; r++)
+        for (let c = 0; c < cols; c++) {
+          const x = -w / 2 + 0.04 + dw * (c + 0.5);
+          const y = 0.11 + dh * r;
+          const tone = 0.85 + hash(r, c) * 0.3;
+          kit.parts.push(
+            box(
+              dw - 0.018,
+              dh - 0.018,
+              0.02,
+              x,
+              y + 0.009,
+              front + 0.006,
+              new THREE.Color("#8a5630").multiplyScalar(tone),
+            ),
+          );
+          kit.parts.push(
+            box(dw * 0.5, dh * 0.22, 0.004, x, y + dh * 0.62, front + 0.018, "#efe2c0"),
+          );
+          kit.parts.push(
+            colored(
+              at(new THREE.SphereGeometry(0.011, 6, 4), x, y + dh * 0.35, front + 0.025),
+              C.brass,
+            ),
+          );
+        }
+      kit.shadows.push({ x: 0, z, rx: 1.1, rz: 0.3, k: 0.4 });
+      // 약장 위: 현판, 약단지, 책
+      const p = remapUv(new THREE.PlaneGeometry(0.76, 0.38, 4, 2), JOKJIPGE_ATLAS.plaque);
+      p.translate(0, 1.88, BACK + 0.07);
+      kit.painted.push(tintKeepUv(p, "#ffffff"));
+      kit.parts.push(box(0.82, 0.44, 0.04, 0, 1.66, BACK + 0.04, C.woodDeep));
+      jar(kit, -0.72, 1.53, z, 0.2, "#d8d0bc", "pot");
+      jar(kit, -0.5, 1.53, z, 0.15, "#7a5a3a", "pot");
+      books(kit, 0.62, 1.53, z, 3, 2);
+    }
+
+    // 뒷벽 왼쪽: 관상 족자 (얼굴 선 그림)
+    {
+      const x = -1.62;
+      const s = remapUv(new THREE.PlaneGeometry(0.44, 0.88, 2, 4), JOKJIPGE_ATLAS.scroll);
+      s.translate(x, 1.36, BACK + 0.075);
+      kit.painted.push(tintKeepUv(s, "#ffffff"));
+      for (const yy of [0.91, 1.81]) {
+        const rod = new THREE.CylinderGeometry(0.016, 0.016, 0.52, 6);
+        rod.rotateZ(Math.PI / 2);
+        kit.parts.push(colored(at(rod, x, yy, BACK + 0.08), C.woodDark));
+      }
+      kit.parts.push(
+        colored(
+          beam(v3(x - 0.2, 1.82, BACK + 0.08), v3(x, 1.98, BACK + 0.06), 0.008, 0.008),
+          "#3a2a1e",
+        ),
+      );
+      kit.parts.push(
+        colored(
+          beam(v3(x + 0.2, 1.82, BACK + 0.08), v3(x, 1.98, BACK + 0.06), 0.008, 0.008),
+          "#3a2a1e",
+        ),
+      );
+    }
+
+    // 왼쪽 구석: 쌓인 책 더미
+    books(kit, -1.85, 0, -1.3, 7, 1);
+    books(kit, -1.55, 0, -1.42, 4, 3);
+    books(kit, -1.9, 0, -0.85, 3, 5);
+    kit.shadows.push({ x: -1.75, z: -1.2, rx: 0.35, rz: 0.3, k: 0.4 });
+
+    // 뒷벽 오른쪽: 다락 (판자 바닥 + 난간 + 사다리, 위에 보따리와 궤짝)
+    {
+      const x0 = 1.0;
+      const x1 = ROOM_MAX_X;
+      const ly = 1.74;
+      const lz = BACK + 0.42;
+      const cx = (x0 + x1) / 2;
+      kit.parts.push(box(x1 - x0, 0.07, 0.86, cx, ly, lz, "#5a3a22"));
+      kit.parts.push(box(x1 - x0, 0.12, 0.06, cx, ly - 0.12, lz + 0.42, C.woodDark));
+      kit.parts.push(box(0.09, ly, 0.09, x0 + 0.05, 0, lz + 0.38, C.woodDark));
+      // 난간
+      kit.parts.push(box(x1 - x0, 0.04, 0.04, cx, ly + 0.32, lz + 0.41, C.woodDark));
+      for (let x = x0 + 0.05; x < x1; x += 0.2)
+        kit.parts.push(box(0.03, 0.32, 0.03, x, ly + 0.07, lz + 0.41, C.woodDark));
+      // 다락 위 물건: 보자기 보따리, 궤짝, 둘둘 만 돗자리
+      const bundle = new THREE.SphereGeometry(0.17, 10, 7);
+      bundle.scale(1.2, 0.8, 1);
+      kit.parts.push(colored(at(bundle, x0 + 0.35, ly + 0.2, lz - 0.1), "#2e5a8a"));
+      kit.parts.push(
+        colored(
+          at(new THREE.SphereGeometry(0.05, 6, 4), x0 + 0.35, ly + 0.36, lz - 0.05),
+          "#2e5a8a",
+        ),
+      );
+      kit.parts.push(box(0.4, 0.26, 0.3, x0 + 0.85, ly + 0.07, lz - 0.12, "#7a5434"));
+      kit.parts.push(box(0.42, 0.03, 0.32, x0 + 0.85, ly + 0.33, lz - 0.12, C.woodDark));
+      const mat = new THREE.CylinderGeometry(0.07, 0.07, 0.55, 10);
+      mat.rotateZ(Math.PI / 2);
+      kit.parts.push(colored(at(mat, x0 + 0.6, ly + 0.15, lz + 0.18), "#c9b07a"));
+      // 사다리
+      const lx = x0 + 0.28;
+      const bottom = lz + 0.95;
+      for (const dx of [-0.16, 0.16])
+        kit.parts.push(
+          colored(
+            beam(v3(lx + dx, 0, bottom), v3(lx + dx, ly + 0.38, lz + 0.46), 0.045, 0.045),
+            "#7a5434",
+          ),
+        );
+      for (let k = 1; k <= 6; k++) {
+        const t = k / 7;
+        const y = (ly + 0.38) * t;
+        const z = bottom + (lz + 0.46 - bottom) * t;
+        kit.parts.push(box(0.34, 0.03, 0.04, lx, y - 0.015, z, "#8a6440"));
+      }
+      // 다락 밑 벽: 걸어 둔 돋보기들과 안경
+      kit.parts.push(box(1.1, 0.04, 0.05, cx + 0.05, 1.5, BACK + 0.05, C.woodDark));
+      magnifier(kit, 1.22, 1.22, BACK + 0.07, 0.1, -Math.PI / 2);
+      magnifier(kit, 1.58, 1.28, BACK + 0.07, 0.14, -Math.PI / 2);
+      magnifier(kit, 1.95, 1.25, BACK + 0.07, 0.08, -Math.PI / 2);
+      spectacles(kit, 1.4, 0.92, BACK + 0.07, 1, "#2a2420");
+      spectacles(kit, 1.82, 0.94, BACK + 0.07, 1.2, "#b08a3a");
+      for (const x of [1.22, 1.58, 1.95])
+        kit.parts.push(
+          colored(at(new THREE.SphereGeometry(0.012, 6, 4), x, 1.47, BACK + 0.07), C.brass),
+        );
+      kit.shadows.push({ x: cx, z: lz, rx: 0.8, rz: 0.5, k: 0.35 });
+    }
+
+    // 백열 전구 하나 (천장에서 늘어진 전선 + 소켓 + 양철 갓)
+    {
+      const bx = 0.5;
+      const by = 1.95;
+      const bzz = -0.45;
+      kit.parts.push(cyl(0.006, 0.006, 2.55 - by - 0.1, bx, by + 0.1, bzz, "#1e1a18", 4));
+      kit.parts.push(cyl(0.025, 0.025, 0.07, bx, by + 0.05, bzz, "#2a2420", 8));
+      const shade = new THREE.ConeGeometry(0.14, 0.08, 14, 1, true);
+      kit.parts.push(colored(at(shade, bx, by + 0.1, bzz), "#3e5a52"));
+      const bulb = new THREE.SphereGeometry(0.045, 10, 8);
+      bulb.scale(1, 1.25, 1);
+      kit.lit.push(colored(at(bulb, bx, by, bzz), "#fff0c0"));
+      kit.glows.push({ x: bx, y: by, z: bzz, size: 1.5, color: "#ffc070", flicker: 0.05 });
+      kit.lights.push({ x: bx, y: by, z: bzz, color: "#ffc080", intensity: 1.3, range: 2.0 });
+    }
+    // 약장 양옆을 밝히는 은은한 빛 (전구 하나로는 구석이 너무 어둡다)
+    kit.lights.push({ x: -1.4, y: 1.4, z: -1.0, color: "#ffb070", intensity: 0.4, range: 1.2 });
+
+    // 상 위: 큰 돋보기, 족집게, 손거울, 주판
+    const ty = TABLE.h;
+    {
+      // 종이 한 장 위에 눕힌 큰 돋보기
+      kit.parts.push(box(0.26, 0.003, 0.34, -0.36, ty, 0.02, "#f2ead6", 0.15));
+      const mx = -0.34;
+      const mz = 0.0;
+      const r = 0.11;
+      const ring = new THREE.TorusGeometry(r, 0.014, 6, 24);
+      ring.rotateX(-Math.PI / 2);
+      kit.parts.push(colored(at(ring, mx, ty + 0.02, mz), C.brass));
+      const glass = new THREE.CircleGeometry(r * 0.94, 20);
+      glass.rotateX(-Math.PI / 2);
+      kit.lit.push(colored(at(glass, mx, ty + 0.018, mz), "#e4ece6"));
+      kit.parts.push(
+        colored(
+          beam(
+            v3(mx + r * 0.75, ty + 0.02, mz + r * 0.75),
+            v3(mx + r * 2.2, ty + 0.02, mz + r * 2.2),
+            0.03,
+            0.03,
+          ),
+          "#5a3420",
+        ),
+      );
+      // 족집게: 끝이 모인 은빛 집게 둘
+      const tx = 0.1;
+      const tz = 0.14;
+      for (const s of [-1, 1])
+        kit.parts.push(
+          colored(
+            beam(
+              v3(tx - 0.09, ty + 0.008, tz),
+              v3(tx + 0.09, ty + 0.008, tz + s * 0.018),
+              0.008,
+              0.006,
+            ),
+            "#d8dde4",
+          ),
+        );
+      // 손거울: 둥근 나무 테 + 거울, 받침에 기대 세우고 손잡이는 옆으로
+      const hx = 0.44;
+      const hz = -0.14;
+      const tilt = 1.2;
+      const frame = new THREE.CylinderGeometry(0.08, 0.08, 0.016, 18);
+      frame.rotateX(tilt);
+      kit.parts.push(colored(at(frame, hx, ty + 0.08, hz), "#7a2a2a"));
+      const mg = new THREE.CircleGeometry(0.068, 16);
+      mg.rotateX(tilt - Math.PI / 2);
+      kit.lit.push(
+        colored(
+          at(mg, hx, ty + 0.08 + Math.cos(tilt) * 0.009, hz + Math.sin(tilt) * 0.009),
+          "#cfe0ea",
+        ),
+      );
+      kit.parts.push(
+        colored(
+          beam(
+            v3(hx + 0.07, ty + 0.012, hz + 0.03),
+            v3(hx + 0.19, ty + 0.012, hz + 0.07),
+            0.025,
+            0.02,
+          ),
+          "#7a2a2a",
+        ),
+      );
+      kit.parts.push(box(0.1, 0.06, 0.03, hx, ty, hz - 0.045, C.woodDark));
+      // 주판: 틀 + 가름대 + 살 9개 + 알 (위 1, 아래 4)
+      const ax = -0.02;
+      const az = -0.27;
+      const aw = 0.38;
+      const ad = 0.15;
+      for (const s of [-1, 1]) {
+        kit.parts.push(box(aw, 0.024, 0.016, ax, ty, az + s * (ad / 2), "#3a2416"));
+        kit.parts.push(box(0.016, 0.024, ad, ax + s * (aw / 2), ty, az, "#3a2416"));
+      }
+      kit.parts.push(box(aw, 0.02, 0.01, ax, ty + 0.002, az - ad * 0.18, "#3a2416"));
+      for (let i = 0; i < 9; i++) {
+        const x = ax - aw / 2 + 0.03 + (i * (aw - 0.06)) / 8;
+        kit.parts.push(
+          colored(
+            beam(v3(x, ty + 0.012, az - ad / 2), v3(x, ty + 0.012, az + ad / 2), 0.004, 0.004),
+            "#c9a86a",
+          ),
+        );
+        const beads = [
+          az - ad * 0.36,
+          az + ad * 0.02,
+          az + ad * 0.13,
+          az + ad * 0.24,
+          az + ad * 0.35,
+        ];
+        beads.forEach((bz, k) => {
+          // 몇 알은 올려 놓아 셈하는 중
+          const up = k > 0 && hash(i, k) < 0.25 ? -0.03 : 0;
+          const bead = new THREE.SphereGeometry(0.012, 6, 3);
+          bead.scale(1.4, 0.9, 0.75);
+          kit.parts.push(
+            colored(at(bead, x, ty + 0.012, bz + up), k === 0 ? "#5a2a1a" : "#3a1c10"),
+          );
+        });
+      }
+    }
+  },
+};
+
+export const DECOR: Record<ShopId, Decor> = { saju, tarot, dolyeong, dream, jokjipge };

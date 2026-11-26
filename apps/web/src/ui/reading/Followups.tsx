@@ -25,6 +25,7 @@ const THINKING: Record<ShopId, string> = {
   tarot: "음… 카드를 다시 들여다보고 있어요.",
   dolyeong: "딸랑딸랑… 할아버지한테 물어보는 중!",
   dream: "아이고, 차 한 모금 마시고 생각 좀 해 보자.",
+  jokjipge: "가만, 돋보기를 다시 대 보겠네.",
 };
 
 const PLACEHOLDER: Record<ShopId, string> = {
@@ -32,6 +33,7 @@ const PLACEHOLDER: Record<ShopId, string> = {
   tarot: "예: 그 사람이 먼저 연락할까요?",
   dolyeong: "예: 이번 달 안에 좋은 소식 있을까?",
   dream: "예: 이 꿈이 시험이랑도 관련 있을까요?",
+  jokjipge: "예: 저랑 잘 맞는 사람은 어떤 사람이에요?",
 };
 
 function TypedAnswer(props: { text: string; animate: boolean; onTick?: () => void }) {

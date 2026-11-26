@@ -32,10 +32,10 @@ export interface Kit {
   noGrass: ((x: number, z: number) => boolean)[];
 }
 
-export type LampKind = "stone" | "torch" | "iron" | "moon";
-export type BorderKind = "wall" | "brushwood" | "hedge" | "bushes";
+export type LampKind = "stone" | "torch" | "iron" | "moon" | "bulbs";
+export type BorderKind = "wall" | "brushwood" | "hedge" | "bushes" | "brick";
 export type TreeKind = "round" | "dead" | "cypress" | "pastel";
-export type NeighborKind = "hanok" | "huts" | "gables" | "none";
+export type NeighborKind = "hanok" | "huts" | "gables" | "none" | "market";
 
 const lambert = (color: THREE.ColorRepresentation) => new THREE.MeshLambertMaterial({ color });
 
@@ -165,7 +165,96 @@ function moonLamp(kit: Kit, x: number, z: number) {
   kit.nav.blockCircle(x, z, 0.25);
 }
 
-const LAMPS: Record<LampKind, (kit: Kit, x: number, z: number) => void> = {
+/** 전구 기둥 (족집게집): 나무 전봇대 + 양철 갓 전구. 기둥끼리는 bulbStrings가 줄로 잇는다 */
+function bulbPole(kit: Kit, x: number, z: number) {
+  const { parts, lit } = kit;
+  const h = 3.1;
+  const lean = (hash(x, z) - 0.5) * 0.05;
+  const pole = new THREE.CylinderGeometry(0.06, 0.085, h, 7);
+  pole.rotateZ(lean);
+  parts.push(gradient(at(pole, x, h / 2, z), "#2a1f1a", "#5a4334"));
+  const topX = x - Math.sin(lean) * h;
+  // 가로대 + 애자
+  parts.push(colored(at(new THREE.BoxGeometry(0.62, 0.06, 0.07), topX, h - 0.22, z), "#3a2c22"));
+  for (const dx of [-0.24, 0.24])
+    parts.push(
+      colored(
+        at(new THREE.CylinderGeometry(0.025, 0.03, 0.07, 6), topX + dx, h - 0.15, z),
+        "#e6e2d6",
+      ),
+    );
+  // 기둥에 붙인 낡은 전단지
+  parts.push(
+    colored(
+      at(new THREE.BoxGeometry(0.2, 0.28, 0.01), x, 1.35, z + (z > -2 ? 0.08 : -0.08)),
+      hash(z, x) > 0.5 ? "#e8dcc0" : "#d8c49a",
+    ),
+  );
+  // 양철 갓 전구 (기둥에서 길 쪽으로)
+  const side = x > 0 ? -1 : 1;
+  const bx = topX + side * 0.42;
+  const by = h - 0.5;
+  parts.push(
+    colored(
+      beam(new THREE.Vector3(topX, h - 0.4, z), new THREE.Vector3(bx, by + 0.12, z), 0.03, 0.03),
+      "#2a2420",
+    ),
+  );
+  const shade = new THREE.ConeGeometry(0.2, 0.12, 10, 1, true);
+  parts.push(colored(at(shade, bx, by + 0.08, z), "#3e5a52"));
+  lit.push(colored(at(new THREE.SphereGeometry(0.07, 8, 6), bx, by, z), "#ffe2a0"));
+  kit.glows.push({ x: bx, y: by, z, size: 2.6, color: "#ffb45a", flicker: 0.06 });
+  kit.pools.push({ x: bx, z, r: 1.5, k: 0.6, color: new THREE.Color("#ffa850") });
+  kit.nav.blockCircle(x, z, 0.25);
+  return new THREE.Vector3(topX, h - 0.15, z);
+}
+
+/**
+ * 줄줄이 매단 백열 전구 (족집게집): 기둥 꼭대기끼리 길을 지그재그로 가로지르는 처진 전선에
+ * 작은 전구를 일정한 간격으로 단다. 전구는 빛 조각, 빛무리는 점 하나씩.
+ */
+function bulbStrings(kit: Kit, spots: Point[]) {
+  const tops = spots.map((s) => bulbPole(kit, s.x, s.z));
+  for (let i = 0; i + 1 < tops.length; i++) {
+    const a = tops[i] as THREE.Vector3;
+    const b = tops[i + 1] as THREE.Vector3;
+    const len = a.distanceTo(b);
+    const sag = 0.35 + len * 0.05;
+    const pt = (t: number) =>
+      a
+        .clone()
+        .lerp(b, t)
+        .setY(a.y + (b.y - a.y) * t - sag * 4 * t * (1 - t));
+    const segs = 14;
+    for (let k = 0; k < segs; k++)
+      kit.parts.push(colored(beam(pt(k / segs), pt((k + 1) / segs), 0.018, 0.018), "#1e1a18"));
+    const n = Math.max(3, Math.round(len / 0.65));
+    for (let k = 1; k < n; k++) {
+      const p = pt(k / n);
+      kit.parts.push(
+        colored(
+          at(new THREE.CylinderGeometry(0.022, 0.022, 0.05, 5), p.x, p.y - 0.04, p.z),
+          "#2a2420",
+        ),
+      );
+      // 몇 개는 꺼져 있다 (오래된 장터 전구)
+      const off = hash(i * 7.1 + k, k * 1.3) < 0.12;
+      const bulb = new THREE.SphereGeometry(0.05, 7, 5);
+      bulb.scale(1, 1.25, 1);
+      if (off) {
+        kit.parts.push(colored(at(bulb, p.x, p.y - 0.11, p.z), "#8a7a62"));
+        continue;
+      }
+      const warm = k % 3 === 0 ? "#ffd08a" : "#ffe6b0";
+      kit.lit.push(colored(at(bulb, p.x, p.y - 0.11, p.z), warm));
+      kit.glows.push({ x: p.x, y: p.y - 0.11, z: p.z, size: 1.1, color: "#ffb25a", flicker: 0.05 });
+      if (k % 2 === 0)
+        kit.pools.push({ x: p.x, z: p.z, r: 1.0, k: 0.22, color: new THREE.Color("#ff9e48") });
+    }
+  }
+}
+
+const LAMPS: Record<Exclude<LampKind, "bulbs">, (kit: Kit, x: number, z: number) => void> = {
   stone: stoneLantern,
   torch,
   iron: ironLamp,
@@ -173,6 +262,7 @@ const LAMPS: Record<LampKind, (kit: Kit, x: number, z: number) => void> = {
 };
 
 export function placeLamps(kit: Kit, kind: LampKind, spots: Point[]) {
+  if (kind === "bulbs") return bulbStrings(kit, spots);
   for (const s of spots) LAMPS[kind](kit, s.x, s.z);
 }
 
@@ -303,6 +393,55 @@ function bushes(kit: Kit, x0: number, z0: number, x1: number, z1: number) {
   }
 }
 
+/**
+ * 붉은 벽돌 담 (족집게집): 몸통은 줄눈색 상자, 안쪽 면에만 벽돌을 한 장씩 칠한 판을 붙인다.
+ * 줄마다 반 장씩 엇갈리고, 벽돌마다 색이 조금씩 다르다. 위는 시멘트 갓돌.
+ */
+function brickWall(
+  kit: Kit,
+  cx: number,
+  cz: number,
+  length: number,
+  alongZ: boolean,
+  face: 1 | -1,
+) {
+  const H = 1.7;
+  const T = 0.4;
+  const body = alongZ ? new THREE.BoxGeometry(T, H, length) : new THREE.BoxGeometry(length, H, T);
+  kit.parts.push(colored(at(body, cx, H / 2, cz), "#4a3430"));
+  const bl = 0.4;
+  const bh = 0.14;
+  const rows = Math.round(H / bh);
+  const cols = Math.round(length / (bl / 2));
+  const plane = new THREE.PlaneGeometry(length, rows * bh, cols, rows);
+  const g = colored(plane, "#8a3a2c");
+  const pos = g.getAttribute("position");
+  const col = g.getAttribute("color");
+  const tones = ["#9a4434", "#8a3a2c", "#a85040", "#7a3426", "#94483a", "#6e2e24"].map(
+    (c) => new THREE.Color(c),
+  );
+  const c = new THREE.Color();
+  for (let i = 0; i < pos.count; i += 3) {
+    const u = (pos.getX(i) + pos.getX(i + 1) + pos.getX(i + 2)) / 3 + length / 2;
+    const v = (pos.getY(i) + pos.getY(i + 1) + pos.getY(i + 2)) / 3 + (rows * bh) / 2;
+    const row = Math.floor(v / bh);
+    const brick = Math.floor((u + (row % 2) * (bl / 2)) / bl);
+    c.copy(tones[Math.floor(hash(brick + cx, row + cz) * tones.length)] as THREE.Color);
+    // 아래쪽은 젖어서 어둡다
+    c.multiplyScalar(0.75 + Math.min(1, v / 0.6) * 0.25);
+    for (let j = 0; j < 3; j++) col.setXYZ(i + j, c.r, c.g, c.b);
+  }
+  g.translate(0, (rows * bh) / 2, 0);
+  if (alongZ) g.rotateY(face > 0 ? Math.PI / 2 : -Math.PI / 2);
+  else if (face < 0) g.rotateY(Math.PI);
+  const off = T / 2 + 0.006;
+  kit.parts.push(at(g, cx + (alongZ ? face * off : 0), 0, cz + (alongZ ? 0 : face * off)));
+  const cap = alongZ
+    ? new THREE.BoxGeometry(T + 0.12, 0.1, length + 0.1)
+    : new THREE.BoxGeometry(length + 0.1, 0.1, T + 0.12);
+  kit.parts.push(gradient(at(cap, cx, H + 0.05, cz), "#5e5a56", "#8c8780"));
+}
+
 /** 거리 양옆과 뒤를 막는다 (x ±8.8, 뒤 z -13.8) */
 export function placeBorder(kit: Kit, kind: BorderKind, roofColor: string) {
   const { nav } = kit;
@@ -320,6 +459,12 @@ export function placeBorder(kit: Kit, kind: BorderKind, roofColor: string) {
   if (kind === "hedge") {
     for (const side of [-1, 1]) hedge(kit, side * 8.7, 8, side * 8.7, -13.7, "#2f5a3c");
     hedge(kit, -8.7, -13.7, 8.7, -13.7, "#2f5a3c");
+    return;
+  }
+  if (kind === "brick") {
+    for (const side of [-1, 1] as const)
+      brickWall(kit, side * 8.8, -3, 22, true, side > 0 ? -1 : 1);
+    brickWall(kit, 0, -13.8, 18.0, false, 1);
     return;
   }
   for (const side of [-1, 1]) bushes(kit, side * 8.7, 8, side * 8.7, -13.7);
@@ -503,6 +648,33 @@ export function placeNeighbors(kit: Kit, kind: NeighborKind) {
       const wx = x > 0 ? x - w * 0.3 - 0.01 : x + w * 0.3 + 0.01;
       lit.push(colored(at(new THREE.BoxGeometry(0.02, 0.4, 0.3), wx, 1.6, z + 0.4), "#e0a85a"));
       kit.glows.push({ x: wx, y: 1.6, z: z + 0.4, size: 1.2, color: "#ffb45a", flicker: 0.05 });
+    } else if (kind === "market") {
+      // 장터 가게: 납작한 2층 상자 + 한쪽으로 기운 함석 지붕 + 불 켜진 창과 간판 띠
+      const h = 2.6 + hash(x, z) * 1.4;
+      parts.push(colored(at(new THREE.BoxGeometry(w * 0.7, h, d * 0.6), x, h / 2, z), "#2e2438"));
+      const roof = new THREE.BoxGeometry(w * 0.8, 0.12, d * 0.75);
+      roof.rotateX(0.18);
+      parts.push(colored(at(roof, x, h + 0.2, z), "#3a2e2a"));
+      const front = z + d * 0.3 + 0.01;
+      lit.push(
+        colored(
+          at(new THREE.BoxGeometry(w * 0.45, 0.32, 0.02), x, h - 0.45, front),
+          hash(z, x) > 0.5 ? "#d8664a" : "#4aa89a",
+        ),
+      );
+      for (const dx of [-w * 0.18, w * 0.16]) {
+        lit.push(
+          colored(at(new THREE.BoxGeometry(0.5, 0.55, 0.02), x + dx, 1.3, front), "#e0a060"),
+        );
+        kit.glows.push({
+          x: x + dx,
+          y: 1.3,
+          z: front + 0.2,
+          size: 1.4,
+          color: "#ffaa55",
+          flicker: 0.05,
+        });
+      }
     }
   }
 }

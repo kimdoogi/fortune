@@ -579,3 +579,133 @@ export function musindoTexture(url = "/textures/musindo.jpg"): THREE.CanvasTextu
   img.src = url;
   return tex;
 }
+
+// ───────────── 족집게집: 관상 족자 + 현판 (D-100) ─────────────
+/** 관상 그림: 먹 선으로 그린 얼굴과 삼정(上停·中停·下停) 나눔 선, 점 자리 */
+function drawGwansang(ctx: Ctx, x: number, y: number, w: number, h: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  // 비단 테두리 + 누런 종이
+  ctx.fillStyle = "#6a3a2a";
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = "#c9a86a";
+  ctx.fillRect(w * 0.06, h * 0.035, w * 0.88, h * 0.93);
+  const paper = ctx.createLinearGradient(0, 0, 0, h);
+  paper.addColorStop(0, "#f1e4c4");
+  paper.addColorStop(1, "#e2cfa4");
+  ctx.fillStyle = paper;
+  ctx.fillRect(w * 0.09, h * 0.045, w * 0.82, h * 0.91);
+  // 제목
+  ctx.fillStyle = "#1f1a17";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = `700 ${Math.round(w * 0.16)}px ${SERIF}`;
+  ctx.fillText("觀相", w / 2, h * 0.1);
+  // 얼굴
+  const cx = w / 2;
+  const cy = h * 0.47;
+  const fw = w * 0.27;
+  const fh = h * 0.27;
+  ctx.strokeStyle = "rgba(30,24,20,0.9)";
+  ctx.lineWidth = 2.4;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, fw, fh, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  // 귀
+  for (const s of [-1, 1]) {
+    ctx.beginPath();
+    ctx.ellipse(cx + s * fw * 1.02, cy - fh * 0.02, fw * 0.14, fh * 0.2, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  // 머리선
+  ctx.beginPath();
+  ctx.moveTo(cx - fw * 0.92, cy - fh * 0.45);
+  ctx.quadraticCurveTo(cx, cy - fh * 0.78, cx + fw * 0.92, cy - fh * 0.45);
+  ctx.stroke();
+  // 눈썹·눈
+  ctx.lineWidth = 2;
+  for (const s of [-1, 1]) {
+    const ex = cx + s * fw * 0.42;
+    ctx.beginPath();
+    ctx.moveTo(ex - s * fw * 0.22, cy - fh * 0.2);
+    ctx.quadraticCurveTo(ex, cy - fh * 0.32, ex + s * fw * 0.24, cy - fh * 0.22);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(ex - fw * 0.18, cy - fh * 0.06);
+    ctx.quadraticCurveTo(ex, cy - fh * 0.16, ex + fw * 0.18, cy - fh * 0.06);
+    ctx.quadraticCurveTo(ex, cy + fh * 0.02, ex - fw * 0.18, cy - fh * 0.06);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(30,24,20,0.9)";
+    ctx.beginPath();
+    ctx.arc(ex, cy - fh * 0.07, fw * 0.05, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // 코·인중·입
+  ctx.beginPath();
+  ctx.moveTo(cx - fw * 0.04, cy - fh * 0.08);
+  ctx.lineTo(cx - fw * 0.1, cy + fh * 0.22);
+  ctx.quadraticCurveTo(cx, cy + fh * 0.3, cx + fw * 0.12, cy + fh * 0.22);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + fh * 0.32);
+  ctx.lineTo(cx, cy + fh * 0.4);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx - fw * 0.26, cy + fh * 0.48);
+  ctx.quadraticCurveTo(cx, cy + fh * 0.58, cx + fw * 0.26, cy + fh * 0.48);
+  ctx.stroke();
+  // 삼정 나눔 선 (붉은 점선) + 옆 글씨
+  ctx.setLineDash([5, 5]);
+  ctx.strokeStyle = "rgba(168,48,40,0.85)";
+  ctx.lineWidth = 1.6;
+  const lines = [cy - fh * 0.62, cy - fh * 0.2, cy + fh * 0.3, cy + fh * 0.98];
+  for (const ly of lines) {
+    ctx.beginPath();
+    ctx.moveTo(cx - fw * 1.35, ly);
+    ctx.lineTo(cx + fw * 1.35, ly);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.fillStyle = "#a83028";
+  ctx.font = `700 ${Math.round(w * 0.08)}px ${SERIF}`;
+  ["上", "中", "下"].forEach((c, i) => {
+    const a = lines[i] as number;
+    const b = lines[i + 1] as number;
+    ctx.fillText(c, cx - fw * 1.5, (a + b) / 2);
+    ctx.fillText(["天", "人", "地"][i] as string, cx + fw * 1.5, (a + b) / 2);
+  });
+  // 점 자리 (작은 붉은 원)
+  for (const [dx, dy] of [
+    [-0.5, -0.45],
+    [0.55, 0.1],
+    [-0.2, 0.36],
+    [0.3, 0.7],
+  ] as const) {
+    ctx.beginPath();
+    ctx.arc(cx + dx * fw, cy + dy * fh, 3.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // 아래 설명 줄 (흐린 먹 글씨 자리)
+  ctx.fillStyle = "rgba(40,32,28,0.5)";
+  for (let i = 0; i < 4; i++) {
+    ctx.fillRect(w * 0.2, h * (0.82 + i * 0.028), w * (0.6 - (i % 2) * 0.12), 2.2);
+  }
+  // 낙관
+  ctx.fillStyle = "#b8443a";
+  ctx.fillRect(w * 0.66, h * 0.92 - 6, 13, 13);
+  ctx.restore();
+}
+
+/** 족집게집 그림 한 장: 왼쪽 관상 족자, 오른쪽 위 현판 */
+export const JOKJIPGE_ATLAS = {
+  scroll: { u0: 0, v0: 0, u1: 0.5, v1: 1 },
+  plaque: { u0: 0.5, v0: 0.75, u1: 1, v1: 1 },
+};
+
+export function jokjipgeTexture(): THREE.CanvasTexture {
+  return canvasTexture(512, 512, (ctx) => {
+    drawGwansang(ctx, 0, 0, 256, 512);
+    drawPlaque(ctx, 256, 0, 256, 128, "족집게");
+  });
+}

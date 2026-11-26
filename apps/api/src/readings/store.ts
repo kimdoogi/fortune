@@ -4,6 +4,8 @@ import {
   DISCLAIMER,
   type FollowupView,
   type InterpretOutput,
+  type MarksResponse,
+  NATURE_SECTIONS,
   type ProductId,
   type ReadingResult,
   type ReadingVisual,
@@ -21,10 +23,12 @@ export interface ReadingRow {
   visual_json: string;
   output_json: string;
   created_at: string;
+  /** 족집게집 맞아요/아니에요 (F19, 0008). 없으면 NULL */
+  marks_json?: string | null;
 }
 
 const COLUMNS =
-  "id, user_id, shop, product, seed_key, input_json, visual_json, output_json, created_at";
+  "id, user_id, shop, product, seed_key, input_json, visual_json, output_json, created_at, marks_json";
 
 export function toResult(
   row: ReadingRow,
@@ -45,7 +49,21 @@ export function toResult(
     followups,
     // 같이 본 풀이는 사람마다 따로 센다: 상대가 물은 것(asker 있음)은 빼고 (D-091)
     followupsLeft: Math.max(0, followupMax(row.product) - followups.filter((f) => !f.asker).length),
+    ...(row.product === "nature" ? { marks: parseMarks(row.marks_json) } : {}),
   };
+}
+
+/** 저장된 표시 읽기. 깨진 값은 빈 표시로 */
+export function parseMarks(json: string | null | undefined): MarksResponse["marks"] {
+  if (!json) return {};
+  try {
+    const v = JSON.parse(json) as Record<string, unknown>;
+    const out: MarksResponse["marks"] = {};
+    for (const s of NATURE_SECTIONS) if (v[s] === "yes" || v[s] === "no") out[s] = v[s];
+    return out;
+  } catch {
+    return {};
+  }
 }
 
 // ── 이어 묻기 (F15) ───────────────────────────────────────

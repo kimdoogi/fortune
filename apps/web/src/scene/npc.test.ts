@@ -2,7 +2,7 @@ import type { ShopId } from "@fortune/shared-types";
 import { describe, expect, it } from "vitest";
 import { Npc, type NpcAction, ONE_SHOT } from "./npc";
 
-const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
+const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream", "jokjipge"];
 const ACTIONS: NpcAction[] = ["idle", "greet", "talk", "present", "celebrate"];
 
 describe("점술가 NPC (07 §3 한도)", () => {

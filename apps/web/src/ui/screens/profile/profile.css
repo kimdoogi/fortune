@@ -566,7 +566,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  width: 25%;
+  width: 20%;
   max-width: 74px;
   animation: rise 0.45s ease both;
 }

@@ -4,6 +4,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { findBanned, greetings } from "../../prompts/src/index";
+import nature from "../data/meanings/nature.json";
 import obanggi from "../data/meanings/obanggi.json";
 import saju from "../data/meanings/saju.json";
 
@@ -16,7 +17,9 @@ const RELATIONS = ["천간합", "천간충", "지지육합", "지지육충"];
 const FLAGS = ["빨강", "노랑", "파랑", "하양", "초록"];
 const GRADES = ["대길", "길", "평", "주의"];
 const CATEGORIES = ["연애", "재물", "직장", "건강", "기타"];
-const SHOPS = ["saju", "tarot", "dolyeong", "dream"];
+const SHOPS = ["saju", "tarot", "dolyeong", "dream", "jokjipge"];
+const NATURE_SCENES = ["surface", "inner", "people", "work", "love", "stress"];
+const NATURE_GROUPS = ["비겁", "식상", "재성", "관성", "인성"];
 
 /** 금지 표현 목록 v1은 packages/prompts/common/banned.json 한 곳에서 관리한다 */
 const bannedHits = findBanned;
@@ -140,6 +143,32 @@ describe("사주 해석 데이터 (data/meanings/saju.json)", () => {
   });
 });
 
+describe("기질 장면 표 (data/meanings/nature.json, F19)", () => {
+  it("일간 10개마다 장면 여섯 칸, 한 칸 25~90자", () => {
+    expectExactKeys(nature, ["dayMaster", "groups"]);
+    expectExactKeys(nature.dayMaster, STEMS);
+    for (const stem of STEMS) {
+      const row = (nature.dayMaster as Rec)[stem] as Record<string, string>;
+      expectExactKeys(row, NATURE_SCENES);
+      for (const scene of NATURE_SCENES) {
+        const text = row[scene] as string;
+        expect(len(text), `${stem}.${scene}`).toBeGreaterThanOrEqual(25);
+        expect(len(text), `${stem}.${scene}`).toBeLessThanOrEqual(90);
+      }
+    }
+  });
+
+  it("십신 무리 5개: strong, absent", () => {
+    expectExactKeys(nature.groups, NATURE_GROUPS);
+    for (const g of NATURE_GROUPS) {
+      const row = (nature.groups as Rec)[g] as Record<string, string>;
+      expectExactKeys(row, ["strong", "absent"]);
+      expect(isSentence(row.strong)).toBe(true);
+      expect(isSentence(row.absent)).toBe(true);
+    }
+  });
+});
+
 describe("오방기 의미표 (data/meanings/obanggi.json)", () => {
   const flags = obanggi as Rec;
 
@@ -175,7 +204,7 @@ describe("오방기 의미표 (data/meanings/obanggi.json)", () => {
 describe("인사말 (packages/prompts/greetings.json)", () => {
   const g = greetings as Rec;
 
-  it("점집 4곳, enter 5줄, dailyLimit 2줄", () => {
+  it("점집 5곳, enter 5줄, dailyLimit 2줄", () => {
     expectExactKeys(g, SHOPS);
     for (const shop of SHOPS) {
       const s = g[shop];
@@ -206,7 +235,7 @@ describe("금지 표현 (docs/04 §7 v1)", () => {
     expect(bannedHits("오늘은 천천히 쉬어 가면 좋다")).toEqual([]);
   });
 
-  const files = { saju, obanggi, greetings };
+  const files = { saju, nature, obanggi, greetings };
   for (const [name, data] of Object.entries(files)) {
     it(`${name}의 모든 문장에 금지 표현이 없다`, () => {
       const strings = allStrings(data);

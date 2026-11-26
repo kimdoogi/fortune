@@ -20,6 +20,7 @@ import {
   avatarString,
 } from "@fortune/shared-types";
 import { ApiFailure, type api } from "../../api/client";
+import { NATURE_BOARD, NATURE_SAMPLE } from "../shop/labData";
 
 type Api = typeof api;
 const KEY = "fortune.mock.v1";
@@ -102,6 +103,7 @@ function makeProfile(input: ProfileInput): ProfileView {
 }
 
 const OUT: Record<ProductId, InterpretOutput> = {
+  nature: NATURE_SAMPLE,
   gunghap: {
     greeting: "두 분, 나란히 앉으니 보기 좋구려.",
     summary: "준호 님과 궁합 · 서로 키워 주는 사이",
@@ -288,6 +290,8 @@ function visualFor(req: ReadingRequest): ReadingVisual {
             rice: { count: 9, grade: "길" },
           }
         : { shop: "dolyeong", category: req.category, flag: { color: "노랑", grade: "길" } };
+    case "jokjipge":
+      return NATURE_BOARD;
     case "dream":
       return {
         shop: "dream",
@@ -317,6 +321,7 @@ function result(
     todayCallsLeft: 30,
     followups: [],
     followupsLeft: 3,
+    ...(req.product === "nature" ? { marks: {} } : {}),
   };
 }
 
@@ -486,6 +491,17 @@ export const mockApi: Api = {
     const r = db.readings.find((x) => x.id === id);
     if (!r) throw fail("NOT_FOUND", "찾을 수 없는 기록이에요", 404);
     return { ...r, reused: true, todayCallsLeft: db.calls };
+  },
+  async mark(id, req) {
+    await wait(200);
+    const r = db.readings.find((x) => x.id === id);
+    if (!r || r.product !== "nature") throw fail("NOT_FOUND", "찾을 수 없는 기록이에요", 404);
+    const marks = { ...(r.marks ?? {}) };
+    if (req.mark) marks[req.section] = req.mark;
+    else delete marks[req.section];
+    r.marks = marks;
+    save();
+    return { marks };
   },
   async remove(id) {
     await wait(300);

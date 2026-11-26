@@ -1285,3 +1285,79 @@
   word-break: break-all;
   user-select: all;
 }
+
+/* ── 족집게집 돋보기 연출 (F19) ─────────────────────── */
+.sh-lens {
+  position: relative;
+  height: 128px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sh-lens-glass {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 7px solid #c99a45;
+  box-shadow: 0 0 0 2px #6e4429, 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 0 24px
+    rgba(255, 220, 150, 0.35);
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.5),
+    rgba(180, 210, 255, 0.12) 45%,
+    rgba(20, 16, 40, 0.25)
+  );
+  overflow: hidden;
+  animation: sh-lens-scan 2.4s ease-in-out infinite;
+  z-index: 1;
+}
+
+.sh-lens-glass i {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(246, 220, 151, 0.55);
+  animation: sh-ink 1.6s ease-in-out infinite;
+}
+
+.sh-lens-glass i:nth-child(1) {
+  top: 30%;
+}
+
+.sh-lens-glass i:nth-child(2) {
+  top: 46%;
+  right: 30%;
+  animation-delay: 0.2s;
+}
+
+.sh-lens-glass i:nth-child(3) {
+  top: 62%;
+  animation-delay: 0.4s;
+}
+
+.sh-lens-handle {
+  position: absolute;
+  left: calc(50% + 30px);
+  top: calc(50% + 30px);
+  width: 14px;
+  height: 52px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #8a5634, #5b3420 50%, #2f1a0e);
+  transform: rotate(-45deg);
+  transform-origin: 50% 0;
+  animation: sh-lens-scan 2.4s ease-in-out infinite;
+}
+
+@keyframes sh-lens-scan {
+  0%,
+  100% {
+    translate: -18px 0;
+  }
+  50% {
+    translate: 18px -6px;
+  }
+}

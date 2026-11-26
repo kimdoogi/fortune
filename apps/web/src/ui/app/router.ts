@@ -24,7 +24,7 @@ export type Route =
   /** 같이 보기: 점집 안 */
   | { name: "pair-in"; code: string; shop: ShopId };
 
-export const SHOP_IDS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
+export const SHOP_IDS: ShopId[] = ["saju", "tarot", "dolyeong", "dream", "jokjipge"];
 const isShop = (s: string | undefined): s is ShopId => SHOP_IDS.includes(s as ShopId);
 
 export function parse(hash: string): Route {

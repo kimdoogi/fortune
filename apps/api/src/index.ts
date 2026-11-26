@@ -13,6 +13,7 @@ import { checkDream } from "./readings/check";
 import { createReading } from "./readings/create";
 import { createFollowup } from "./readings/followups";
 import { deleteReading, getReading, listReadings } from "./readings/history";
+import { setMark } from "./readings/marks";
 import { deleteSession, postSession, requireUser } from "./session";
 import { addStone, createWish, getWishes, setOutcome } from "./wishes";
 import { forwardVillage, wsToken } from "./ws";
@@ -86,6 +87,8 @@ async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Res
   if (wo?.[1] && method === "POST") return setOutcome(wo[1], req, env, user);
   const fu = /^\/api\/readings\/([A-Za-z0-9-]{1,64})\/followups$/.exec(path);
   if (fu?.[1] && method === "POST") return createFollowup(fu[1], req, env, ctx, user);
+  const mk = /^\/api\/readings\/([A-Za-z0-9-]{1,64})\/marks$/.exec(path);
+  if (mk?.[1] && method === "PUT") return setMark(mk[1], req, env, user);
   const one = /^\/api\/readings\/([A-Za-z0-9-]{1,64})$/.exec(path);
   if (one?.[1]) {
     if (method === "GET") return getReading(one[1], env, user);

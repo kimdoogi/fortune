@@ -1,9 +1,10 @@
 /** 해석 데이터 표 (docs/02 §7, docs/03). 파일은 packages/fortune-engine/data/meanings/ */
 import dreamJson from "@fortune/fortune-engine/data/meanings/dream.json";
+import natureJson from "@fortune/fortune-engine/data/meanings/nature.json";
 import obanggiJson from "@fortune/fortune-engine/data/meanings/obanggi.json";
 import sajuJson from "@fortune/fortune-engine/data/meanings/saju.json";
 import tarotJson from "@fortune/fortune-engine/data/meanings/tarot.json";
-import type { FlagColor, FlagGrade } from "@fortune/shared-types";
+import type { FlagColor, FlagGrade, NatureGroup } from "@fortune/shared-types";
 
 export interface SajuMeanings {
   dayMaster: Record<string, { nature: string; keywords: string[]; summary: string }>;
@@ -58,7 +59,17 @@ export interface DreamSymbol {
   meaning: string;
 }
 
+/** 족집게집 기질 장면 표 (F19, D-100) */
+export interface NatureMeanings {
+  dayMaster: Record<
+    string,
+    Record<"surface" | "inner" | "people" | "work" | "love" | "stress", string>
+  >;
+  groups: Record<NatureGroup, { strong: string; absent: string }>;
+}
+
 export const SAJU = sajuJson as SajuMeanings;
+export const NATURE = natureJson as NatureMeanings;
 export const TAROT = tarotJson as TarotMeaning[];
 export const OBANGGI = obanggiJson as Record<FlagColor, FlagMeaning>;
 export const DREAM = dreamJson as DreamSymbol[];

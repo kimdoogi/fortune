@@ -14,19 +14,21 @@
 | ID | 화면 | 멀티 | 설명 | 기능 명세 |
 |---|---|---|---|---|
 | S0 | 로딩 / 첫 진입 | — | 익명 계정 생성 | [F14](features/F14-session.md) |
-| S1 | 지도 | — | 2D SVG, 점집 4곳 | [F01](features/F01-map.md), [F13](features/F13-daily.md) |
+| S1 | 지도 | — | 2D SVG, 점집 5곳 + 당산나무 (D-099, D-100) | [F01](features/F01-map.md), [F13](features/F13-daily.md) |
 | S2 | 프로필 입력 | — | 한 화면에 한 항목 + 캐릭터 미리보기 | [F02](features/F02-profile.md) |
 | S3-1 | 사주집 거리 | ✅ | 사주집 외관 + 다른 유저 | [F03](features/F03-street.md) |
 | S3-2 | 타로집 거리 | ✅ | 〃 | [F03](features/F03-street.md) |
 | S3-3 | 아기도령집 거리 | ✅ | 〃 | [F03](features/F03-street.md) |
 | S3-4 | 꿈해몽집 거리 | ✅ | 〃 | [F03](features/F03-street.md) |
+| S3-5 | 족집게집 거리 | ✅ | 〃 (D-100) | [F03](features/F03-street.md), [F19](features/F19-jokjipge.md) |
 | S4-1 | 사주집 내부 | ❌ 개인 | 청운 선생 | [F04](features/F04-shop-enter.md), [F05](features/F05-saju.md) |
 | S4-2 | 타로집 내부 | ❌ 개인 | 달님 언니 | [F04](features/F04-shop-enter.md), [F06](features/F06-tarot.md) |
 | S4-3 | 아기도령집 내부 | ❌ 개인 | 아기도령 | [F04](features/F04-shop-enter.md), [F07](features/F07-dolyeong.md) |
 | S4-4 | 꿈해몽집 내부 | ❌ 개인 | 몽실 할매 | [F04](features/F04-shop-enter.md), [F08](features/F08-dream.md) |
+| S4-5 | 족집게집 내부 | ❌ 개인 | 족집게 도사 | [F04](features/F04-shop-enter.md), [F19](features/F19-jokjipge.md) |
 | S5 | 결과 화면 | ❌ | 2D UI(Preact) 오버레이 | [F10](features/F10-history.md), [F11](features/F11-share.md) |
 
-3D 장면은 거리 4개 + 내부 4개 = 8개.
+3D 장면은 거리 5개 + 당산나무 1개 + 내부 5개 = 11개.
 
 ## 2. 지도와 거리 구조
 - ✅ 지도에서 점집을 고르면 그 점집 거리의 입구에 선다

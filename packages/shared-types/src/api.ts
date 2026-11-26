@@ -3,7 +3,7 @@
  * web과 api가 이 파일만 보고 맞춘다. 바꾸면 양쪽을 같이 고친다.
  */
 import type { AvatarStyle } from "./avatar";
-import type { InterpretOutput, ProductId, ShopId } from "./index";
+import type { InterpretOutput, PairShopId, ProductId, ShopId } from "./index";
 
 export type Gender = "male" | "female";
 export type AgeBand = "10대" | "20대" | "30대" | "40대 이상";
@@ -105,7 +105,8 @@ export type ReadingRequest =
     }
   | { shop: "dolyeong"; product: "obanggi"; category: DolyeongCategory; requestId: string }
   | { shop: "dolyeong"; product: "sinjeom"; requestId: string }
-  | { shop: "dream"; product: "dream"; checkId: string; requestId: string };
+  | { shop: "dream"; product: "dream"; checkId: string; requestId: string }
+  | { shop: "jokjipge"; product: "nature"; requestId: string };
 
 /** 사주판 (F05 출력) */
 export interface SajuBoard {
@@ -118,6 +119,50 @@ export interface SajuBoard {
   yongsin: string;
   /** 앞으로 12달 월운 등급 (D-079). 예전 풀이에는 없다 */
   months?: { year: number; month: number; grade: "good" | "normal" | "caution" }[];
+}
+
+/** 기질 판 (F19 출력): 나의 기운 + 오행 막대 + 많은 기운·없는 기운 */
+export interface NatureBoard {
+  dayMaster: { stem: string; element: string; yinYang: "양" | "음" };
+  elements: Record<"목" | "화" | "토" | "금" | "수", number>;
+  /** 원국 십신 무리 (F19 처리 규칙). 2자리 이상인 가장 많은 무리, 없으면 null */
+  strong: NatureGroup | null;
+  /** 0자리인 무리 */
+  absent: NatureGroup[];
+  hourUnknown: boolean;
+}
+
+/** 십신 무리 다섯 (02 §5-2) */
+export const NATURE_GROUPS = ["비겁", "식상", "재성", "관성", "인성"] as const;
+export type NatureGroup = (typeof NATURE_GROUPS)[number];
+/** 화면에 보이는 쉬운 이름 (D-083) */
+export const NATURE_GROUP_NAMES: Record<NatureGroup, string> = {
+  비겁: "나·친구",
+  식상: "재주·표현",
+  재성: "돈·현실",
+  관성: "책임·규칙",
+  인성: "공부·생각",
+};
+
+/** 족집게집 섹션 (F19). 이 순서로 보인다 */
+export const NATURE_SECTIONS = [
+  "surface",
+  "inner",
+  "people",
+  "atWork",
+  "inLove",
+  "stress",
+] as const;
+export type NatureSection = (typeof NATURE_SECTIONS)[number];
+export type NatureMark = "yes" | "no";
+/** PUT /api/readings/:id/marks 본문. mark가 null이면 지운다 */
+export interface MarkRequest {
+  section: NatureSection;
+  mark: NatureMark | null;
+}
+/** PUT /api/readings/:id/marks 응답 */
+export interface MarksResponse {
+  marks: Partial<Record<NatureSection, NatureMark>>;
 }
 
 export interface TarotCardView {
@@ -169,7 +214,7 @@ export interface GunghapInviteView {
 }
 
 /** 같이 보기: 점집마다 같이 보는 점 (F16, D-090) */
-export const PAIR_PRODUCT: Record<ShopId, ProductId> = {
+export const PAIR_PRODUCT: Record<PairShopId, ProductId> = {
   saju: "gunghap",
   tarot: "tarot_pair",
   dolyeong: "sinjeom_pair",
@@ -213,7 +258,8 @@ export type ReadingVisual =
   | {
       shop: "dream";
       pair: { nickname: string; dream: string; symbols: { id: string; name: string }[] }[];
-    };
+    }
+  | { shop: "jokjipge"; nature: NatureBoard };
 
 /** POST /api/readings, GET /api/readings/:id 응답 */
 export interface ReadingResult {
@@ -233,6 +279,8 @@ export interface ReadingResult {
   followups: FollowupView[];
   /** 이 풀이에 더 물을 수 있는 횟수 (최대 3) */
   followupsLeft: number;
+  /** 족집게집 맞아요/아니에요 표시 (F19). 다른 상품은 없다 */
+  marks?: Partial<Record<NatureSection, NatureMark>>;
 }
 
 // ── F15 이어 묻기 ─────────────────────────────────────────
@@ -329,6 +377,7 @@ export const PRODUCT_NAMES: Record<ProductId, string> = {
   sinjeom_pair: "둘의 신점",
   dream_pair: "두 사람 꿈풀이",
   dream: "꿈해몽",
+  nature: "나는 어떤 사람",
 };
 
 /** 점집별로 볼 수 있는 점 (F04 표) */
@@ -337,6 +386,7 @@ export const SHOP_PRODUCTS: Record<ShopId, ProductId[]> = {
   tarot: ["tarot_one", "tarot_three"],
   dolyeong: ["sinjeom"],
   dream: ["dream"],
+  jokjipge: ["nature"],
 };
 
 /** 섹션 제목 (코드가 붙인다, docs/04 §5) */
@@ -369,6 +419,13 @@ export const SECTION_TITLES: Record<string, string> = {
   gongsu: "아기도령의 공수",
   symbols: "꿈 속 상징",
   meaning: "꿈의 뜻",
+  // 족집게집 (F19)
+  surface: "겉으로 보이는 나",
+  inner: "속마음",
+  people: "사람들 사이에서",
+  atWork: "일할 때",
+  inLove: "연애할 때",
+  stress: "스트레스 받을 때",
 };
 
 export const DISCLAIMER =

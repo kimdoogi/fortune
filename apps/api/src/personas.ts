@@ -7,6 +7,7 @@ export const FALLBACK: Record<ShopId, string> = {
   tarot: "어머, 카드가 오늘은 수줍어하네요. 조금 있다가 다시 펼쳐 볼까요?",
   dolyeong: "으앙, 방울 소리가 안 들려! 이따 다시 와!",
   dream: "아이고, 할매가 깜빡 졸았구먼. 이따 다시 얘기해 줘.",
+  jokjipge: "허허, 돋보기에 김이 서려 잘 안 보이네. 조금 있다 다시 오게.",
 };
 
 /** 하루 30회 상한 안내 (docs/04 §10). 사주는 F05, 타로는 F06 문장 */
@@ -15,6 +16,7 @@ export const DAILY_LIMIT_TEXT: Record<ShopId, string> = {
   tarot: "오늘은 카드가 쉬고 싶대요. 내일 또 봐요.",
   dolyeong: "오늘은 방울이 지쳤어! 내일 또 와!",
   dream: "아이고, 오늘은 꿈 얘기를 많이 들었구먼. 내일 또 와.",
+  jokjipge: "오늘은 돋보기가 뜨거워졌네. 내일 다시 오게.",
 };
 
 /** 위기 안내 (docs/04a 위기 안내). LLM을 거치지 않는다 */

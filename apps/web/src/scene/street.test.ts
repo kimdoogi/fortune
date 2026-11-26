@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { buildStreet } from "./street";
 import type { PlaceId } from "./street-env";
 
-const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
+const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream", "jokjipge"];
 
 /** 그릴 것 수(대략적인 드로우콜)와 삼각형 수. InstancedMesh는 인스턴스 수만큼 곱한다 */
 function measure(root: THREE.Object3D) {

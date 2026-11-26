@@ -1,14 +1,14 @@
 /**
  * 거리 바닥과 길 (08 §1 점집별 외관, D-075).
  * 풀 얼룩·길·마당·등불 빛 웅덩이를 바닥 버텍스 컬러로 굽는다 (D-065). 길 모양은 점집마다 다르다:
- * 사주집 디딤돌, 아기도령 흙길, 타로집 자갈 돌길, 꿈해몽 물 위 디딤돌.
+ * 사주집 디딤돌, 아기도령 흙길, 타로집 자갈 돌길, 꿈해몽 물 위 디딤돌, 족집게집 비 갠 젖은 골목.
  */
 import * as THREE from "three";
 import { at, colored, gradient, hash, noise } from "./geo";
 import { addWater } from "./street-fx";
 import type { Kit } from "./street-kit";
 
-export type PathKind = "steps" | "dirt" | "cobble" | "pond";
+export type PathKind = "steps" | "dirt" | "cobble" | "pond" | "wet";
 
 export interface GroundStyle {
   grass: [string, string];
@@ -253,9 +253,58 @@ function pondPath(kit: Kit, style: GroundStyle) {
   }
 }
 
+/**
+ * 비 갠 젖은 골목 (족집게집): 시멘트 길 위 물웅덩이. 웅덩이는 밤하늘빛이고,
+ * 위에 매달린 전구가 웅덩이 안에 길쭉한 주황 빛으로 비친다 (전구 빛무리 위치를 보고 굽는다).
+ * placeLamps 뒤에 불러야 전구 위치를 안다.
+ */
+function wetAlley(kit: Kit) {
+  const { bz, parts, lit } = kit;
+  // 길 가운데 금 간 시멘트 판 이음매
+  for (let z = 7.4; z > bz + 3.2; z -= 1.6) {
+    parts.push(colored(at(new THREE.BoxGeometry(2.9, 0.008, 0.022), 0, 0.004, z), "#3c3634"));
+  }
+  const puddles: [number, number, number, number][] = [
+    [-0.7, 4.6, 0.7, 0.42],
+    [0.9, 2.6, 0.55, 0.34],
+    [-0.3, 0.4, 0.85, 0.46],
+    [0.8, -2.0, 0.6, 0.38],
+    [-0.8, -4.2, 0.55, 0.34],
+    [-3.6, 2.4, 0.7, 0.4],
+    [3.9, -0.6, 0.6, 0.38],
+  ];
+  const inside = (p: (typeof puddles)[number], x: number, z: number) =>
+    ((x - p[0]) / p[2]) ** 2 + ((z - p[1]) / p[3]) ** 2;
+  for (const p of puddles) {
+    const [px, pz, rx, rz] = p;
+    // 가장자리가 구불한 웅덩이 (부채꼴 삼각형)
+    const n = 20;
+    const pts: THREE.Vector2[] = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2;
+      const k = 0.8 + noise(px * 3 + Math.cos(a) * 1.5, pz * 3 + Math.sin(a) * 1.5) * 0.4;
+      pts.push(new THREE.Vector2(Math.cos(a) * rx * k, Math.sin(a) * rz * k));
+    }
+    const shape = new THREE.ShapeGeometry(new THREE.Shape(pts));
+    shape.rotateX(-Math.PI / 2);
+    parts.push(colored(at(shape, px, 0.008, pz), "#363452"));
+    // 비친 전구: 가까운 전구마다 웅덩이 안에 길쭉한 빛
+    for (const gl of kit.glows) {
+      if (gl.y < 0.5 || gl.y > 4) continue;
+      const rz0 = pz + (pz - gl.z) * 0.15;
+      if (inside(p, gl.x, rz0) > 0.4) continue;
+      const streak = new THREE.CircleGeometry(0.04 + gl.size * 0.012, 8);
+      streak.scale(1, 3.2, 1);
+      streak.rotateX(-Math.PI / 2);
+      lit.push(colored(at(streak, gl.x, 0.012, rz0), "#a86a3c"));
+    }
+  }
+}
+
 export function buildPath(kit: Kit, kind: PathKind, style: GroundStyle) {
   if (kind === "steps") steppingStones(kit);
   else if (kind === "dirt") dirtPath(kit);
   else if (kind === "cobble") cobbles(kit);
+  else if (kind === "wet") wetAlley(kit);
   else pondPath(kit, style);
 }

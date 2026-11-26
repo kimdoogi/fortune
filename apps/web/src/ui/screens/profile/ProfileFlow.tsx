@@ -245,7 +245,7 @@ function Welcome(props: { consent: boolean; setConsent: (v: boolean) => void }) 
       sub="닉네임, 생년월일, 태어난 시간, 성별이면 충분해요. 이름은 받지 않아요."
       hero={
         <div class="pf-masters" aria-hidden="true">
-          {(["saju", "tarot", "dolyeong", "dream"] as const).map((id, i) => (
+          {(["saju", "tarot", "dolyeong", "dream", "jokjipge"] as const).map((id, i) => (
             <span key={id} style={{ animationDelay: `${0.15 + i * 0.08}s` }}>
               <Portrait shop={id} size={58} />
               <small>{SHOP_INFO[id].master}</small>

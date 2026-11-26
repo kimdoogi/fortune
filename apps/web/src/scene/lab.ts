@@ -1,6 +1,6 @@
 /**
  * 장면 실험실 (개발용, scene-lab.html). 배포 묶음에는 들어가지 않는다 (vite build 입력은 index.html뿐).
- * 주소 파라미터: ?shop=saju|tarot|dolyeong|dream &inside=1 &act=greet &ui=1(대사 상자 자리 표시)
+ * 주소 파라미터: ?shop=saju|tarot|dolyeong|dream|jokjipge &inside=1 &act=greet &ui=1(대사 상자 자리 표시)
  *   &gender=female|male &age=20대
  */
 import type { ShopId } from "@fortune/shared-types";
@@ -9,7 +9,7 @@ import { NPC_NAMES } from "./npc-looks";
 import { type NpcAction, Stage } from "./stage";
 
 const params = new URLSearchParams(location.search);
-const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
+const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream", "jokjipge"];
 const shop = (SHOPS.find((s) => s === params.get("shop")) ?? "saju") as ShopId;
 const gender: Gender = params.get("gender") === "male" ? "male" : "female";
 const AGES: AgeBand[] = ["10대", "20대", "30대", "40대 이상"];

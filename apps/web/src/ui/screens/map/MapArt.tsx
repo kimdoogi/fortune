@@ -1,8 +1,10 @@
 /**
  * F01 지도: 코드로 그린 2D 밤 한옥 골목 일러스트 (D-030, D-048).
  * 거리 장면과 같은 팔레트 (08 §1): 남보라 하늘 + 별 + 보름달, 길 따라 석등 불빛.
- * 점집마다 생김새가 다르다 (D-075): 사주집 기와 한옥, 타로집 서양 오두막, 아기도령 신당 초가집, 꿈해몽 꿈속 찻집.
- * viewBox는 360×640. 화면 비율이 달라도 점집 네 곳은 늘 다 보이고, 남는 곳은 하늘·땅이 이어진다.
+ * 점집마다 생김새가 다르다 (D-075): 사주집 기와 한옥, 타로집 서양 오두막, 아기도령 신당 초가집, 꿈해몽 꿈속 찻집,
+ * 족집게집 장터 골목 점방 (D-100).
+ * viewBox는 360×640. 화면 비율이 달라도 점집 다섯 곳은 늘 다 보이고, 남는 곳은 하늘·땅이 이어진다.
+ * 16:9 휴대폰(375×667)에서도 아래 버튼 줄(y ≈ 557 위)에 가리지 않게 다섯 곳을 지그재그로 촘촘히 둔다.
  */
 import type { ShopId } from "@fortune/shared-types";
 import type { JSX } from "preact";
@@ -138,20 +140,22 @@ interface ShopSpot {
   yard: string;
 }
 const SPOTS: ShopSpot[] = [
-  { id: "saju", x: 92, y: 258, s: 0.84, yard: "#6b5a4b" },
-  { id: "tarot", x: 270, y: 338, s: 0.9, yard: "#625b66" },
-  { id: "dolyeong", x: 92, y: 424, s: 0.96, yard: "#54463f" },
-  { id: "dream", x: 270, y: 510, s: 1.02, yard: "#6a6480" },
+  { id: "saju", x: 92, y: 246, s: 0.78, yard: "#6b5a4b" },
+  { id: "tarot", x: 270, y: 316, s: 0.82, yard: "#625b66" },
+  { id: "dolyeong", x: 92, y: 386, s: 0.86, yard: "#54463f" },
+  { id: "dream", x: 270, y: 456, s: 0.9, yard: "#6a6480" },
+  { id: "jokjipge", x: 94, y: 514, s: 0.92, yard: "#5a4c44" },
 ];
 
 const LANTERNS: { x: number; y: number; s: number }[] = [
-  { x: 166, y: 222, s: 0.42 },
-  { x: 204, y: 270, s: 0.52 },
-  { x: 150, y: 346, s: 0.6 },
-  { x: 210, y: 430, s: 0.68 },
-  { x: 140, y: 516, s: 0.76 },
-  { x: 230, y: 598, s: 0.86 },
-  { x: 118, y: 628, s: 0.9 },
+  { x: 166, y: 220, s: 0.42 },
+  { x: 204, y: 262, s: 0.5 },
+  { x: 156, y: 302, s: 0.54 },
+  { x: 206, y: 372, s: 0.62 },
+  { x: 152, y: 440, s: 0.7 },
+  { x: 214, y: 528, s: 0.8 },
+  { x: 230, y: 610, s: 0.88 },
+  { x: 118, y: 630, s: 0.9 },
 ];
 
 const TREES: { x: number; y: number; s: number; flip?: boolean }[] = [
@@ -1157,6 +1161,176 @@ function DreamTeaHouse() {
   );
 }
 
+/** 족집게집 (D-100): 판자벽 점방, 황동빛 골함석 맞배지붕, 큰 유리창, 돋보기 간판, "용하다" 깃발, 궤짝·평상 */
+function JokjipgeShop() {
+  const bulbs = Array.from({ length: 11 }, (_, i) => {
+    const t = (i + 0.5) / 11;
+    return { x: -62 + 124 * t, y: -57 + 9 * 4 * t * (1 - t) };
+  });
+  return (
+    <g>
+      <ellipse cx="0" cy="2" rx="80" ry="10" fill="#000" opacity=".3" />
+      <Glow x={0} y={4} rx={70} ry={14} o={0.8} />
+      {/* 기단 */}
+      <rect x="-58" y="-7" width="116" height="7" fill="#6e6a64" />
+      <path d="M-58 -7 H58" stroke="#9a948a" stroke-width="1.2" />
+      {/* 판자벽 */}
+      <rect x="-52" y="-64" width="104" height="57" fill="url(#m-plank)" />
+      <path
+        d="M-52 -57 H52 M-52 -50 H52 M-52 -43 H52 M-52 -36 H52 M-52 -29 H52 M-52 -22 H52 M-52 -15 H52"
+        stroke="#2e1e14"
+        stroke-opacity=".45"
+        stroke-width=".7"
+      />
+      {/* 큰 미닫이 유리창 둘 */}
+      {[-46, 16].map((x) => (
+        <g key={x}>
+          <rect x={x} y="-48" width="30" height="30" fill="#ffcf86" class="window" />
+          <path
+            d={`M${x + 15} -48 v30 M${x + 7.5} -48 v30 M${x + 22.5} -48 v30 M${x} -38 h30 M${x} -28 h30`}
+            stroke="#3a2a1e"
+            stroke-width="1.1"
+          />
+          <rect
+            x={x}
+            y="-48"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="#3a2a1e"
+            stroke-width="2"
+          />
+          <rect x={x - 2} y="-18" width="34" height="2.4" fill="#5a3c28" />
+        </g>
+      ))}
+      {/* 안쪽 실루엣 (선반 위 단지) */}
+      <path
+        d="M-44 -33 h26 M-41 -33 v-5 h4 v5 M-33 -33 v-7 h5 v7 M-25 -33 v-4 h4 v4"
+        stroke="#7a4a2a"
+        stroke-width="1"
+        fill="none"
+        opacity=".7"
+      />
+      {/* 유리 미닫이 문 */}
+      <rect x="-12" y="-52" width="24" height="45" fill="#ffcf86" class="window" />
+      <path d="M0 -52 v45 M-12 -38 h24 M-12 -24 h24" stroke="#3a2a1e" stroke-width="1.2" />
+      <rect
+        x="-12"
+        y="-52"
+        width="24"
+        height="45"
+        fill="none"
+        stroke="#3a2a1e"
+        stroke-width="2.2"
+      />
+      {/* 문 위 현판 */}
+      <rect
+        x="-19"
+        y="-62.5"
+        width="38"
+        height="9"
+        rx="1"
+        fill="url(#m-wood)"
+        stroke="#e0b45e"
+        stroke-width=".9"
+      />
+      <text x="0" y="-55.6" text-anchor="middle" font-size="6.4" fill="#ffe0a0" font-weight="700">
+        족집게
+      </text>
+      {/* 골함석 맞배지붕 (앞에서 본 처마 쪽 경사면) */}
+      <path d="M-68 -62 H68 L56 -94 H-56 Z" fill="url(#m-tin)" />
+      <path
+        d={Array.from({ length: 27 }, (_, i) => {
+          const t = i / 26;
+          return `M${-68 + 136 * t} -62 L${-56 + 112 * t} -94`;
+        }).join(" ")}
+        stroke="#8a6630"
+        stroke-opacity=".55"
+        stroke-width=".9"
+      />
+      <path d="M-68 -62 H68" stroke="#5a4020" stroke-width="2.4" />
+      <rect x="-58" y="-97" width="116" height="4" rx="2" fill="#c99a48" />
+
+      {/* 처마 끝 전구 줄 */}
+      <path d="M-64 -59 Q0 -41 64 -59" stroke="#1e1a18" stroke-width=".9" fill="none" />
+      {bulbs.map((b, i) => (
+        <g key={b.x}>
+          <circle
+            class="lglow"
+            style={{ animationDelay: `${i * -0.4}s` }}
+            cx={b.x}
+            cy={b.y + 3}
+            r="6"
+            fill="url(#m-flame)"
+          />
+          <circle cx={b.x} cy={b.y + 3} r="1.7" fill="#ffe6b0" />
+        </g>
+      ))}
+      {/* 큰 돋보기 간판: 황동 테 + 가운데 눈 */}
+      <path d="M26 -61 L27 -55 M36 -61 L35 -55" stroke="#2a2420" stroke-width=".8" />
+      <circle cx="31" cy="-44" r="14" fill="url(#m-flame)" class="pulse" />
+      <path d="M37.5 -37.5 L46 -28" stroke="#5a3420" stroke-width="3.6" stroke-linecap="round" />
+      <circle cx="31" cy="-44" r="9.5" fill="#fff2d2" />
+      <path
+        d="M24.5 -44 q6.5 -6 13 0 q-6.5 6 -13 0z"
+        fill="#fffdf6"
+        stroke="#2a1a12"
+        stroke-width="1"
+      />
+      <circle cx="31" cy="-44" r="2.6" fill="#6a4424" />
+      <circle cx="31" cy="-44" r="1.3" fill="#140c08" />
+      <circle cx="31" cy="-44" r="9.5" fill="none" stroke="#e0b45e" stroke-width="2.6" />
+      {/* "용하다" 깃발 */}
+      <path d="M-62 0 V-100" stroke="#b8a060" stroke-width="2" />
+      <g class="flag">
+        <rect
+          x="-61"
+          y="-96"
+          width="13"
+          height="38"
+          fill="#f2e8d2"
+          stroke="#b8322a"
+          stroke-width="1.5"
+        />
+        {["용", "하", "다"].map((ch, i) => (
+          <text
+            key={ch}
+            x="-54.5"
+            y={-85 + i * 11}
+            text-anchor="middle"
+            font-size="8"
+            font-weight="700"
+            fill="#1e1612"
+          >
+            {ch}
+          </text>
+        ))}
+      </g>
+      {/* 나무 궤짝 (왼쪽) */}
+      <g>
+        <rect x="-84" y="-13" width="17" height="13" fill="#7a5a3a" />
+        <rect x="-82" y="-25" width="15" height="12" fill="#8a6440" />
+        <path
+          d="M-84 -9 h17 M-84 -4.5 h17 M-82 -21 h15 M-82 -17 h15"
+          stroke="#4a3220"
+          stroke-width=".8"
+        />
+        {[-79, -75, -71].map((x) => (
+          <circle key={x} cx={x} cy="-26" r="2.3" fill="#c83a2a" />
+        ))}
+      </g>
+      {/* 평상 + 노란 주전자 (오른쪽) */}
+      <g>
+        <rect x="58" y="-10" width="26" height="3" fill="#a07a50" />
+        <path d="M60 -7 v7 M82 -7 v7" stroke="#3a2a1e" stroke-width="1.6" />
+        <path d="M66 -10 v-5 q3 -2 6 0 v5 z" fill="#e8c860" />
+        <path d="M72 -13 l3 -2" stroke="#e8c860" stroke-width="1.2" />
+        <ellipse cx="78" cy="-11" rx="2.6" ry="1.2" fill="#f4f0e6" />
+      </g>
+    </g>
+  );
+}
+
 /** 당산나무 (F18): 둥근 수관, 오색 천, 금줄, 옆의 돌탑 */
 function WishTreeArt() {
   const cloth = ["#e0473a", "#f2c94c", "#3f7fd9", "#f4f1ea", "#4caf6a"];
@@ -1235,6 +1409,8 @@ function ShopDecor(props: { shop: ShopId }) {
       return <DolyeongShrine />;
     case "dream":
       return <DreamTeaHouse />;
+    case "jokjipge":
+      return <JokjipgeShop />;
   }
 }
 
@@ -1264,13 +1440,18 @@ function FarVillage() {
   );
 }
 
-/** 지도에서 고를 수 있는 곳: 점집 넷 + 당산나무 (F18) */
+/** 지도에서 고를 수 있는 곳: 점집 다섯 + 당산나무 (F18) */
 export type MapSpot = ShopId | "tree";
 
 /** 당산나무 자리: 길 끝, 사주집과 타로집 사이 언덕 (멀어서 작게) */
 const TREE_SPOT = { x: 210, y: 206, s: 0.62 };
 
-export function MapArt(props: { selected: MapSpot | null; onSelect: (s: MapSpot) => void }) {
+export function MapArt(props: {
+  selected: MapSpot | null;
+  onSelect: (s: MapSpot) => void;
+  /** 흐리게 두는 곳 (같이 보기 중 족집게집, F19). 눌리기는 한다 (안내는 MapScreen이 띄운다) */
+  locked?: MapSpot[];
+}) {
   type Item = { y: number; el: JSX.Element };
   const items: Item[] = [];
 
@@ -1282,16 +1463,18 @@ export function MapArt(props: { selected: MapSpot | null; onSelect: (s: MapSpot)
     const info = SHOP_INFO[sp.id];
     const on = props.selected === sp.id;
     const dim = props.selected !== null && !on;
+    const locked = props.locked?.includes(sp.id) ?? false;
     items.push({
       y: sp.y,
       el: (
         <g
           key={sp.id}
-          class={`shop ${on ? "on" : ""} ${dim ? "dim" : ""}`}
+          class={`shop ${on ? "on" : ""} ${dim ? "dim" : ""} ${locked ? "locked" : ""}`}
           // biome-ignore lint/a11y/useSemanticElements: SVG 안에는 <button>을 둘 수 없다
           role="button"
           tabIndex={0}
-          aria-label={`${info.name}, ${info.master}`}
+          aria-label={`${info.name}, ${info.master}${locked ? " (혼자 들어가는 곳)" : ""}`}
+          aria-disabled={locked}
           aria-pressed={on}
           onClick={() => props.onSelect(sp.id)}
           onKeyDown={(e) => {
@@ -1454,6 +1637,17 @@ export function MapArt(props: { selected: MapSpot | null; onSelect: (s: MapSpot)
           <stop offset=".7" stop-color="#ece6d6" />
           <stop offset="1" stop-color="#bfb6a2" />
         </radialGradient>
+        {/* 족집게집: 판자벽, 황동빛 골함석 */}
+        <linearGradient id="m-plank" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#4a3222" />
+          <stop offset=".35" stop-color="#7a5438" />
+          <stop offset="1" stop-color="#5e4030" />
+        </linearGradient>
+        <linearGradient id="m-tin" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4d080" />
+          <stop offset=".5" stop-color="#d4a24e" />
+          <stop offset="1" stop-color="#9a7234" />
+        </linearGradient>
         <linearGradient id="m-wood" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#5a341f" />
           <stop offset="1" stop-color="#2a170d" />

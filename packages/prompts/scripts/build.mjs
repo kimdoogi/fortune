@@ -24,6 +24,8 @@ export function render() {
       tarot: { v: 2, text: read("tarot/persona.v2.md") },
       dolyeong: { v: 4, text: read("dolyeong/persona.v4.md") },
       dream: { v: 1, text: read("dream/persona.v1.md") },
+      // 족집게집 (F19, D-100)
+      jokjipge: { v: 1, text: read("jokjipge/persona.v1.md") },
     },
     product: {
       daily: { v: 3, text: read("saju/daily.v3.md") },
@@ -37,6 +39,7 @@ export function render() {
       obanggi: { v: 1, text: read("dolyeong/obanggi.v1.md") },
       dream: { v: 3, text: read("dream/dream.v3.md") },
       sinjeom: { v: 5, text: read("dolyeong/sinjeom.v5.md") },
+      nature: { v: 1, text: read("jokjipge/nature.v1.md") },
     },
     followup: { v: 5, text: read("followup/v5.md") },
     // 아기도령 신점 대화 (F07, D-073)

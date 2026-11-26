@@ -18,7 +18,8 @@ async function start() {
   installSound();
   effect(() => {
     const r = route.value;
-    setBgm(r.name === "inside" ? r.shop : "street");
+    // 족집게집은 아직 곡이 없어 사주집 곡을 같이 쓴다 (08 §5, D-100)
+    setBgm(r.name !== "inside" ? "street" : r.shop === "jokjipge" ? "saju" : r.shop);
   });
   // 개발 서버에서만: 서버 없이 화면을 볼 수 있게 api 객체의 함수를 가짜로 바꾼다 (배포 빌드에서는 빠짐)
   if (import.meta.env.DEV && new URLSearchParams(location.search).has("mock")) {

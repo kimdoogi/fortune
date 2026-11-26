@@ -1,7 +1,8 @@
 /**
  * 점술가 네 사람의 생김새와 동작 (04a 캐릭터 표).
  * 청운 선생: 흰 수염·갓·쥘부채의 70대 선비 / 달님 언니: 별무늬 숄의 20대 후반 /
- * 아기도령: 색동저고리·방울·오방기의 일곱 살 / 몽실 할매: 쪽진 머리·털실 숄·찻잔의 80대.
+ * 아기도령: 색동저고리·방울·오방기의 일곱 살 / 몽실 할매: 쪽진 머리·털실 숄·찻잔의 80대 /
+ * 족집게 도사: 짧은 검은 머리·콧수염·남색 두루마기·큰 황동 돋보기의 40대 (D-100).
  */
 import type { ShopId } from "@fortune/shared-types";
 import * as THREE from "three";
@@ -710,7 +711,180 @@ const dream: LookBuilder = (rig, b) => {
   };
 };
 
-export const LOOKS: Record<ShopId, LookBuilder> = { saju, tarot, dolyeong, dream };
+// ───────────────────────── 족집게집: 족집게 도사 ─────────────────────────
+const jokjipge: LookBuilder = (rig, b) => {
+  const R = 0.32;
+  const skin = "#efc6a4";
+  const hair = "#1c181a";
+  const robe = "#26305a";
+  const collar = "#1a2244";
+  const white = "#f7f5ef";
+  const silver = "#d8dde4";
+  const brass = "#e0b45e";
+  addSeat(rig, b, robe, { w: 0.46, h: 0.18, d: 0.38 });
+  addTorso(rig, b, robe, { r: 0.205 });
+  // 깃(짙은 남색 V) + 흰 동정
+  for (const s of [-1, 1]) {
+    rig.add(
+      b.body,
+      beam(
+        new THREE.Vector3(s * 0.11, 0.43, 0.1),
+        new THREE.Vector3(-s * 0.03, 0.2, 0.18),
+        0.065,
+        0.02,
+      ),
+      collar,
+    );
+    rig.add(
+      b.body,
+      beam(
+        new THREE.Vector3(s * 0.085, 0.445, 0.12),
+        new THREE.Vector3(-s * 0.005, 0.3, 0.188),
+        0.03,
+        0.022,
+      ),
+      white,
+    );
+  }
+  // 허리띠 + 매단 은 족집게
+  const belt = new THREE.TorusGeometry(0.203, 0.02, 5, 20);
+  belt.rotateX(Math.PI / 2);
+  belt.scale(1, 1, 0.86);
+  rig.add(b.body, at(belt, 0, 0.15, 0), "#3a2a20");
+  rig.add(b.body, at(new THREE.TorusGeometry(0.016, 0.005, 4, 8), 0.1, 0.13, 0.18), silver);
+  for (const s of [-1, 1])
+    rig.add(
+      b.body,
+      beam(
+        new THREE.Vector3(0.1, 0.115, 0.185),
+        new THREE.Vector3(0.1 + s * 0.012, -0.01, 0.2),
+        0.012,
+        0.006,
+      ),
+      silver,
+    );
+  addArm(rig, b.armL, b.handL, { sleeve: robe, skin, wide: 0.12, len: 0.31 });
+  addArm(rig, b.armR, b.handR, { sleeve: robe, skin, wide: 0.12, len: 0.31 });
+
+  addHead(rig, b, { R, skin });
+  addEyes(rig, b, { R, kind: "dot", color: "#1e1612", ey: -0.01 });
+  // 짙은 눈썹 (바깥이 살짝 올라간다)
+  addBrows(rig, b, R, hair, { y: 0.075, len: 0.085, thick: 0.022, tilt: -0.18 });
+  addMouth(rig, b, R, "#9a4a40", -0.125);
+  // 코
+  rig.add(b.head, at(sphere(0.036, 8, 6), 0, HC - 0.05, faceZ(R, 0, -0.05, -0.012)), "#e2b08c");
+  // 짧은 콧수염
+  for (const s of [-1, 1]) {
+    const m = new THREE.CapsuleGeometry(0.019, 0.05, 3, 6);
+    m.rotateZ(s * 1.3);
+    rig.add(b.head, at(m, s * 0.04, HC - 0.088, faceZ(R, 0.04, -0.088, -0.012)), hair);
+  }
+  // 짧은 검은 머리: 덮개 + 뒷머리 + 짧은 옆머리
+  const cap = hairCap(R, -0.5, 0.5);
+  cap.scale(1, 0.9, 1);
+  rig.add(b.head, at(cap, 0, HC + 0.04, -0.02), hair);
+  const back = sphere(0.3, 12, 8);
+  back.scale(1.06, 0.88, 0.92);
+  rig.add(b.head, at(back, 0, HC + 0.04, -0.1), hair);
+  for (const s of [-1, 1]) {
+    const side = new THREE.BoxGeometry(0.04, 0.12, 0.12);
+    side.rotateY(s * 0.3);
+    rig.add(b.head, at(side, s * 0.3, HC + 0.03, 0.02), hair);
+  }
+  bangs(rig, b, R, hair, 4, 1.2, { y: 0.22, size: 0.75 });
+
+  // 큰 황동 돋보기 (오른손): 나무 손잡이 → 렌즈 받침(lens)을 손잡이 끝에서 돌려 카메라 쪽을 보게 한다
+  const mag = new THREE.Group();
+  b.handR.add(mag);
+  rig.add(mag, at(new THREE.CylinderGeometry(0.02, 0.024, 0.14, 8), 0, 0.06, 0.02), "#5a3420");
+  rig.add(mag, at(new THREE.CylinderGeometry(0.026, 0.022, 0.03, 8), 0, 0.14, 0.02), brass);
+  const lens = new THREE.Group();
+  lens.position.set(0, 0.15, 0.02);
+  mag.add(lens);
+  const LR = 0.115;
+  rig.add(lens, at(new THREE.TorusGeometry(LR, 0.016, 6, 24), 0, LR + 0.01, 0), brass);
+  rig.addFlat(lens, at(new THREE.CircleGeometry(LR * 0.95, 20), 0, LR + 0.01, 0.002), "#e4eef0");
+  const glassBack = new THREE.CircleGeometry(LR * 0.95, 20);
+  glassBack.rotateY(Math.PI);
+  rig.addFlat(lens, at(glassBack, 0, LR + 0.01, -0.002), "#c8d6da");
+  rig.addFlat(lens, at(new THREE.CircleGeometry(0.022, 8), -0.05, LR + 0.06, 0.004), "#ffffff");
+  // 렌즈 너머로 크게 보이는 눈 (인사·들여다볼 때만)
+  const bigEye = new THREE.Group();
+  bigEye.position.set(0, LR + 0.01, 0.005);
+  lens.add(bigEye);
+  const almond = (w: number, h: number) => {
+    const sh = new THREE.Shape();
+    sh.moveTo(-w / 2, 0);
+    sh.quadraticCurveTo(0, h, w / 2, 0);
+    sh.quadraticCurveTo(0, -h, -w / 2, 0);
+    return new THREE.ShapeGeometry(sh, 8);
+  };
+  rig.addFlat(bigEye, almond(0.19, 0.13), "#2a1a12");
+  rig.addFlat(bigEye, at(almond(0.165, 0.1), 0, 0, 0.001), "#fffdf6");
+  rig.addFlat(bigEye, at(new THREE.CircleGeometry(0.038, 14), 0, 0, 0.002), "#5a3820");
+  rig.addFlat(bigEye, at(new THREE.CircleGeometry(0.02, 10), 0, 0, 0.003), "#120a06");
+  rig.addFlat(bigEye, at(new THREE.CircleGeometry(0.009, 6), 0.012, 0.012, 0.004), "#ffffff");
+
+  return {
+    scale: 1.0,
+    hipY: 0.16,
+    rest: { armRx: -1.0, armRz: -0.28, handRx: 0 },
+    act(a, t, p, time) {
+      if (a === "greet") {
+        // 돋보기를 들어 오른눈에 대고 씩 웃는다 (고개는 숙이지 않는다)
+        const e = bump(t, 0.4, 1.9, 0.4);
+        p.lean = 0.04 * e;
+        p.headX = -0.1 + 0.02 * e;
+        p.headZ += -0.08 * e;
+        p.armRx += (-2.03 - p.armRx) * e;
+        p.armRz += (0.22 - p.armRz) * e;
+        p.prop = e;
+        p.squint = 0.6 * e;
+        p.mouth = 0.18 * bump(t, 0.6, 1.6, 0.3);
+      } else if (a === "talk") {
+        // 돋보기를 쥔 채 까딱이고, 왼손으로 손짓
+        p.armRx = -1.1 + Math.sin(t * 1.6) * 0.06;
+        p.armRz = -0.3;
+        p.handRz = Math.sin(t * 2.4) * 0.22;
+        p.armLx = -1.1 - 0.18 * Math.sin(t * 2.0);
+        p.armLz = 0.3 + 0.12 * Math.sin(t * 1.3);
+        p.handLz = -0.2 * Math.sin(t * 2.0 + 0.5);
+      } else if (a === "present") {
+        // 몸을 숙여 돋보기를 앞으로 내밀고 렌즈 너머로 들여다본다
+        const e = Math.min(1, t / 0.6);
+        p.lean = 0.16 * e;
+        p.headX = -0.1 + 0.12 * e + Math.sin(time * 1.3) * 0.02;
+        p.headY = 0.06 * Math.sin(time * 0.8);
+        p.armRx = -1.0 + (-1.78 + 1.0) * e;
+        p.armRz = -0.28 + (0.36 + 0.28) * e;
+        p.armLx = -1.25;
+        p.armLz = 0.12;
+        p.prop = 0.8 * e;
+        p.squint = 0.35 * e;
+      } else if (a === "celebrate") {
+        // 허허: 돋보기를 치켜들고 흔든다
+        const e = bump(t, 0.15, 1.7, 0.35);
+        p.armRx = -1.0 + (-2.5 + 1.0) * e;
+        p.armRz = -0.28 + (-0.25 + 0.28) * e + Math.sin(t * 11) * 0.12 * e;
+        p.armLx = -0.95 + (-1.2 + 0.95) * e;
+        p.bob = Math.abs(Math.sin(t * 12)) * 0.018 * e;
+        p.squint = e;
+        p.mouth = 0.5 * e;
+        p.headX = -0.1 - 0.12 * e;
+      }
+    },
+    apply(p) {
+      const f = Math.max(0, Math.min(1, p.prop));
+      // 손잡이는 늘 서 있고, 들어 올리면 앞으로 기운다. 렌즈는 반대로 돌려 카메라를 본다
+      const tilt = 0.12 + 0.34 * f;
+      upright(mag, p.armRx, p.handRx, tilt);
+      lens.rotation.x = -tilt * 1.4;
+      bigEye.visible = f > 0.55;
+    },
+  };
+};
+
+export const LOOKS: Record<ShopId, LookBuilder> = { saju, tarot, dolyeong, dream, jokjipge };
 
 /** 테스트·실험실용 이름 */
 export const NPC_NAMES: Record<ShopId, string> = {
@@ -718,4 +892,5 @@ export const NPC_NAMES: Record<ShopId, string> = {
   tarot: "달님 언니",
   dolyeong: "아기도령",
   dream: "몽실 할매",
+  jokjipge: "족집게 도사",
 };

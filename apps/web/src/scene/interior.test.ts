@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import { buildInterior, cameraFor } from "./interior";
 
-const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream"];
+const SHOPS: ShopId[] = ["saju", "tarot", "dolyeong", "dream", "jokjipge"];
 
 /** 장면의 그릴 것 수(대략적인 드로우콜)와 삼각형 수 */
 function measure(scene: THREE.Scene) {

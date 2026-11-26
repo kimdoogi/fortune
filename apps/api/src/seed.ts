@@ -12,6 +12,8 @@ import { sha256, sha256Hex } from "./crypto";
  */
 export const sajuSeedKey = (profileVersion: number, year: number) =>
   `saju:v4:${profileVersion}:${year}`;
+/** 족집게집 나는 어떤 사람 (F19): 타고난 기질이라 연도 없이 프로필 버전만 */
+export const natureSeedKey = (profileVersion: number) => `nature:v1:${profileVersion}`;
 export const tarotSeedKey = (date: string, product: string, category: TarotCategory) =>
   `tarot:${date}:${product}:${category}`;
 export const obanggiSeedKey = (date: string, category: string) => `obanggi:${date}:${category}`;

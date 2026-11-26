@@ -1,8 +1,10 @@
 /** API·LLM 입출력 타입. web·api·reading이 같이 쓴다 (docs/13 §3) */
 
-export type ShopId = "saju" | "tarot" | "dolyeong" | "dream";
+export type ShopId = "saju" | "tarot" | "dolyeong" | "dream" | "jokjipge";
+/** 같이 보는 점이 있는 점집 (F16). 족집게집(F19)은 혼자 들어간다 */
+export type PairShopId = Exclude<ShopId, "jokjipge">;
 /** 같이 보기에서 둘이 갈 수 있는 곳: 점집, 당산나무(F18), 지도 */
-export type PairPlace = ShopId | "tree" | "map";
+export type PairPlace = PairShopId | "tree" | "map";
 export type ProductId =
   | "daily"
   | "saju_full"
@@ -17,7 +19,9 @@ export type ProductId =
   | "tarot_pair"
   | "sinjeom_pair"
   | "dream_pair"
-  | "dream";
+  | "dream"
+  /** 족집게집 나는 어떤 사람 (F19, D-100) */
+  | "nature";
 
 /** 오류 응답 (docs/09 §3) */
 export type ErrorCode =

@@ -218,6 +218,15 @@ export async function interpretSamples(
     );
   }
 
+  // 족집게집 나는 어떤 사람 (F19)
+  for (let i = 0; i < 4; i++) {
+    await add(
+      `nature-${PROFILES[i]?.profile.nickname}`,
+      { shop: "jokjipge", product: "nature", requestId: "eval" },
+      ctx(i + 40),
+    );
+  }
+
   for (const [i, d] of DREAM_SAMPLES.entries()) {
     await add(
       `dream-${i + 1}`,

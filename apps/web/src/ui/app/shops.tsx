@@ -1,5 +1,5 @@
 /**
- * 점집 네 곳과 점술가 (docs/04a 캐릭터 한눈에 보기, 08 §1 점집별 외관).
+ * 점집 다섯 곳과 점술가 (docs/04a 캐릭터 한눈에 보기, 08 §1 점집별 외관).
  * 얼굴 그림은 코드로 그린 SVG (D-030).
  */
 import type { ShopId } from "@fortune/shared-types";
@@ -44,6 +44,13 @@ export const SHOP_INFO: Record<ShopId, ShopInfo> = {
     intro: "간밤에 무슨 꿈 꿨누? 할매한테 얘기해 봐.",
     roof: "#2f7470",
     tint: "#9fe3d6",
+  },
+  jokjipge: {
+    name: "족집게집",
+    master: "족집게 도사",
+    intro: "어서 오게. 자네가 어떤 사람인지 돋보기로 콕 집어 주지.",
+    roof: "#b8863a",
+    tint: "#ffd98a",
   },
 };
 
@@ -201,6 +208,51 @@ function Face(props: { shop: ShopId }) {
             fill="none"
             stroke-linecap="round"
           />
+        </>
+      );
+    case "jokjipge":
+      // 족집게 도사: 짧은 검은 머리, 콧수염, 남색 두루마기, 오른눈에 댄 황동 돋보기
+      return (
+        <>
+          <path d="M12 64c2-10 10-14 20-14s18 4 20 14z" fill="#26305a" />
+          <path d="M25 50l7 8 7-8" stroke="#f7f5ef" stroke-width="2.6" fill="none" />
+          <circle cx="32" cy="34" r="14" fill={SKIN} />
+          <path
+            d="M18 32c0-10 6-15.5 14-15.5S46 22 46 32c-1.5-4-4.5-6.5-8-7-3.5 1.6-9 2-13.5.6-3 1.2-5.5 3.4-6.5 6.4z"
+            fill="#1c181a"
+          />
+          <path
+            d="M23 29.6l6.2-1.4M34.8 28.2l6.2 1.4"
+            stroke="#1c181a"
+            stroke-width="2.6"
+            stroke-linecap="round"
+          />
+          <Eye x={37.5} y={34} />
+          <path d="M32 36q1.4 1.6 0 2.8" stroke="#c98f6e" stroke-width="1.1" fill="none" />
+          <path
+            d="M27.4 41.2q2.3-2.2 4.6-.7 2.3-1.5 4.6.7-2.4.5-4.6-.3-2.2.8-4.6.3z"
+            fill="#1c181a"
+          />
+          <path
+            d="M29.5 43.6q2.5 1.8 5 0"
+            stroke="#9a4a40"
+            stroke-width="1.3"
+            fill="none"
+            stroke-linecap="round"
+          />
+          <ellipse cx="41" cy="40" rx="2.4" ry="1.4" fill={CHEEK} opacity=".4" />
+          <path d="M21.6 39.6L15 51" stroke="#5a3420" stroke-width="3.2" stroke-linecap="round" />
+          <circle cx="26" cy="33.5" r="7" fill="#eaf2f4" opacity=".9" />
+          <path
+            d="M21.4 33.5q4.6-4 9.2 0-4.6 4-9.2 0z"
+            fill="#fffdf6"
+            stroke="#2a1a12"
+            stroke-width=".9"
+          />
+          <circle cx="26" cy="33.5" r="1.9" fill="#5a3820" />
+          <circle cx="26" cy="33.5" r="1" fill="#120a06" />
+          <circle cx="23.6" cy="31" r="1.1" fill="#fff" opacity=".9" />
+          <circle cx="26" cy="33.5" r="7" fill="none" stroke="#e0b45e" stroke-width="2.2" />
         </>
       );
   }

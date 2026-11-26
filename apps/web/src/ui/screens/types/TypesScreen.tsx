@@ -83,7 +83,7 @@ export function TypesScreen(props: { type?: string }) {
                       aria-label={`${typeInfo(t).name} ${m?.label ?? ""}`}
                       onClick={() => setSel(t)}
                     >
-                      <AnimalArt type={t} size={40} />
+                      <AnimalArt type={t} size={54} />
                       <b>{typeInfo(t).name}</b>
                       <small>
                         {t === data.type

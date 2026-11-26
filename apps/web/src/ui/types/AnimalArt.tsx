@@ -3,6 +3,7 @@
  * 2등신 톤의 둥근 얼굴을 코드로 그린 SVG (D-030). 64×64 안에 얼굴 하나.
  */
 import type { JSX } from "preact";
+import { useState } from "preact/hooks";
 import { typeInfo } from "./typeData";
 
 type El = "목" | "화" | "토" | "금" | "수";
@@ -335,8 +336,8 @@ function Animal(props: { animal: string; c: (typeof PALETTE)[El]; dark: boolean 
   }
 }
 
-/** 60유형 동물 얼굴. size는 px */
-export function AnimalArt(props: { type: string; size?: number; class?: string }): JSX.Element {
+/** 코드로 그린 동물 얼굴 (그림 파일을 못 받을 때 대체) */
+function AnimalSvg(props: { type: string; size: number; class?: string }): JSX.Element {
   const info = typeInfo(props.type);
   const el = info.element;
   const c = PALETTE[el];
@@ -344,12 +345,34 @@ export function AnimalArt(props: { type: string; size?: number; class?: string }
     <svg
       class={props.class ?? "ty-animal"}
       viewBox="0 0 64 64"
-      width={props.size ?? 64}
-      height={props.size ?? 64}
+      width={props.size}
+      height={props.size}
       role="img"
       aria-label={info.name}
     >
       <Animal animal={info.animal} c={c} dark={el === "수"} />
     </svg>
+  );
+}
+
+/**
+ * 60유형 캐릭터 그림 (D-102): 유형마다 성격에 맞춰 Codex CLI(GPT 이미지)로 만든 그림 `public/types/<id>.webp`.
+ * 못 받으면 코드 SVG로.
+ */
+export function AnimalArt(props: { type: string; size?: number; class?: string }): JSX.Element {
+  const size = props.size ?? 64;
+  const [failed, setFailed] = useState(false);
+  if (failed) return <AnimalSvg type={props.type} size={size} class={props.class} />;
+  return (
+    <img
+      class={props.class ?? "ty-animal"}
+      src={`/types/${props.type}.webp`}
+      width={size}
+      height={size}
+      alt={typeInfo(props.type).name}
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
   );
 }

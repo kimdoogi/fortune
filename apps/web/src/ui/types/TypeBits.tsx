@@ -14,7 +14,7 @@ export function TypeBadge(props: { type: string; who?: string; small?: boolean }
   return (
     <div class={props.small ? "ty-badge ty-badge-sm" : "ty-badge"}>
       <span class="ty-pic">
-        <AnimalArt type={props.type} size={props.small ? 52 : 80} />
+        <AnimalArt type={props.type} size={props.small ? 60 : 96} />
       </span>
       <div class="ty-badge-text">
         {props.who && <span class="ty-who">{props.who}</span>}
@@ -72,7 +72,7 @@ export function MatchRow(props: {
             class={`ty-chip ${GRADE_CLASS[m.label]}`}
             onClick={() => props.onPick(m.type)}
           >
-            <AnimalArt type={m.type} size={48} />
+            <AnimalArt type={m.type} size={60} />
             <span class="ty-chip-name">{typeInfo(m.type).name}</span>
           </button>
         ))}

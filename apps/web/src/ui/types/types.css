@@ -359,3 +359,8 @@
   font-size: 16px;
   padding: 6px 16px;
 }
+
+.ty-btn-wide {
+  width: 100%;
+  margin-top: 8px;
+}

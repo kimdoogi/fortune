@@ -8,7 +8,7 @@ import { ApiFailure, api } from "../../../api/client";
 import { Loading, NightSky } from "../../app/kit";
 import { navigate } from "../../app/router";
 import { profile } from "../../app/state";
-import { GradeTag, MatchWhy, TypeBadge, shareTypeCard } from "../../types/TypeBits";
+import { CardShareButtons, GradeTag, MatchWhy, TypeBadge } from "../../types/TypeBits";
 
 export function CardScreen(props: { code: string }) {
   const [view, setView] = useState<TypeCardView | null>(null);
@@ -67,21 +67,18 @@ export function CardScreen(props: { code: string }) {
                 <MatchWhy m={view.viewer.match} />
               </>
             )}
-            <div class="ty-actions">
-              <button type="button" class="ty-btn ty-btn-main" onClick={toShop}>
-                족집게집 가 보기
-              </button>
-              <button
-                type="button"
-                class="ty-btn"
-                onClick={() =>
-                  void shareTypeCard(profile.value?.nickname ?? "", view.viewer?.type ?? view.type)
-                }
-              >
-                {view.mine ? "카드 보내기" : "내 카드도 보내기"}
-              </button>
-            </div>
-            <button type="button" class="ty-btn" onClick={() => navigate({ name: "types" })}>
+            <button type="button" class="ty-btn ty-btn-main ty-btn-wide" onClick={toShop}>
+              족집게집 가 보기
+            </button>
+            <CardShareButtons
+              type={view.viewer?.type ?? view.type}
+              sendLabel={view.mine ? "카드 보내기" : "내 카드도 보내기"}
+            />
+            <button
+              type="button"
+              class="ty-btn ty-btn-wide"
+              onClick={() => navigate({ name: "types" })}
+            >
               60유형 도감 보기
             </button>
             <p class="ty-note">{DISCLAIMER}</p>

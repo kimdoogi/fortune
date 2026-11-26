@@ -2,7 +2,7 @@
 import { TYPE_FACTOR_TEXT, type TypeMatchBrief, type TypeMatchView } from "@fortune/shared-types";
 import type { JSX } from "preact";
 import { api } from "../../api/client";
-import { toast } from "../app/state";
+import { profile, toast } from "../app/state";
 import { copyText } from "../shop/pair";
 import { AnimalArt } from "./AnimalArt";
 import { GRADE_CLASS, typeInfo } from "./typeData";
@@ -81,23 +81,54 @@ export function MatchRow(props: {
   );
 }
 
-/** 내 유형 카드 링크를 만들어 공유 창(안 되면 복사)으로 보낸다 */
-export async function shareTypeCard(nickname: string, type: string): Promise<void> {
+/** 내 유형 카드 링크 (한 사람 하나라 여러 번 눌러도 같은 링크) */
+async function cardUrl(): Promise<string | null> {
   try {
-    const { url } = await api.createTypeCard();
-    const name = typeInfo(type).name;
-    const text = `${nickname} 님은 '${name}' 유형이래요. 나랑 잘 맞는지 확인해 봐요!`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "족집게집 유형 카드", text, url });
-        return;
-      } catch {
-        // 취소하면 복사로
-      }
-    }
-    await copyText(url);
-    toast("링크를 복사했어요");
+    return (await api.createTypeCard()).url;
   } catch {
     toast("카드를 만들지 못했어요. 잠시 뒤 다시 해 주세요.");
+    return null;
   }
+}
+
+/** 휴대폰 공유 창으로 보낸다. 공유 창이 없으면 복사 */
+export async function shareTypeCard(nickname: string, type: string): Promise<void> {
+  const url = await cardUrl();
+  if (!url) return;
+  const text = `${nickname} 님은 '${typeInfo(type).name}' 유형이래요. 나랑 잘 맞는지 확인해 봐요!`;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: "족집게집 유형 카드", text, url });
+    } catch {
+      // 사용자가 닫았다: 아무것도 하지 않는다 (복사는 옆 버튼)
+    }
+    return;
+  }
+  await copyTypeCard(url);
+}
+
+/** 링크만 복사 */
+export async function copyTypeCard(known?: string): Promise<void> {
+  const url = known ?? (await cardUrl());
+  if (!url) return;
+  toast((await copyText(url)) ? "링크를 복사했어요" : "복사하지 못했어요. 다시 눌러 주세요.");
+}
+
+/** 카드 보내기 + 링크 복사 버튼 한 줄 */
+export function CardShareButtons(props: { type: string; sendLabel?: string }): JSX.Element {
+  const nick = profile.value?.nickname ?? "";
+  return (
+    <div class="ty-actions">
+      <button
+        type="button"
+        class="ty-btn ty-btn-main"
+        onClick={() => void shareTypeCard(nick, props.type)}
+      >
+        {props.sendLabel ?? "내 유형 카드 보내기"}
+      </button>
+      <button type="button" class="ty-btn" onClick={() => void copyTypeCard()}>
+        링크 복사
+      </button>
+    </div>
+  );
 }

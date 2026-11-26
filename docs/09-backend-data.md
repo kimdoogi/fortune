@@ -19,7 +19,7 @@
 | `daily_usage` | user_id, date, llm_calls | 하루 30회 상한 (D-057) | |
 | `profiles` | user_id, nickname, birth_date, calendar(양/음), is_leap_month, birth_time, hour_unknown, gender | **민감 정보. 생년월일·출생 시각은 AES-GCM 암호화** ([15 §8](15-infrastructure.md#8-보안)) |
 | ~~`avatars`~~ | 따로 두지 않는다. 꾸미기는 `profiles.style` (코드 한 줄, 0006, D-098) | [F17](features/F17-avatar-style.md) |
-| `readings` | id, user_id, shop, product, seed, input_json, output_json, prompt_version, created_at, marks_json | 결과 재열람, LLM 재호출 없음. `marks_json`은 D-100의 맞아요/아니에요였고 D-101에서 쓰지 않는다 (다음 배포에서 지움) |
+| `readings` | id, user_id, shop, product, seed, input_json, output_json, prompt_version, created_at | 결과 재열람, LLM 재호출 없음. D-100의 `marks_json`(맞아요/아니에요)은 D-101에서 빼고 0010에서 지웠다 |
 | `type_cards` | code(PK), user_id(UNIQUE), created_at | 족집게집 유형 카드 링크 (0009, D-101). 닉네임·유형은 볼 때 프로필에서 읽는다. 계정 삭제 때 지움 |
 | `reading_followups` | id, reading_id, user_id, question, answer_json, asker, created_at | 이어 묻기 (F15). 풀이를 지우면 함께 지운다. user_id는 물은 사람. 같이 본 풀이는 상대 풀이에도 같은 문답을 넣고 asker(물은 사람 닉네임)를 남긴다 (0005, D-091) |
 | `wallet_ledger` | id, user_id, delta, reason, ref_id, created_at | ⏸ MVP 제외 (D-057). 유료화 때 추가 |

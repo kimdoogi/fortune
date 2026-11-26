@@ -9,7 +9,7 @@ import { Loading, NightSky, TopBar } from "../../app/kit";
 import { goBack } from "../../app/router";
 import { friendly, handleAuth, profile } from "../../app/state";
 import { AnimalArt } from "../../types/AnimalArt";
-import { GradeTag, MatchWhy, TypeBadge, shareTypeCard } from "../../types/TypeBits";
+import { CardShareButtons, GradeTag, MatchWhy, TypeBadge } from "../../types/TypeBits";
 import { GRADE_CLASS, TYPES_60, typeInfo } from "../../types/typeData";
 
 const LABELS: TypeMatchLabel[] = ["찰떡", "잘 맞음", "맞춰 가면 괜찮음", "부딪힘"];
@@ -114,18 +114,14 @@ export function TypesScreen(props: { type?: string }) {
                 </div>
               )}
 
-              <div class="ty-actions">
-                <button
-                  type="button"
-                  class="ty-btn ty-btn-main"
-                  onClick={() => void shareTypeCard(profile.value?.nickname ?? "", data.type)}
-                >
-                  내 유형 카드 보내기
-                </button>
-                <button type="button" class="ty-btn" onClick={() => goBack({ name: "map" })}>
-                  닫기
-                </button>
-              </div>
+              <CardShareButtons type={data.type} />
+              <button
+                type="button"
+                class="ty-btn ty-btn-wide"
+                onClick={() => goBack({ name: "map" })}
+              >
+                닫기
+              </button>
               <p class="ty-note">{DISCLAIMER}</p>
             </section>
           )}

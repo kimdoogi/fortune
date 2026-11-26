@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { navigate } from "../app/router";
 import { profile } from "../app/state";
 import { RiceTray } from "../shop/sinjeom";
-import { MatchRow, TypeBadge, shareTypeCard } from "../types/TypeBits";
+import { CardShareButtons, MatchRow, TypeBadge } from "../types/TypeBits";
 import { isTypeId } from "../types/typeData";
 import { Followups } from "./Followups";
 import { colorSwatch, orderedSections } from "./format";
@@ -357,21 +357,14 @@ export function ResultView(props: {
               items={v.nature.worst}
               onPick={(t) => navigate({ name: "types", type: t })}
             />
-            <div class="ty-actions">
-              <button
-                type="button"
-                class="ty-btn ty-btn-main"
-                onClick={() => {
-                  const t = v.nature.type;
-                  if (t) void shareTypeCard(profile.value?.nickname ?? "", t);
-                }}
-              >
-                내 유형 카드 보내기
-              </button>
-              <button type="button" class="ty-btn" onClick={() => navigate({ name: "types" })}>
-                60유형 도감 보기
-              </button>
-            </div>
+            <CardShareButtons type={v.nature.type} />
+            <button
+              type="button"
+              class="ty-btn ty-btn-wide"
+              onClick={() => navigate({ name: "types" })}
+            >
+              60유형 도감 보기
+            </button>
           </section>
         )}
       {footer && result.followups !== undefined && (

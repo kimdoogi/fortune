@@ -155,7 +155,6 @@ export async function createReading(
       todayCallsLeft: left,
       followups: [],
       followupsLeft: followupMax(plan.product),
-      ...(plan.product === "nature" ? { marks: {} } : {}),
     };
     return json(out);
   })();

@@ -1,0 +1,101 @@
+{
+  "elements": {
+    "목": {
+      "id": "wood",
+      "adj": "씩씩한",
+      "color": "푸른",
+      "phrase": "곧고 씩씩해서",
+      "keyword": "곧음"
+    },
+    "화": {
+      "id": "fire",
+      "adj": "다정한",
+      "color": "붉은",
+      "phrase": "밝고 다정해서",
+      "keyword": "따뜻함"
+    },
+    "토": {
+      "id": "earth",
+      "adj": "듬직한",
+      "color": "노란",
+      "phrase": "묵직하고 믿음직해서",
+      "keyword": "믿음직함"
+    },
+    "금": {
+      "id": "metal",
+      "adj": "깔끔한",
+      "color": "흰",
+      "phrase": "맺고 끊음이 분명해서",
+      "keyword": "분명함"
+    },
+    "수": {
+      "id": "water",
+      "adj": "생각 깊은",
+      "color": "검은",
+      "phrase": "차분하고 생각이 깊어서",
+      "keyword": "깊은 생각"
+    }
+  },
+  "kinds": {
+    "self-strong": {
+      "animal": "lion",
+      "phrase": "제 뜻대로 앞장서는 사람",
+      "keywords": ["주관", "앞장섬"]
+    },
+    "self-soft": {
+      "animal": "dog",
+      "phrase": "친구와 어울릴 때 힘이 나는 사람",
+      "keywords": ["친화력", "의리"]
+    },
+    "expr-strong": {
+      "animal": "fox",
+      "phrase": "재주와 말솜씨로 판을 키우는 사람",
+      "keywords": ["재치", "말솜씨"]
+    },
+    "expr-soft": {
+      "animal": "otter",
+      "phrase": "손재주로 조용히 즐거움을 만드는 사람",
+      "keywords": ["손재주", "놀이"]
+    },
+    "wealth-strong": {
+      "animal": "squirrel",
+      "phrase": "부지런히 실속을 챙기는 사람",
+      "keywords": ["실속", "부지런함"]
+    },
+    "wealth-soft": {
+      "animal": "monkey",
+      "phrase": "눈치 빠르게 기회를 잡는 사람",
+      "keywords": ["눈치", "순발력"]
+    },
+    "duty-strong": {
+      "animal": "tiger",
+      "phrase": "책임을 지고 무리를 지키는 사람",
+      "keywords": ["책임감", "위엄"]
+    },
+    "duty-soft": {
+      "animal": "penguin",
+      "phrase": "규칙을 지키며 성실히 해내는 사람",
+      "keywords": ["성실", "단정함"]
+    },
+    "mind-strong": {
+      "animal": "owl",
+      "phrase": "생각하고 배우며 길을 찾는 사람",
+      "keywords": ["배움", "통찰"]
+    },
+    "mind-soft": {
+      "animal": "panda",
+      "phrase": "느긋하게 곱씹으며 제 속도로 가는 사람",
+      "keywords": ["느긋함", "사색"]
+    },
+    "even-strong": {
+      "animal": "bear",
+      "phrase": "이것저것 고루 해내는 든든한 사람",
+      "keywords": ["균형", "든든함"]
+    },
+    "even-soft": {
+      "animal": "sheep",
+      "phrase": "누구와도 무던하게 어울리는 사람",
+      "keywords": ["무던함", "온화"]
+    }
+  }
+}

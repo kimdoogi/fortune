@@ -19,6 +19,8 @@ const Street = lazy(() => loadStreet().then((m) => m.StreetScreen));
 const History = lazy(() => import("../screens/history/HistoryScreen").then((m) => m.HistoryScreen));
 const Daily = lazy(() => import("../screens/daily/DailyScreen").then((m) => m.DailyScreen));
 const Join = lazy(() => import("../screens/join/JoinScreen").then((m) => m.JoinScreen));
+const Types = lazy(() => import("../screens/types/TypesScreen").then((m) => m.TypesScreen));
+const Card = lazy(() => import("../screens/types/CardScreen").then((m) => m.CardScreen));
 
 function Splash(props: { failed?: string }) {
   return (
@@ -79,6 +81,11 @@ function Routes() {
     // 같이 보기 (F16): 초대 받기 → 같이 보는 지도 → 방장이 고른 골목 → 점집 안
     case "join":
       return <Join code={r.code} />;
+    // 족집게집 60유형 도감·유형 카드 (F19, D-101)
+    case "types":
+      return <Types key={r.type ?? ""} type={r.type} />;
+    case "card":
+      return <Card code={r.code} />;
     case "pair":
     case "pair-in":
       if (!r.shop) return <MapScreen key={`pair:${r.code}`} pair={{ code: r.code }} />;
@@ -129,7 +136,10 @@ export function App() {
             phase.value = "ready";
             // 같이 보기 초대 링크로 처음 온 사람은 프로필을 만든 뒤 초대 화면으로 (F16)
             const r = route.value;
-            navigate(r.name === "join" ? r : { name: "map" }, { replace: true });
+            // 유형 카드 링크(F19)도 프로필을 만든 뒤 카드로
+            navigate(r.name === "join" || r.name === "card" ? r : { name: "map" }, {
+              replace: true,
+            });
           }}
         />
       );

@@ -1,0 +1,361 @@
+/* 족집게집 60유형 (F19, D-101): 결과 위 유형 카드, 맞음 칩, 도감, 카드 받기 */
+
+.ty-badge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 220, 150, 0.22), rgba(255, 220, 150, 0.08));
+  box-shadow: inset 0 0 0 1px rgba(201, 154, 69, 0.45);
+  text-align: left;
+}
+
+.ty-pic {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #fffaf0, rgba(255, 220, 150, 0.35));
+  box-shadow: inset 0 0 0 2px rgba(201, 154, 69, 0.6);
+}
+
+.ty-sub {
+  font-size: 13px;
+  color: #8a5634;
+}
+
+.ty-glyph {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 4px solid #c99a45;
+  box-shadow: 0 0 0 1.5px #6e4429;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fffaf0,
+    color-mix(in srgb, var(--ty) 25%, #fbf3e2)
+  );
+  font-family: var(--font-title);
+  font-size: 21px;
+  letter-spacing: -1px;
+  color: var(--ty);
+}
+
+.ty-badge-sm .ty-glyph {
+  width: 46px;
+  height: 46px;
+  border-width: 3px;
+  font-size: 15px;
+}
+
+.ty-badge-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ty-who {
+  font-size: 12px;
+  color: #8a6a4a;
+}
+
+.ty-name {
+  word-break: keep-all;
+  font-family: var(--font-title);
+  font-size: 18px;
+  color: var(--ink, #2e2118);
+  line-height: 1.3;
+}
+
+.ty-tagline {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #5a4230;
+}
+
+.ty-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 12px;
+  color: #8a5634;
+}
+
+.ty-keys i {
+  font-style: normal;
+}
+
+.ty-grade {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ty-grade b {
+  font-weight: 700;
+}
+
+.ty-g4 {
+  --tyc: #c27a14;
+  --tybg: rgba(255, 196, 107, 0.38);
+}
+.ty-g3 {
+  --tyc: #8a6a1c;
+  --tybg: rgba(255, 220, 150, 0.3);
+}
+.ty-g2 {
+  --tyc: #6e6458;
+  --tybg: rgba(110, 100, 88, 0.12);
+}
+.ty-g1 {
+  --tyc: #9a4a3a;
+  --tybg: rgba(154, 74, 58, 0.14);
+}
+
+.ty-grade,
+.ty-chip {
+  color: var(--tyc);
+  background: var(--tybg);
+}
+
+.ty-why {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13.5px;
+  color: #4a3626;
+}
+
+.ty-why li::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  vertical-align: 1px;
+}
+
+.ty-why-good::before {
+  background: #e0a23a;
+}
+
+.ty-why-bad::before {
+  background: #b5524a;
+}
+
+/* 결과 아래 잘 맞는·안 맞는 유형 */
+.ty-match {
+  margin: 4px 0 16px;
+  padding: 14px 12px;
+  border-radius: 14px;
+  background: rgba(110, 68, 41, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(110, 68, 41, 0.15);
+}
+
+.ty-row + .ty-row {
+  margin-top: 12px;
+}
+
+.ty-row-title {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--font-title);
+  font-size: 14px;
+  color: #5a4230;
+}
+
+.ty-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.ty-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-height: 64px;
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ty-chip-id {
+  font-family: var(--font-title);
+  font-size: 11px;
+  color: var(--ty);
+}
+
+.ty-chip-name {
+  word-break: keep-all;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  color: #4a3626;
+}
+
+.ty-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.ty-btn {
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(110, 68, 41, 0.3);
+  background: #fffaf0;
+  color: #6e4429;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ty-btn-main {
+  border-color: #6e4429;
+  background: #6e4429;
+  color: #fbf3e2;
+}
+
+/* ── 도감 (#/types) ───────────────────────────── */
+.ty-page .sub-body {
+  padding-bottom: 40px;
+}
+
+.ty-paper {
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fbf3e2, #efdfbf);
+  color: #2e2118;
+}
+
+.ty-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 0 10px;
+}
+
+.ty-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.ty-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 66px;
+  padding: 3px 0;
+  border: 0;
+  border-radius: 9px;
+  color: var(--tyc);
+  background: var(--tybg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ty-cell b {
+  font-family: var(--font-title);
+  font-size: 11px;
+  line-height: 1.25;
+  word-break: keep-all;
+  text-align: center;
+  color: var(--ty);
+}
+
+.ty-cell small {
+  font-size: 9.5px;
+  line-height: 1.2;
+}
+
+.ty-cell-me {
+  box-shadow: 0 0 0 2px #6e4429, 0 0 0 4px rgba(255, 210, 120, 0.7);
+}
+
+.ty-cell-on {
+  outline: 2px solid #2e2118;
+  outline-offset: 1px;
+}
+
+.ty-detail {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(110, 68, 41, 0.3);
+}
+
+.ty-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 10px 0 2px;
+  font-size: 14px;
+  color: #5a4230;
+}
+
+.ty-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: #8a6a4a;
+  text-align: center;
+}
+
+.ty-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+  color: #5a4230;
+}
+
+/* 카드 받기 (#/card/<코드>) */
+.ty-card {
+  width: min(360px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ty-vs {
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: 15px;
+  color: #8a6a4a;
+}
+
+.ty-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ty-score .ty-grade {
+  font-size: 16px;
+  padding: 6px 16px;
+}

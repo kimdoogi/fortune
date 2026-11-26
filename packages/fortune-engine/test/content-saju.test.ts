@@ -7,6 +7,7 @@ import { findBanned, greetings } from "../../prompts/src/index";
 import nature from "../data/meanings/nature.json";
 import obanggi from "../data/meanings/obanggi.json";
 import saju from "../data/meanings/saju.json";
+import types from "../data/meanings/types.json";
 
 const STEMS = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"];
 const TEN_GODS = ["비견", "겁재", "식신", "상관", "편재", "정재", "편관", "정관", "편인", "정인"];
@@ -235,7 +236,7 @@ describe("금지 표현 (docs/04 §7 v1)", () => {
     expect(bannedHits("오늘은 천천히 쉬어 가면 좋다")).toEqual([]);
   });
 
-  const files = { saju, nature, obanggi, greetings };
+  const files = { saju, nature, types, obanggi, greetings };
   for (const [name, data] of Object.entries(files)) {
     it(`${name}의 모든 문장에 금지 표현이 없다`, () => {
       const strings = allStrings(data);

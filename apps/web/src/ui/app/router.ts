@@ -17,6 +17,10 @@ export type Route =
   | { name: "daily" }
   /** 당산나무 (F18) */
   | { name: "tree" }
+  /** 족집게집 60유형 도감 (F19, D-101). type이 있으면 그 칸을 골라 둔다 */
+  | { name: "types"; type?: string }
+  /** 유형 카드 받기 (F19): 링크 ?t=<code>로 들어오면 여기로 */
+  | { name: "card"; code: string }
   /** 같이 보기 초대 받기 (F16): 링크 ?g=<code>로 들어오면 여기로 */
   | { name: "join"; code: string }
   /** 같이 보기 (F16, D-090): shop이 없으면 같이 보는 지도, 있으면 그 점집 골목 */
@@ -40,6 +44,12 @@ export function parse(hash: string): Route {
       return { name: "daily" };
     case "tree":
       return { name: "tree" };
+    case "types": {
+      const t = arg ? decodeURIComponent(arg) : undefined;
+      return t && /^[a-z]+-[a-z]+-[a-z]+$/.test(t) ? { name: "types", type: t } : { name: "types" };
+    }
+    case "card":
+      return arg && /^[a-z0-9]{10}$/.test(arg) ? { name: "card", code: arg } : { name: "map" };
     case "history":
       return arg ? { name: "history", id: decodeURIComponent(arg) } : { name: "history" };
     case "join":
@@ -68,7 +78,10 @@ export function toHash(r: Route): string {
     case "history":
       return r.id ? `#/history/${encodeURIComponent(r.id)}` : "#/history";
     case "join":
+    case "card":
       return `#/${r.name}/${r.code}`;
+    case "types":
+      return r.type ? `#/types/${encodeURIComponent(r.type)}` : "#/types";
     case "pair":
     case "pair-in":
       return r.shop ? `#/${r.name}/${r.code}/${r.shop}` : `#/${r.name}/${r.code}`;
@@ -117,9 +130,18 @@ export function initHistory() {
   // 같이 보기 초대 링크 (?g=<code>, F16): 주소에서 지우고 초대 화면으로
   const params = new URLSearchParams(location.search);
   const g = params.get("g");
-  if (g && /^[a-z0-9]{10}$/.test(g)) {
-    r = { name: "join", code: g };
+  // 유형 카드 링크 (?t=<code>, F19)도 같은 방식으로
+  const t = params.get("t");
+  const linked =
+    g && /^[a-z0-9]{10}$/.test(g)
+      ? ({ name: "join", code: g } as const)
+      : t && /^[a-z0-9]{10}$/.test(t)
+        ? ({ name: "card", code: t } as const)
+        : null;
+  if (linked) {
+    r = linked;
     params.delete("g");
+    params.delete("t");
     const q = params.toString();
     history.replaceState(
       history.state,

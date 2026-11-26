@@ -33,7 +33,15 @@ export const SECTION_TARGETS: Record<ProductId, Record<string, number>> = {
   sinjeom: { gongsu: 170 },
   dream: { symbols: 300, meaning: 350, advice: 200 },
   // 족집게집 나는 어떤 사람 (F19). 이 순서로 보인다
-  nature: { surface: 160, inner: 170, people: 160, atWork: 160, inLove: 160, stress: 160 },
+  nature: {
+    surface: 160,
+    inner: 170,
+    people: 160,
+    atWork: 160,
+    inLove: 160,
+    stress: 160,
+    match: 220,
+  },
 };
 
 export const PRODUCT_SHOP: Record<ProductId, ShopId> = {

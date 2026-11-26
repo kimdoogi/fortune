@@ -1,6 +1,7 @@
 /**
  * ui-lab 전용 가짜 데이터 (개발용, 배포 빌드에 들어가지 않음). 실제 길이에 가까운 한국어 예시.
  */
+import { bestAndWorst } from "@fortune/fortune-engine/src/types60";
 import {
   DISCLAIMER,
   type InterpretOutput,
@@ -39,10 +40,12 @@ export const NATURE_SAMPLE: InterpretOutput = {
       "일을 맡으면 끝을 봐야 잠이 오는 사람이네. 남이 대충 한 걸 보면 몰래 다시 손보고 있지? 꼼꼼함은 믿음을 사지만 혼자 다 떠안다 마감 전날 지쳐 버리네. 이번 주엔 한 가지를 남에게 통째로 맡겨 보게.",
     inLove:
       "좋아하는 사람 앞에선 말보다 행동이 먼저 나가는 사람이네. 상대가 지나가듯 한 말을 기억해 뒀다가 챙겨 주지. 그런데 정작 내 마음은 말을 안 해서 상대가 헷갈려하네. 고마운 건 그 자리에서 말로 하게.",
+    match:
+      "자네와 잘 맞는 건 씩씩한 호랑이 같은 사람이네. 말수는 적어도 맡은 일은 끝까지 지는 사람 곁에서 자네가 마음을 놓지. 반대로 깔끔한 다람쥐처럼 생각이 많은 사람과는 서로 눈치만 보다 하루가 가네. 그런 사람과는 할 말을 먼저 짧게 꺼내 주게.",
     stress:
       "화가 나면 말이 줄고 얼굴이 굳는 사람이네. 겉으론 괜찮다 하면서 집에 가는 길에 혼자 다 쏟아 내지. 참는 힘은 크지만 쌓이면 엉뚱한 데서 터지네. 답답한 날엔 땀 날 만큼 걷고 오게.",
   },
-  advice: "맞으면 맞다고, 아니면 아니라고 시원하게 눌러 주게.",
+  advice: "잘 맞는 사람 곁에선 자네 장점이 두 배로 빛나네.",
 };
 
 export const NATURE_BOARD: ReadingVisual = {
@@ -53,6 +56,18 @@ export const NATURE_BOARD: ReadingVisual = {
     strong: "인성",
     absent: ["재성"],
     hourUnknown: false,
+    // 60유형 (D-101)
+    type: "earth-mind-soft",
+    best: bestAndWorst("earth-mind-soft").best.map(({ type, score, label }) => ({
+      type,
+      score,
+      label,
+    })),
+    worst: bestAndWorst("earth-mind-soft").worst.map(({ type, score, label }) => ({
+      type,
+      score,
+      label,
+    })),
   },
 };
 

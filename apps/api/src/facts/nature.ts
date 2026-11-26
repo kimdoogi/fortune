@@ -2,8 +2,16 @@
  * 족집게집 "나는 어떤 사람" 입력 만들기 (F19, D-100, docs/04 §3-6).
  * 원국만 쓴다: 일간 + 십신 무리 세기 + 오행 과다·부족 + 신강·신약 + 원국 합충.
  */
-import type { ChartAnalysis, PillarsResult, TenGod } from "@fortune/fortune-engine";
-import type { NatureBoard, NatureGroup } from "@fortune/shared-types";
+import {
+  type ChartAnalysis,
+  type PillarsResult,
+  type TenGod,
+  type TypeMatch,
+  bestAndWorst,
+  typeInfo,
+  typeKey,
+} from "@fortune/fortune-engine";
+import { type NatureBoard, type NatureGroup, TYPE_FACTOR_TEXT } from "@fortune/shared-types";
 import { NATURE, SAJU } from "./data";
 import { dayMasterFact } from "./saju";
 
@@ -65,8 +73,21 @@ const SCENE_LABEL = {
 export interface NatureParts {
   facts: string[];
   chart: Record<string, unknown>;
+  /** LLM 입력 type (04 §3-6) */
+  type: { id: string; name: string; best: string[]; worst: string[] };
   board: NatureBoard;
 }
+
+/** 결과의 세 가지(나의 기운·많은 기운·기운 세기)로 정한 60유형 (02 §5-10) */
+export function natureTypeOf(a: ChartAnalysis): string {
+  return typeKey(a.dayMaster.element, natureGroups(a).strong, a.strength.ratio);
+}
+const typeName = (t: string) => typeInfo(t).name;
+const brief = (m: TypeMatch) => ({ type: m.type, score: m.score, label: m.label });
+const matchFact = (head: string, m: TypeMatch) =>
+  `${head} '${typeName(m.type)}'(${m.label}, ${m.score}점): ${m.factors
+    .map((f) => TYPE_FACTOR_TEXT[f.kind])
+    .join(", ")}.`;
 
 export function buildNature(natal: PillarsResult, a: ChartAnalysis): NatureParts {
   const p = natal.pillars;
@@ -76,7 +97,14 @@ export function buildNature(natal: PillarsResult, a: ChartAnalysis): NatureParts
   if (!scenes) throw new Error(`unknown stem ${stem}`);
   const groups = natureGroups(a);
 
-  const facts: string[] = [dayMasterFact(stem)];
+  const typeId = natureTypeOf(a);
+  const info = typeInfo(typeId);
+  const { best, worst } = bestAndWorst(typeId);
+
+  const facts: string[] = [
+    `이 사람의 유형은 60유형 중 '${info.name}'이다: ${info.tagline}. 키워드: ${info.keywords.join(", ")}. 유형은 나의 기운·많은 기운·기운 세기로 정했다.`,
+    dayMasterFact(stem),
+  ];
   if (hourUnknown) facts.push("태어난 시간을 몰라 시주 없이 세 기둥으로 본다.");
   for (const [key, label] of Object.entries(SCENE_LABEL)) {
     facts.push(`생활 장면 — ${label}: ${scenes[key as keyof typeof SCENE_LABEL]}`);
@@ -89,6 +117,8 @@ export function buildNature(natal: PillarsResult, a: ChartAnalysis): NatureParts
   for (const e of a.elements.excess) facts.push(SAJU.elements[e]?.excess ?? "");
   for (const e of a.elements.missing) facts.push(SAJU.elements[e]?.missing ?? "");
   facts.push(`${a.strength.label}: ${SAJU.strength[a.strength.label] ?? ""}`);
+  for (const m of best) facts.push(matchFact("잘 맞는 유형", m));
+  for (const m of worst) facts.push(matchFact("안 맞는 유형", m));
   for (const r of a.relations) {
     const m = SAJU.relations[r.type];
     if (m) facts.push(`${r.a}와 ${r.b}가 ${r.type}: ${m.natal}`);
@@ -109,6 +139,15 @@ export function buildNature(natal: PillarsResult, a: ChartAnalysis): NatureParts
     strong: groups.strong,
     absent: groups.absent,
     hourUnknown,
+    type: typeId,
+    best: best.map(brief),
+    worst: worst.map(brief),
   };
-  return { facts: facts.filter((f) => f.length > 0), chart, board };
+  const type = {
+    id: typeId,
+    name: info.name,
+    best: best.map((m) => typeName(m.type)),
+    worst: worst.map((m) => typeName(m.type)),
+  };
+  return { facts: facts.filter((f) => f.length > 0), chart, type, board };
 }

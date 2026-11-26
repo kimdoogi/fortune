@@ -178,7 +178,7 @@ export function NatureFlow(props: FlowProps): JSX.Element {
   // biome-ignore lint/correctness/useExhaustiveDependencies: 단계가 바뀔 때만 실행한다 (콜백은 렌더마다 새로 만들어짐)
   useEffect(() => {
     if (step === "confirm") {
-      props.say("자네가 어떤 사람인지 내가 콕콕 집어 보겠네. 맞으면 맞다고 해 주게.");
+      props.say("자네가 60가지 사람 중 어떤 사람인지, 누구와 잘 맞는지 콕콕 집어 보겠네.");
       return;
     }
     props.npc("present");

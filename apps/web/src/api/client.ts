@@ -12,9 +12,8 @@ import type {
   FollowupResponse,
   GunghapInviteCreated,
   GunghapInviteView,
-  MarkRequest,
-  MarksResponse,
   MenuResponse,
+  MyTypesResponse,
   PairDreamResponse,
   PairReadingRequest,
   ProductId,
@@ -26,6 +25,8 @@ import type {
   SessionResponse,
   ShopId,
   StyleInput,
+  TypeCardCreated,
+  TypeCardView,
   WishBoard,
   WishRequest,
   WishResponse,
@@ -97,9 +98,11 @@ export const api = {
   wishOutcome: (id: string, outcome: "yes" | "no") =>
     call<WishBoard>("POST", `/api/wishes/${encodeURIComponent(id)}/outcome`, { outcome }),
   /** F15: 풀이에 이어 묻기 (한 풀이에 3번) */
-  /** 족집게집 맞아요/아니에요 표시 (F19) */
-  mark: (id: string, req: MarkRequest) =>
-    call<MarksResponse>("PUT", `/api/readings/${encodeURIComponent(id)}/marks`, req),
+  /** 족집게집 60유형 도감·유형 카드 (F19, D-101) */
+  myTypes: () => call<MyTypesResponse>("GET", "/api/types/me"),
+  createTypeCard: () => call<TypeCardCreated>("POST", "/api/type-cards", {}),
+  typeCard: (code: string) =>
+    call<TypeCardView>("GET", `/api/type-cards/${encodeURIComponent(code)}`),
   followup: (id: string, req: FollowupRequest) =>
     call<FollowupResponse>("POST", `/api/readings/${encodeURIComponent(id)}/followups`, req),
   // ── 같이 보기 (F16) ──

@@ -83,6 +83,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@fortune/fortune-engine':
+        specifier: workspace:*
+        version: link:../../packages/fortune-engine
       '@fortune/prompts':
         specifier: workspace:*
         version: link:../../packages/prompts

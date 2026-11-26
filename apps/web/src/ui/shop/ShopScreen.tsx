@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { api } from "../../api/client";
 import { sfx } from "../../audio/sound";
 import { SoundButton } from "../app/kit";
+import { navigate } from "../app/router";
 import { CrisisScreen, ResultView } from "../reading/ResultView";
 import { Dialogue } from "./Dialogue";
 import { CHARACTERS, PRODUCT_BLURB } from "./characters";
@@ -277,31 +278,43 @@ export function ShopScreen(props: {
 
         {view.k === "menu" && (
           <div class="sh-menu">
-            {menu ? (
-              menu.items.map((it, i) => (
-                <div class="sh-item" key={it.product} style={{ "--i": i }}>
-                  <button type="button" class="sh-item-main" onClick={() => start(it.product)}>
-                    <span class="sh-item-name">{it.name || PRODUCT_NAMES[it.product]}</span>
-                    <span class="sh-item-blurb">{PRODUCT_BLURB[it.product]}</span>
+            {menu?.items.map((it, i) => (
+              <div class="sh-item" key={it.product} style={{ "--i": i }}>
+                <button type="button" class="sh-item-main" onClick={() => start(it.product)}>
+                  <span class="sh-item-name">{it.name || PRODUCT_NAMES[it.product]}</span>
+                  <span class="sh-item-blurb">{PRODUCT_BLURB[it.product]}</span>
+                </button>
+                {it.todayReadingId && (
+                  <button
+                    type="button"
+                    class="sh-replay"
+                    disabled={opening !== null}
+                    onClick={() => it.todayReadingId && replay(it.todayReadingId)}
+                  >
+                    <ReplayIcon />
+                    {opening === it.todayReadingId ? "여는 중" : "다시 보기"}
                   </button>
-                  {it.todayReadingId && (
-                    <button
-                      type="button"
-                      class="sh-replay"
-                      disabled={opening !== null}
-                      onClick={() => it.todayReadingId && replay(it.todayReadingId)}
-                    >
-                      <ReplayIcon />
-                      {opening === it.todayReadingId ? "여는 중" : "다시 보기"}
-                    </button>
-                  )}
-                </div>
-              ))
-            ) : menuFailed ? (
+                )}
+              </div>
+            ))}
+            {menu && shop === "jokjipge" && (
+              <div class="sh-item" style={{ "--i": menu.items.length }}>
+                <button
+                  type="button"
+                  class="sh-item-main"
+                  onClick={() => navigate({ name: "types" })}
+                >
+                  <span class="sh-item-name">60유형 도감</span>
+                  <span class="sh-item-blurb">60가지 사람 중 나와 잘 맞는 유형 찾기</span>
+                </button>
+              </div>
+            )}
+            {!menu && menuFailed && (
               <button type="button" class="sh-quiet" onClick={loadMenu}>
                 다시 불러오기
               </button>
-            ) : (
+            )}
+            {!menu && !menuFailed && (
               <div class="sh-menu-wait">
                 <i />
                 <i />

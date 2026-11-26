@@ -155,6 +155,7 @@ export async function deleteUserData(env: Env, userId: string): Promise<void> {
     "pair_dreams",
     "wishes",
     "wish_stones",
+    "type_cards",
     "profiles",
   ];
   await env.DB.batch([

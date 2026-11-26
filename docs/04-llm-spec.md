@@ -140,10 +140,12 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
     "tenGods": { "yearStem": "식신", "yearBranch": "정인", "monthStem": "편관", "monthBranch": "비견", "dayBranch": "상관", "hourStem": null, "hourBranch": null },
     "strength": { "label": "신강", "ratio": 0.63 },
     "groups": { "strong": "식상", "absent": ["재성"] }
-  }
+  },
+  "type": { "id": "fire-self-soft", "name": "다정한 강아지", "best": ["…"], "worst": ["…"] }
 }
 ```
 - 사주(§3-2)의 원국만 쓴다. 대운·세운·월운은 넣지 않는다 (기질 풀이라서)
+- `type`은 결과의 세 가지로 정한 60유형과 코드가 고른 잘 맞는/안 맞는 유형 3개씩 (일주·간지 글자는 넣지 않는다) ([02 §5-10](02-saju-rules.md#5-10-60유형과-맞음-d-101), D-101)
 - `groups`는 코드가 원국 십신 자리를 다섯 무리로 센 결과 ([F19](features/F19-jokjipge.md#처리-규칙)). `strong`이 없으면 null
 - `facts`는 일간 성향 + 일간별 생활 장면 여섯 칸 + 많은/없는 기운 버릇 + 오행 과다·부족 + 신강·신약 + 원국 합충 (해석 표 `nature.json`, `saju.json`)
 
@@ -162,7 +164,7 @@ user 메시지에 아래 JSON 하나만 넣는다. 사용자가 쓴 글(`questio
 | `obanggi` (목록에서 뺌, D-073) | 아기도령 | 무료 | `flag`, `message`, `advice` | 800~1,000자 | 없음 |
 | `sinjeom` | 아기도령 | 무료 | `gongsu` (공수, 2~4줄) + 이어서 대화 5번 (§13) | 공수 150자, 대화 한 번 80자 | 없음 |
 | `dream` | 꿈해몽 | 무료 | `symbols`, `meaning`, `advice` | 800~1,000자 | 없음 |
-| `nature` | 족집게집 | 무료 | `surface`, `inner`, `people`, `atWork`, `inLove`, `stress` (나는 어떤 사람, D-100) | 1,000자 안팎 | 없음 |
+| `nature` | 족집게집 | 무료 | `surface`, `inner`, `people`, `atWork`, `inLove`, `stress`, `match` (나는 어떤 사람, D-100·D-101) | 1,200자 안팎 | 없음 |
 
 - 자유질문은 `tarot_three`, `obanggi`에 붙일 수 있다. 붙이면 `question`이 채워지고 섹션 내용이 질문에 맞춰진다. 길이는 같다
 - 섹션별 목표 글자 수는 [04a](04a-persona-prompts.md#상품별-지시)의 상품별 지시에 적는다

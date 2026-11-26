@@ -6,17 +6,17 @@
  */
 import {
   type InterpretOutput,
-  type MarksResponse,
-  type NatureMark,
-  type NatureSection,
   PRODUCT_NAMES,
   type ProductId,
   type ReadingResult,
 } from "@fortune/shared-types";
 import type { ComponentChildren, JSX } from "preact";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { api } from "../../api/client";
+import { navigate } from "../app/router";
+import { profile } from "../app/state";
 import { RiceTray } from "../shop/sinjeom";
+import { MatchRow, TypeBadge, shareTypeCard } from "../types/TypeBits";
+import { isTypeId } from "../types/typeData";
 import { Followups } from "./Followups";
 import { colorSwatch, orderedSections } from "./format";
 import { type TypingBlock, blockCount, useTyping } from "./typing";
@@ -62,49 +62,12 @@ const Chevron = () => (
   </svg>
 );
 
-type Marks = MarksResponse["marks"];
-
-/** 족집게집 섹션 아래 맞아요/아니에요 (F19). 표시만 남긴다 */
-function MarkButtons(props: {
-  value: NatureMark | undefined;
-  onMark: (m: NatureMark | null) => void;
-}) {
-  const pick = (m: NatureMark) => props.onMark(props.value === m ? null : m);
-  return (
-    <fieldset class="rd-mark" aria-label="맞는지 표시">
-      <button
-        type="button"
-        class={
-          props.value === "yes" ? "rd-mark-btn rd-mark-yes rd-mark-on" : "rd-mark-btn rd-mark-yes"
-        }
-        aria-pressed={props.value === "yes"}
-        onClick={() => pick("yes")}
-      >
-        맞아요
-      </button>
-      <button
-        type="button"
-        class={
-          props.value === "no" ? "rd-mark-btn rd-mark-no rd-mark-on" : "rd-mark-btn rd-mark-no"
-        }
-        aria-pressed={props.value === "no"}
-        onClick={() => pick("no")}
-      >
-        아니에요
-      </button>
-    </fieldset>
-  );
-}
-
 export function OutputView(props: {
   output: InterpretOutput;
   product: ProductId;
   animate: boolean;
   /** 글자가 다 나오면 한 번 부른다 */
   onDone?: () => void;
-  /** 족집게집 맞아요/아니에요 (F19). 있으면 섹션마다 버튼을 그린다 */
-  marks?: Marks;
-  onMark?: (section: NatureSection, mark: NatureMark | null) => void;
 }): JSX.Element {
   const { output, product } = props;
   const sections = useMemo(() => orderedSections(product, output.sections), [product, output]);
@@ -209,12 +172,6 @@ export function OutputView(props: {
               <p class="rd-sec-text">
                 <Typed chars={tl.chars[i] ?? []} n={count(i)} active={active(i)} />
               </p>
-            )}
-            {!isClosed && props.marks && props.onMark && started(i + 1) && (
-              <MarkButtons
-                value={props.marks[s.key as NatureSection]}
-                onMark={(m) => props.onMark?.(s.key as NatureSection, m)}
-              />
             )}
           </section>
         );
@@ -321,7 +278,17 @@ function VisualHeader(props: { result: ReadingResult }) {
         </div>
       );
     case "jokjipge":
-      return <NatureBoardView board={v.nature} />;
+      // 60유형 카드 (D-101). 예전 v1 풀이에는 유형이 없다
+      return (
+        <>
+          {isTypeId(v.nature.type) && (
+            <div class="rd-type-head">
+              <TypeBadge type={v.nature.type} who="자네의 유형" />
+            </div>
+          )}
+          <NatureBoardView board={v.nature} />
+        </>
+      );
     case "dream":
       // 두 사람 꿈풀이 (D-090): 두 꿈을 나란히
       if ("pair" in v)
@@ -355,25 +322,7 @@ export function ResultView(props: {
   const { result } = props;
   const [footer, setFooter] = useState(!props.animate);
   const [crisis, setCrisis] = useState(false);
-  const [marks, setMarks] = useState<Marks | undefined>(result.marks);
-  // 누르는 즉시 표시하고, 저장이 실패하면 되돌린다 (F19)
-  const onMark = (section: NatureSection, mark: NatureMark | null) => {
-    const before = marks ?? {};
-    const next = { ...before };
-    if (mark) next[section] = mark;
-    else delete next[section];
-    setMarks(next);
-    result.marks = next;
-    api.mark(result.id, { section, mark }).then(
-      (r) => {
-        result.marks = r.marks;
-      },
-      () => {
-        setMarks(before);
-        result.marks = before;
-      },
-    );
-  };
+
   if (crisis) return <CrisisScreen onClose={() => setCrisis(false)} />;
   const v = result.visual;
   const cat = (v.shop === "tarot" || v.shop === "dolyeong") && v.category ? ` · ${v.category}` : "";
@@ -391,8 +340,40 @@ export function ResultView(props: {
         product={result.product}
         animate={props.animate}
         onDone={() => setFooter(true)}
-        {...(marks ? { marks, onMark } : {})}
       />
+      {footer &&
+        v.shop === "jokjipge" &&
+        isTypeId(v.nature.type) &&
+        v.nature.best &&
+        v.nature.worst && (
+          <section class="ty-match" aria-label="잘 맞는 유형과 안 맞는 유형">
+            <MatchRow
+              title="잘 맞는 유형"
+              items={v.nature.best}
+              onPick={(t) => navigate({ name: "types", type: t })}
+            />
+            <MatchRow
+              title="부딪히는 유형"
+              items={v.nature.worst}
+              onPick={(t) => navigate({ name: "types", type: t })}
+            />
+            <div class="ty-actions">
+              <button
+                type="button"
+                class="ty-btn ty-btn-main"
+                onClick={() => {
+                  const t = v.nature.type;
+                  if (t) void shareTypeCard(profile.value?.nickname ?? "", t);
+                }}
+              >
+                내 유형 카드 보내기
+              </button>
+              <button type="button" class="ty-btn" onClick={() => navigate({ name: "types" })}>
+                60유형 도감 보기
+              </button>
+            </div>
+          </section>
+        )}
       {footer && result.followups !== undefined && (
         <Followups
           result={result}

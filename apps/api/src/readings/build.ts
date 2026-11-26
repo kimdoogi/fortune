@@ -212,7 +212,11 @@ export async function planReading(req: ReadingRequest, ctx: PlanContext): Promis
           const natal = natalOf(ctx.profile);
           const parts = buildNature(natal, analyzePillars(natal.pillars));
           return {
-            input: { ...base(ctx, "jokjipge", "nature", parts.facts), chart: parts.chart },
+            input: {
+              ...base(ctx, "jokjipge", "nature", parts.facts),
+              chart: parts.chart,
+              type: parts.type,
+            },
             visual: { shop: "jokjipge", nature: parts.board },
           };
         },

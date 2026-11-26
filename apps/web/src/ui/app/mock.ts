@@ -1,3 +1,4 @@
+import { allTypeMatches } from "@fortune/fortune-engine/src/types60";
 /**
  * 개발용 가짜 API (`?mock=1`). 서버 없이 화면을 확인할 때 쓴다. 배포 빌드에는 들어가지 않는다.
  * `?mock=fresh` 는 첫 방문(프로필 없음)부터, `&mockerr=llm` 은 오늘의 운세 실패를 흉내 낸다.
@@ -321,7 +322,6 @@ function result(
     todayCallsLeft: 30,
     followups: [],
     followupsLeft: 3,
-    ...(req.product === "nature" ? { marks: {} } : {}),
   };
 }
 
@@ -492,16 +492,24 @@ export const mockApi: Api = {
     if (!r) throw fail("NOT_FOUND", "찾을 수 없는 기록이에요", 404);
     return { ...r, reused: true, todayCallsLeft: db.calls };
   },
-  async mark(id, req) {
+  async myTypes() {
+    needProfile();
+    await wait(300);
+    return { type: "earth-mind-soft", matches: allTypeMatches("earth-mind-soft") };
+  },
+  async createTypeCard() {
     await wait(200);
-    const r = db.readings.find((x) => x.id === id);
-    if (!r || r.product !== "nature") throw fail("NOT_FOUND", "찾을 수 없는 기록이에요", 404);
-    const marks = { ...(r.marks ?? {}) };
-    if (req.mark) marks[req.section] = req.mark;
-    else delete marks[req.section];
-    r.marks = marks;
-    save();
-    return { marks };
+    return { code: "mockcard01", url: `${location.origin}/?t=mockcard01` };
+  },
+  async typeCard() {
+    await wait(300);
+    const match = allTypeMatches("earth-mind-soft").find((m) => m.type === "wood-duty-strong");
+    return {
+      nickname: "새벽바람",
+      type: "wood-duty-strong",
+      mine: false,
+      viewer: db.profile && match ? { type: "earth-mind-soft", match } : null,
+    };
   },
   async remove(id) {
     await wait(300);

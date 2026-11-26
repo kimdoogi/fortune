@@ -16,7 +16,6 @@ import { buildObanggi } from "../src/facts/obanggi";
 import { buildDaily, buildSajuFull } from "../src/facts/saju";
 import { buildTarot } from "../src/facts/tarot";
 import { decodeCursor, encodeCursor } from "../src/readings/history";
-import { applyMark } from "../src/readings/marks";
 import { FLAG_COLORS } from "../src/seed";
 
 function expectClean(facts: string[]) {
@@ -245,12 +244,19 @@ describe("족집게집 facts (F19)", () => {
     });
     expect(flat.strong).toBeNull();
   });
+});
 
-  it("맞아요/아니에요 표시는 바꾸고 지울 수 있다", () => {
-    let m = applyMark({}, { section: "surface", mark: "yes" });
-    m = applyMark(m, { section: "inner", mark: "no" });
-    m = applyMark(m, { section: "surface", mark: "no" });
-    expect(m).toEqual({ surface: "no", inner: "no" });
-    expect(applyMark(m, { section: "inner", mark: null })).toEqual({ surface: "no" });
+describe("족집게집 60유형 facts (F19, D-101)", () => {
+  it("결과로 정한 유형·잘 맞는·안 맞는 유형이 facts와 판에 들어간다", () => {
+    const natal = computePillars({ calendar: "solar", date: "1996-02-14", time: "07:30" });
+    const parts = buildNature(natal, analyzePillars(natal.pillars));
+    expect(parts.board.type).toMatch(/^[a-z]+-[a-z]+-(strong|soft)$/);
+    expect(parts.board.best).toHaveLength(3);
+    expect(parts.board.worst).toHaveLength(3);
+    expect(parts.type.id).toBe(parts.board.type);
+    expect(parts.facts.filter((f) => f.startsWith("잘 맞는 유형"))).toHaveLength(3);
+    expect(parts.facts.filter((f) => f.startsWith("안 맞는 유형"))).toHaveLength(3);
+    expect(parts.facts[0]).toContain(parts.type.name);
+    expect(parts.facts.join(" ")).not.toContain(`'${natal.pillars.day}'`);
   });
 });

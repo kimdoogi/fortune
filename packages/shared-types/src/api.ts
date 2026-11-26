@@ -130,6 +130,63 @@ export interface NatureBoard {
   /** 0자리인 무리 */
   absent: NatureGroup[];
   hourUnknown: boolean;
+  /** 60유형 id (D-101, 예: fire-self-soft). v1 풀이에는 없다 */
+  type?: string;
+  /** 잘 맞는 유형·안 맞는 유형 3개씩 (02 §5-10) */
+  best?: TypeMatchBrief[];
+  worst?: TypeMatchBrief[];
+}
+
+// ── 족집게집 60유형 (F19, D-101) ──────────────────────────
+export type TypeMatchLabel = "찰떡" | "잘 맞음" | "맞춰 가면 괜찮음" | "부딪힘";
+export type TypeFactorKind =
+  | "element_saeng"
+  | "element_same"
+  | "element_geuk"
+  | "strength_pair"
+  | "strength_clash"
+  | "strength_soft"
+  | "group_same"
+  | "group_help"
+  | "group_clash";
+export interface TypeMatchBrief {
+  type: string;
+  score: number;
+  label: TypeMatchLabel;
+}
+export interface TypeMatchView extends TypeMatchBrief {
+  factors: { kind: TypeFactorKind; good: boolean }[];
+}
+/** 요인 화면 문장 (02 §5-10 표) */
+export const TYPE_FACTOR_TEXT: Record<TypeFactorKind, string> = {
+  element_saeng: "타고난 기운이 서로 키워 주는 사이",
+  element_same: "타고난 기운이 닮아 편하지만 고집이 부딪힐 수 있는 사이",
+  element_geuk: "타고난 기운이 달라 자주 맞춰야 하는 사이",
+  strength_pair: "한쪽은 이끌고 한쪽은 받쳐 주는 사이",
+  strength_clash: "둘 다 기운이 세서 주도권을 다투기 쉬운 사이",
+  strength_soft: "둘 다 맞춰 주는 편이라 편안한 사이",
+  group_same: "중요하게 여기는 게 닮은 사이",
+  group_help: "서로 모자란 걸 채워 주는 사이",
+  group_clash: "중요하게 여기는 게 달라 부딪히는 사이",
+};
+/** GET /api/types/me: 내 유형과 60유형 모두와의 맞음 (60갑자 순서, 나 포함) */
+export interface MyTypesResponse {
+  type: string;
+  matches: TypeMatchView[];
+}
+/** POST /api/type-cards 응답 */
+export interface TypeCardCreated {
+  code: string;
+  url: string;
+}
+/** GET /api/type-cards/:code 응답 */
+export interface TypeCardView {
+  nickname: string;
+  type: string;
+  /** 내 카드를 내가 열었다 */
+  mine: boolean;
+  /** 보는 사람에게 프로필이 있으면 그 사람 유형과 둘의 맞음 */
+  viewer: { type: string; match: TypeMatchView } | null;
 }
 
 /** 십신 무리 다섯 (02 §5-2) */
@@ -154,17 +211,6 @@ export const NATURE_SECTIONS = [
   "stress",
 ] as const;
 export type NatureSection = (typeof NATURE_SECTIONS)[number];
-export type NatureMark = "yes" | "no";
-/** PUT /api/readings/:id/marks 본문. mark가 null이면 지운다 */
-export interface MarkRequest {
-  section: NatureSection;
-  mark: NatureMark | null;
-}
-/** PUT /api/readings/:id/marks 응답 */
-export interface MarksResponse {
-  marks: Partial<Record<NatureSection, NatureMark>>;
-}
-
 export interface TarotCardView {
   /** 과거 / 현재 / 미래 / 오늘 */
   position: string;
@@ -279,8 +325,6 @@ export interface ReadingResult {
   followups: FollowupView[];
   /** 이 풀이에 더 물을 수 있는 횟수 (최대 3) */
   followupsLeft: number;
-  /** 족집게집 맞아요/아니에요 표시 (F19). 다른 상품은 없다 */
-  marks?: Partial<Record<NatureSection, NatureMark>>;
 }
 
 // ── F15 이어 묻기 ─────────────────────────────────────────
@@ -426,6 +470,7 @@ export const SECTION_TITLES: Record<string, string> = {
   atWork: "일할 때",
   inLove: "연애할 때",
   stress: "스트레스 받을 때",
+  match: "잘 맞는 사람·안 맞는 사람",
 };
 
 export const DISCLAIMER =
